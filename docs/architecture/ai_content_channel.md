@@ -71,12 +71,6 @@ categories:
 }
 ```
 
-**Output Structure**:
-- Multiple content options (configurable count, default: 3)
-- Each option includes: topic, fact, platform-specific formatting
-- Quality scores for each option
-- User selects single option for posting
-
 ### Service 3: Content Generator
 **Purpose**: Create multiple content options from selected theme using templates
 **Input**: Theme with category from Service 2
@@ -129,6 +123,15 @@ requirements:
 - Allows preview of content with visual assets
 - Records selection reason for improvement
 
+### Service 6: Scheduler
+**Purpose**: Distribute selected content across platforms
+**Input**: Selected content and visual assets
+**Output**: Published posts
+**Process**:
+1. **Platform Formatting**: Apply final platform-specific tags/handles
+2. **Scheduling**: Post immediately or at optimal time per platform
+3. **Verification**: Confirm post was successfully published
+
 ## Data Flow
 ```
 Google Trends API (with fallback to configured trends)
@@ -139,9 +142,9 @@ Google Trends API (with fallback to configured trends)
     ↓
 [Service 3: Content Generator] → Multiple Content Options (configurable)
     ↓
-[Service 4: Content Selector] → User selects single option
+[Service 5: Content Selector] → User selects single option
     ↓  
-[Service 5: Visual Generator] → Visual assets for selected content
+[Service 4: Visual Generator] → Visual assets for selected content
     ↓
 [Service 6: Scheduler] → Multi-platform posts
 ```
@@ -199,32 +202,19 @@ Google Trends API (with fallback to configured trends)
 
 ## Monitoring & Analytics
 
-### Content Generation Metrics
-- Option generation success rate
-- User selection patterns
-- Quality score distribution
-
-### Platform Performance
-- Engagement rates per platform
-- Optimal posting times analysis
-- Cross-platform performance comparison
-
-### Improvement Loop
-- Track which options users select
-- Use feedback to improve templates
-- A/B test template variations
+### Success Metrics
+- Content generation success rate
+- User selection patterns (which templates perform best)
+- Posting reliability (delivery rate to platforms)
 
 ## Deployment Strategy
 
 ### Environment Configuration
-- Development: Local selection interface, mock platforms
-- Staging: Real platforms with test accounts
-- Production: Full platform integration, monitoring
+- **Local**: CLI-based selection and mock platform posting
+- **Production**: Full platform integration with monitoring
 
-### Selection Interface Deployment
-- Simple web app for user selection
-- Can run locally or as microservice
-- Secure access for authorized users
+### Selection Interface
+- Simple web app or CLI for authorized user selection
 
 ## Status
 Proposed
