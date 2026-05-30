@@ -3,50 +3,238 @@
 ## Overview
 AI-driven social media channel featuring "Did you know?" style culinary entertainment content. The system automates content creation from trend discovery to scheduled posting across multiple platforms.
 
-## Architectural Principles
+## Core Principles
 1. **Platform Agnostic**: Content creation independent of posting destination
-2. **Configurable Output**: Generate multiple options, select best
-3. **Template Driven**: Content requirements defined in templates
+2. **Multiple Options**: Generate several options, human selects best
+3. **Template Driven**: Content requirements defined in YAML templates
 4. **Human in the Loop**: User selects final post from options
-5. **Extensible**: Easy to add new platforms and content types
+5. **Modular**: Each module is independently testable
 
-## Service Architecture
+## Tech Stack
 
-### Service 1: Trend Selector
-**Purpose**: Identify suitable food-related trends for content creation
-**Input**: Google Trends API
-**Output**: Exactly one selected trend per execution (guaranteed)
-**Frequency**: Configurable (default: every 2 hours)
-**Key Decisions**:
-- Fetch fresh trends on each execution
-- Compare with recently used trends to avoid repetition
-- Filter non-food trends using configurable keyword list
-- **Always returns exactly one trend** using fallback strategies
+| Layer | Technology |
+|-------|------------|
+| Language | Python 3.11+ |
+| AI API | OpenRouter (text generation + image generation) |
+| Trend Source | `pytrends` (Google Trends unofficial API) |
+| Database | PostgreSQL (persistent storage) |
+| Migrations | Raw SQL files in `migrations/` (sequential: `0001_name.sql`) |
+| Web UI | Flask (simple single-page app) |
+| Config | YAML files |
+| Platform APIs | Platform-specific SDKs (e.g., `requests` for REST APIs) |
+| Scheduler | System cron (triggers automated pipeline) |
+| Project Manager | `uv` (fast Python package manager) |
 
-**Fallback Strategies** (in order of preference):
-1. **Primary**: Select highest-scoring unused food trend
-2. **Secondary**: If no unused food trends, select highest-scoring food trend regardless of recent use
-3. **Tertiary**: If no food trends at all, select highest-scoring trend from any category
-4. **Emergency**: If Google Trends API fails, use pre-defined backup trends from configuration
+## Pipeline Flow
 
-**Quality Degradation Awareness**:
-- System tracks which fallback strategy was used
-- Lower-quality selections may trigger alerts or different handling
-- Historical analysis to improve trend selection algorithm
+```
+Cron (every 2 hours)
+    ↓
+[1] Trend Selector → saves trend to DB
+    ↓
+[2] Theme Associator → creates theme + category (deduplicated via DB)
+    ↓
+[3] Content Generator → generates options, saves to DB (skips if queue full)
+    ↓
+=== Queue holds options until user approves ===
+    ↓
+User opens Web UI → sees pending options → clicks "Approve"
+    ↓
+[4] Content Selector → marks selected option in DB
+    ↓
+[5] Visual Generator → creates image, saves to DB
+    ↓
+[6] Scheduler → posts to platforms, updates DB with result
+```
 
-### Service 2: Theme Associator
-**Purpose**: Create theme from trend, categorized for content variety control
-**Input**: Selected trend from Service 1
-**Output**: Theme with category assignment
-**Process**: 
-1. **AI Analysis**: Determine which configured category the trend best fits
-2. **Category Deduplication**: Check if category used recently (configurable timeframe)
-3. **Theme Creation**: AI creates appropriate theme based on trend and category
-4. **Output**: Theme with category metadata
+## Project Structure
 
-**Simple Configuration**:
+```
+did-you-know/
+├── config/
+│   ├── categories.yaml          # Theme categories
+│   ├── content_template.yaml    # Content generation template
+│   ├── platforms.yaml           # Platform settings
+│   └── backup_trends.yaml       # Fallback trends + queue settings
+├── migrations/
+│   ├── 0001_create_trends.sql
+│   ├── 0002_create_categories.sql
+│   ├── 0003_create_content.sql
+│   └── 0004_create_posts.sql
+├── modules/
+│   ├── trend_selector.py        # Module 1
+│   ├── theme_associator.py      # Module 2
+│   ├── content_generator.py     # Module 3
+│   ├── visual_generator.py      # Module 5
+│   └── scheduler.py             # Module 6
+├── web/
+│   ├── app.py                   # Flask web server + API routes
+│   └── templates/
+│       └── dashboard.html       # Single-page UI for content approval
+├── shared/
+│   ├── openrouter_client.py     # OpenRouter API wrapper
+│   ├── config_loader.py         # YAML config loading
+│   ├── db.py                    # PostgreSQL connection + queries
+│   ├── migrate.py               # Migration runner
+│   └── models.py                # Shared data classes
+├── main.py                      # CLI orchestrator (generate command)
+├── pyproject.toml               # Dependencies and project metadata
+└── .env                         # API keys + DB URL (gitignored)
+```
+
+## Database Schema
+
+### trends
+Tracks used trends to avoid repetition.
+
+```sql
+CREATE TABLE trends (
+    id SERIAL PRIMARY KEY,
+    keyword TEXT NOT NULL,
+    score INTEGER,
+    source TEXT NOT NULL DEFAULT 'google',
+    used_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_trends_used_at ON trends (used_at);
+CREATE INDEX idx_trends_keyword ON trends (keyword);
+```
+
+### categories
+Tracks category usage for deduplication.
+
+```sql
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    trend_keyword TEXT NOT NULL,
+    used_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_categories_used_at ON categories (used_at);
+CREATE INDEX idx_categories_name ON categories (name);
+```
+
+### content_options
+Stores generated content options until user approves one.
+
+```sql
+CREATE TABLE content_options (
+    id SERIAL PRIMARY KEY,
+    batch_id TEXT NOT NULL,
+    trend_keyword TEXT NOT NULL,
+    theme TEXT NOT NULL,
+    category TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    fact TEXT NOT NULL,
+    hashtags TEXT[] NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_content_options_status ON content_options (status);
+CREATE INDEX idx_content_options_created_at ON content_options (created_at);
+```
+
+**Status values**: `pending` → `approved` → `posted` / `expired`
+
+### posts
+Tracks published posts and their status.
+
+```sql
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    content_option_id INTEGER NOT NULL REFERENCES content_options(id),
+    platform TEXT NOT NULL,
+    image_path TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    post_url TEXT,
+    error TEXT,
+    posted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_posts_content_option_id ON posts (content_option_id);
+CREATE INDEX idx_posts_status ON posts (status);
+```
+
+## Queue Management
+
+To prevent unbounded growth of pending options:
+
 ```yaml
-# categories.yaml
+# config/backup_trends.yaml
+queue:
+  max_pending: 10           # Skip generation if >= 10 pending options
+  expire_days: 7            # Auto-expire options older than 7 days
+  cleanup_on_generate: true # Run cleanup before each generation
+```
+
+**Behavior**:
+1. Before generating, check `SELECT COUNT(*) FROM content_options WHERE status = 'pending'`
+2. If count >= `max_pending`, skip generation entirely (log and exit)
+3. On each generation, expire old options: `UPDATE content_options SET status = 'expired' WHERE status = 'pending' AND created_at < NOW() - INTERVAL '7 days'`
+
+## Modules
+
+### Module 1: Trend Selector
+**Purpose**: Identify suitable food-related trends for content creation
+**Input**: Google Trends API (via `pytrends`)
+**Output**: Exactly one selected trend (saved to `trends` table)
+**Trigger**: Cron (every 2 hours via `python main.py generate`)
+
+**Process**:
+1. Fetch fresh trends from Google Trends via `pytrends`
+2. Filter non-food trends using configurable keyword list
+3. Query DB for recently used trends, skip duplicates
+4. Select best unused food trend
+5. Save selected trend to `trends` table
+
+**Fallback Strategies** (in order):
+1. Highest-scoring unused food trend
+2. Highest-scoring food trend (even if recently used)
+3. Highest-scoring trend from any category
+4. Pre-defined backup trends from `config/backup_trends.yaml`
+
+**Configuration** (`config/backup_trends.yaml`):
+```yaml
+food_keywords:
+  - recipe
+  - cooking
+  - food
+  - kitchen
+  - ingredient
+  - meal
+  - bake
+  - fry
+  - grill
+
+backup_trends:
+  - "sourdough bread"
+  - "air fryer recipes"
+  - "meal prep ideas"
+
+trend_history_days: 30
+```
+
+---
+
+### Module 2: Theme Associator
+**Purpose**: Assign a category and create a theme from the trend
+**Input**: Selected trend (from `trends` table)
+**Output**: Theme with category (saved to `categories` table)
+
+**Tech**: OpenRouter API (text generation model for categorization + theme naming)
+
+**Process**:
+1. Send trend to OpenRouter, ask: "Which category fits best? [list]"
+2. Query `categories` table for recently used categories
+3. If category used recently, ask OpenRouter to pick next best
+4. Ask OpenRouter: "Create a short theme name for this trend in this category"
+5. Save category usage to `categories` table
+
+**Configuration** (`config/categories.yaml`):
+```yaml
 categories:
   - cooking_techniques
   - kitchen_tools
@@ -54,170 +242,231 @@ categories:
   - recipes
   - food_science
   - cultural_foods
-```
 
-**Category Deduplication**:
-- `MIN_HOURS_BETWEEN_CATEGORY`: Don't repeat same category within X hours (default: 12)
-- If preferred category used recently, use next best fitting category
-- Track category usage for rotation awareness
+deduplication:
+  min_hours_between_category: 12
+```
 
 **Output Example**:
 ```json
 {
   "trend": "air fryer recipes",
   "theme": "Air Fryer Cooking",
-  "category": "cooking_techniques",
-  "alternative_categories": ["kitchen_tools", "recipes"]
+  "category": "cooking_techniques"
 }
 ```
 
-### Service 3: Content Generator
-**Purpose**: Create multiple content options from selected theme using templates
-**Input**: Theme with category from Service 2
-**Output**: Multiple (configurable) content options for user selection
-**Components**:
-1. **Template Engine**: Uses YAML templates to define content requirements
-2. **Content Creator**: Generates multiple variations based on templates
-3. **Content Reviewer**: Ensures safety, quality, and template compliance
+---
 
-**Template System**:
+### Module 3: Content Generator
+**Purpose**: Create multiple content options from theme using templates
+**Input**: Theme dict (from Module 2)
+**Output**: List of content options (saved to `content_options` table)
+**Queue Check**: Skips generation if pending options >= `max_pending`
+
+**Tech**: OpenRouter API (text generation model) + YAML template
+
+**Process**:
+1. Check queue size — if >= `max_pending`, log and exit
+2. Expire old pending options (older than `expire_days`)
+3. Load template from `config/content_template.yaml`
+4. Build prompt: theme + template requirements → ask OpenRouter for N variations
+5. Parse response into structured content options
+6. Save all options to `content_options` table with `status = 'pending'`
+
+**Configuration** (`config/content_template.yaml`):
 ```yaml
-# content_template.yaml
 requirements:
   topic_length: "≤3 words"
   fact_style: "Did you know?"
   tone: "engaging, educational, fun"
-  platforms:
-    - name: "pinterest"
-      character_limit: 500
-      hashtag_count: 5-10
-    - name: "instagram"
-      character_limit: 2200
-      hashtag_count: 10-30
-  variations: 3  # Number of options to generate
+
+platforms:
+  pinterest:
+    character_limit: 500
+    hashtag_count: 5-10
+  instagram:
+    character_limit: 2200
+    hashtag_count: 10-30
+
+variations: 3
 ```
 
-**Output Structure**:
-- Multiple content options (configurable count, default: 3)
-- Each option includes: topic, fact, platform-specific formatting
-- Quality scores for each option
-- User selects single option for posting
+---
 
-### Service 4: Visual Generator
-**Purpose**: Create visual assets for selected content
-**Input**: User-selected content from Service 3
-**Output**: Visual assets ready for posting
-**Technology**: AI image generation (OpenRouter with models like DALL-E, Stable Diffusion, Midjourney)
-**Components**:
-1. **Prompt Engineer**: Creates detailed image prompts from content
-2. **Image Generator**: Uses AI models to create images
-3. **Visual QA**: Validates image quality and relevance
+### Module 4: Web UI (Content Selector)
+**Purpose**: User views pending options and approves one
+**Input**: Pending options from `content_options` table
+**Output**: Marks approved option as `status = 'approved'`, triggers pipeline
 
-### Service 5: Content Selector (Human)
-**Purpose**: Choose final post from generated options
-**Input**: Multiple content options from Service 3
-**Output**: Single selected content for posting
-**Interface**: Simple web interface or CLI for selection
-**Decision Support**:
-- Shows all generated options with quality scores
-- Allows preview of content with visual assets
-- Records selection reason for improvement
+**Tech**: Flask web server + simple HTML/JS frontend
 
-### Service 6: Scheduler
-**Purpose**: Distribute selected content across platforms
-**Input**: Selected content and visual assets
-**Output**: Published posts
+**Endpoints**:
+```
+GET  /                  → Dashboard (shows pending options)
+POST /api/approve/:id  → Approve option, trigger visual generation + posting
+GET  /api/history      → Show posted content history
+```
+
+**Dashboard UI**:
+- Shows all pending options as cards (topic + fact + hashtags)
+- Each card has an "Approve" button
+- Clicking "Approve" → POST /api/approve/:id → triggers Modules 5→6 automatically
+- Shows queue status (e.g., "8 pending, 3 posted today")
+
+**Auto-trigger flow** (on approve):
+```
+User clicks "Approve"
+    → API marks option as 'approved'
+    → Calls visual_generator(option_id)
+    → Creates post entry in DB
+    → Calls scheduler(post_id)
+    → Updates post status
+    → Returns result to UI
+```
+
+**Run**: `python -m web.app` (or `flask run`)
+
+---
+
+### Module 5: Visual Generator
+**Purpose**: Create an image for the approved content
+**Input**: Approved content option (from DB)
+**Output**: Image file path (saved to `posts` table)
+
+**Tech**: OpenRouter API (image generation: DALL-E, Stable Diffusion, etc.)
+
 **Process**:
-1. **Platform Formatting**: Apply final platform-specific tags/handles
-2. **Scheduling**: Post immediately or at optimal time per platform
-3. **Verification**: Confirm post was successfully published
+1. Load approved content from `content_options` table
+2. Build image prompt: topic + fact + style preferences
+3. Call OpenRouter image generation endpoint
+4. Save image to `data/images/` directory
+5. Create entry in `posts` table with image path
 
-## Data Flow
-```
-Google Trends API (with fallback to configured trends)
-    ↓
-[Service 1: Trend Selector] → Exactly One Trend (guaranteed)
-    ↓
-[Service 2: Theme Associator] → Unique Food Theme (deduplicated)
-    ↓
-[Service 3: Content Generator] → Multiple Content Options (configurable)
-    ↓
-[Service 5: Content Selector] → User selects single option
-    ↓  
-[Service 4: Visual Generator] → Visual assets for selected content
-    ↓
-[Service 6: Scheduler] → Multi-platform posts
+**Configuration** (`config/platforms.yaml`):
+```yaml
+visual:
+  model: "dall-e-3"
+  style: "food photography, bright, appetizing, clean background"
+  dimensions:
+    pinterest: [1000, 1500]
+    instagram: [1080, 1080]
 ```
 
-## Configuration Boundaries
+---
 
-### Category Configuration
-- `CATEGORY_LIST`: Available categories (default: cooking_techniques,kitchen_tools,ingredients,recipes)
-- `MIN_HOURS_BETWEEN_CATEGORY`: Don't repeat category within X hours (default: 12)
-- `CATEGORY_ROTATION_ENABLED`: Ensure category variety (default: true)
-- `CATEGORY_IDENTIFICATION_MODEL`: AI model for category detection
+### Module 6: Scheduler
+**Purpose**: Post approved content with visual to configured platforms
+**Input**: Post entry from `posts` table
+**Output**: Updated post status + URL (in `posts` table)
 
-### Platform Configuration
-- `PLATFORMS_ENABLED`: Which platforms to post to
-- `PLATFORM_SCHEDULES`: Optimal posting times per platform
-- `CROSS_POST_DELAY`: Time between posting to different platforms
+**Tech**: `requests` for platform REST APIs (Pinterest API, Instagram API, etc.)
 
-### Visual Generation
-- `IMAGE_MODELS`: Prioritized list of AI image models
-- `IMAGE_DIMENSIONS`: Platform-specific image sizes
-- `QUALITY_THRESHOLD`: Minimum image quality score
+**Process**:
+1. Load post entry from `posts` table
+2. Load platform config from `config/platforms.yaml`
+3. Format content for target platform (tags, handles, limits)
+4. Upload image and create post via platform API
+5. Update `posts` table with status (`success`/`failed`) and post URL
+6. Update `content_options` status to `posted`
 
-## Selection Process Architecture
+**Configuration** (`config/platforms.yaml`):
+```yaml
+platforms:
+  pinterest:
+    enabled: true
+    api_base: "https://api.pinterest.com/v5"
+    board_id: "${PINTEREST_BOARD_ID}"
+  instagram:
+    enabled: false
+    api_base: "https://graph.instagram.com"
 
-### User Interface Options
-1. **Web Dashboard**: View options, preview, select
-2. **CLI Interface**: List options, select by ID
-3. **API Endpoint**: Programmatic selection
-
-### Selection Workflow
+scheduling:
+  post_immediately: true
+  cross_post_delay_minutes: 0
 ```
-1. Content Generator creates N options
-2. Options displayed with scores and previews
-3. User reviews and selects one
-4. Selection triggers Visual Generator
-5. Selected content moves to Scheduler
+
+## Shared Modules
+
+### db.py
+**Purpose**: PostgreSQL connection and query helpers
+**Used by**: All modules
+**Interface**:
+```python
+def get_connection() -> psycopg2.connection
+def execute(query: str, params: tuple = None) -> list[dict]
+def execute_one(query: str, params: tuple = None) -> dict | None
 ```
 
-## Extensibility Patterns
+### openrouter_client.py
+**Purpose**: Single wrapper for all OpenRouter API calls
+**Used by**: Modules 2, 3, 5
+**Interface**:
+```python
+def generate_text(prompt: str, model: str = "openai/gpt-4o-mini") -> str
+def generate_image(prompt: str, model: str = "dall-e-3") -> bytes
+```
 
-### Adding New Platforms
-1. Add platform template
-2. Configure scheduler for new platform
-3. Update content templates to include platform
+### models.py
+**Purpose**: Shared data classes for type safety
+**Classes**:
+```python
+@dataclass
+class Trend:
+    keyword: str
+    score: int
+    source: str
 
-### Adding Content Types
-1. Create new content template
-2. Update Trend Selector filters if needed
-3. Configure Content Generator to use new template
+@dataclass
+class Theme:
+    trend: str
+    theme: str
+    category: str
 
-### Scaling Options Generation
-1. Increase `CONTENT_VARIATIONS` for more options
-2. Parallel content generation
-3. A/B testing of different templates
+@dataclass
+class ContentOption:
+    id: int
+    batch_id: str
+    topic: str
+    fact: str
+    hashtags: list[str]
+    status: str  # pending | approved | posted | expired
 
-## Monitoring & Analytics
+@dataclass
+class Post:
+    id: int
+    content_option_id: int
+    platform: str
+    image_path: str
+    status: str  # pending | success | failed
+    post_url: str | None
+```
 
-### Success Metrics
-- Content generation success rate
-- User selection patterns (which templates perform best)
-- Posting reliability (delivery rate to platforms)
+## Cron Configuration
 
-## Deployment Strategy
+```bash
+# Run content generation pipeline every 2 hours
+0 */2 * * * cd /path/to/did-you-know && python main.py generate >> /var/log/content-generator.log 2>&1
+```
 
-### Environment Configuration
-- **Local**: CLI-based selection and mock platform posting
-- **Production**: Full platform integration with monitoring
+## Running the System
 
-### Selection Interface
-- Simple web app or CLI for authorized user selection
+```bash
+# 1. Run database migrations
+python -m shared.migrate
 
-## Status
-Proposed
+# 2. Start web UI (for approval dashboard)
+python -m web.app
 
-## Date
-2025-05-30
+# 3. Cron handles automatic generation (every 2 hours)
+# Or run manually:
+python main.py generate
+```
+
+## Environment Variables (.env)
+```
+DATABASE_URL=postgresql://user:pass@localhost:5432/did_you_know
+OPENROUTER_API_KEY=sk-or-...
+PINTEREST_ACCESS_TOKEN=...
+INSTAGRAM_ACCESS_TOKEN=...
+```
