@@ -78,18 +78,36 @@ categories:
 - User selects single option for posting
 
 ### Service 3: Content Generator
-**Purpose**: Create multiple content options from selected theme
-**Input**: Unique food theme from Service 2
+**Purpose**: Create multiple content options from selected theme using templates
+**Input**: Theme with category from Service 2
 **Output**: Multiple (configurable) content options for user selection
 **Components**:
 1. **Template Engine**: Uses YAML templates to define content requirements
 2. **Content Creator**: Generates multiple variations based on templates
 3. **Content Reviewer**: Ensures safety, quality, and template compliance
 
-**Technology Stack**:
-- **Primary**: OpenRouter API (supports multiple AI image models)
-- **Fallback**: Multiple model support for reliability
-- **Format**: Standard image formats (JPEG, PNG) with platform-specific dimensions
+**Template System**:
+```yaml
+# content_template.yaml
+requirements:
+  topic_length: "≤3 words"
+  fact_style: "Did you know?"
+  tone: "engaging, educational, fun"
+  platforms:
+    - name: "pinterest"
+      character_limit: 500
+      hashtag_count: 5-10
+    - name: "instagram"
+      character_limit: 2200
+      hashtag_count: 10-30
+  variations: 3  # Number of options to generate
+```
+
+**Output Structure**:
+- Multiple content options (configurable count, default: 3)
+- Each option includes: topic, fact, platform-specific formatting
+- Quality scores for each option
+- User selects single option for posting
 
 ### Service 4: Visual Generator
 **Purpose**: Create visual assets for selected content
@@ -145,44 +163,6 @@ Google Trends API (with fallback to configured trends)
 - `IMAGE_MODELS`: Prioritized list of AI image models
 - `IMAGE_DIMENSIONS`: Platform-specific image sizes
 - `QUALITY_THRESHOLD`: Minimum image quality score
-
-## Template System Architecture
-
-### Template Types
-1. **Content Templates**: Define topic, fact style, tone requirements
-2. **Platform Templates**: Platform-specific formatting rules
-3. **Visual Templates**: Image style, composition guidelines
-
-### Template Structure
-```yaml
-# Example: food_fact_template.yaml
-metadata:
-  name: "Food Did You Know"
-  version: "1.0"
-  
-content:
-  topic:
-    max_words: 3
-    required_elements: ["food_item", "adjective"]
-    
-  fact:
-    style: "did_you_know"
-    length: "short_to_medium"
-    elements: ["surprising_fact", "historical_context", "preparation_tip"]
-    
-platforms:
-  pinterest:
-    format: "vertical_image_with_text_overlay"
-    dimensions: [1000, 1500]
-    
-  instagram:
-    format: "square_image_with_caption"
-    dimensions: [1080, 1080]
-    
-generation:
-  variations: 3
-  temperature: 0.7  # For AI creativity
-```
 
 ## Selection Process Architecture
 
