@@ -164,21 +164,6 @@
     "ast_hash": "d8cacf58feec633e62d030d4763b51c6",
     "semantic_hash": ""
   },
-  "/workspaces/did-you-know/board/todo/TKT-004_openrouter_client.md": {
-    "mtime": 1780215071.0267088,
-    "ast_hash": "8bdc77074a75bd599774d83bdb40ac82",
-    "semantic_hash": ""
-  },
-  "/workspaces/did-you-know/board/todo/TKT-005_yaml_configuration_files.md": {
-    "mtime": 1780215075.192236,
-    "ast_hash": "e6ca1899ca346df37573c5fb0316ab20",
-    "semantic_hash": ""
-  },
-  "/workspaces/did-you-know/board/todo/TKT-006_trend_selector.md": {
-    "mtime": 1780215079.2504032,
-    "ast_hash": "d64a77f3d2fa85141b2bca0d283457d6",
-    "semantic_hash": ""
-  },
   "/workspaces/did-you-know/board/todo/TKT-007_theme_associator.md": {
     "mtime": 1780215083.1020966,
     "ast_hash": "6a681cb76f1a8b04296320247d54cdb1",
@@ -315,8 +300,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/content_template.yaml": {
-    "mtime": 1780238693.0517232,
-    "ast_hash": "827acd43f84e7d4b0ad348a116187232",
+    "mtime": 1780243248.952922,
+    "ast_hash": "7c00e1aac0a909d0b708ea436efff10a",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/done/TKT-002_shared_config_and_db_pool.md": {
@@ -332,6 +317,41 @@
   "/workspaces/did-you-know/tests/test_models.py": {
     "mtime": 1780238693.4028084,
     "ast_hash": "e3986e21793ac14c393bbadacb8074ff",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/shared/openrouter_client.py": {
+    "mtime": 1780241778.7551653,
+    "ast_hash": "342081dbf45633b12ec4bc1d99b4b78c",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_openrouter_client.py": {
+    "mtime": 1780241840.1488636,
+    "ast_hash": "94ea39e1b2fd27c4f2da8d2c675cee7f",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/config/backup_trends.yaml": {
+    "mtime": 1780243250.9031086,
+    "ast_hash": "a1ff66cb17d09a05f653ad6e4c1c6a2c",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/config/platforms.yaml": {
+    "mtime": 1780243250.346352,
+    "ast_hash": "517fc9a253c145a68c455d28f4216fd2",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/modules/__init__.py": {
+    "mtime": 1780245977.7011938,
+    "ast_hash": "f3dd932b3b5afaeb6053d23e9e56f4a4",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/modules/trend_selector.py": {
+    "mtime": 1780246004.6271505,
+    "ast_hash": "f3c1bc1b2d5b087427fb33d5434eab95",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_trend_selector.py": {
+    "mtime": 1780246304.2319465,
+    "ast_hash": "d74769522b57c16957483189327b491e",
     "semantic_hash": ""
   }
 }
