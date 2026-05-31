@@ -50,6 +50,8 @@ class TrendSelector:
         self._config = config
         self._backup_trends: list[dict[str, Any]] = config.get("backup_trends", [])
         self._history_days: int = config.get("trend_history_days", 30)
+        self._geo: str = config.get("geo", "US")
+        self._period: str = config.get("period", "now 1-d")
 
     # ------------------------------------------------------------------
     # Public API
@@ -110,7 +112,8 @@ class TrendSelector:
             return []
 
         try:
-            pytrends = TrendReq(hl="en-US", tz=360, timeout=30)
+            pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
+            pytrends.build_payload(kw_list=[], timeframe=self._period)
             return self._parse_trending_searches(pytrends)
         except Exception:
             logger.warning(
@@ -118,7 +121,7 @@ class TrendSelector:
                 exc_info=True,
             )
             try:
-                pytrends = TrendReq(hl="en-US", tz=360, timeout=30)
+                pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
                 return self._parse_realtime_trending(pytrends)
             except Exception:
                 logger.warning(

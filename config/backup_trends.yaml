@@ -21,3 +21,5 @@ queue:
 
 # Trend selection settings
 trend_history_days: 30
+geo: "US"
+period: "now 1-d"
