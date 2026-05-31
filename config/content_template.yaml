@@ -1,0 +1,4 @@
+max_length: 280
+tone: informative
+include_hashtags: true
+default_template: "Did you know that {{ fact }}?"

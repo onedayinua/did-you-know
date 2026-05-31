@@ -25,6 +25,7 @@ dependencies = [
     "asyncpg>=0.29.0",      # Async PostgreSQL driver
     "pydantic>=2.0.0",      # Data validation
     "python-dotenv>=1.0.0", # Environment variable management
+    "pyyaml>=6.0.0",       # YAML config parsing
     # Note: FastAPI will be added when web service is implemented
 ]
 
