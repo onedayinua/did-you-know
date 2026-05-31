@@ -1,16 +1,16 @@
 # Graph Report - did-you-know  (2026-05-31)
 
 ## Corpus Check
-- 59 files · ~40,582 words
+- 62 files · ~44,221 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1339 nodes · 1938 edges · 93 communities (89 shown, 4 thin omitted)
-- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 288 edges (avg confidence: 0.56)
+- 1561 nodes · 2332 edges · 109 communities (105 shown, 4 thin omitted)
+- Extraction: 86% EXTRACTED · 14% INFERRED · 0% AMBIGUOUS · INFERRED: 334 edges (avg confidence: 0.55)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8931daef`
+- Built from commit: `93457940`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -101,18 +101,34 @@
 - [[_COMMUNITY_Community 90|Community 90]]
 - [[_COMMUNITY_Community 91|Community 91]]
 - [[_COMMUNITY_Community 92|Community 92]]
+- [[_COMMUNITY_Community 93|Community 93]]
+- [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
+- [[_COMMUNITY_Community 96|Community 96]]
+- [[_COMMUNITY_Community 97|Community 97]]
+- [[_COMMUNITY_Community 98|Community 98]]
+- [[_COMMUNITY_Community 99|Community 99]]
+- [[_COMMUNITY_Community 100|Community 100]]
+- [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `AsyncMock` - 55 edges
-2. `Trend` - 49 edges
-3. `MagicMock` - 40 edges
-4. `TrendSelector` - 36 edges
-5. `ContentOption` - 31 edges
-6. `Post` - 27 edges
-7. `TestTrend` - 26 edges
-8. `TestContentOption` - 26 edges
-9. `TrendSelector` - 24 edges
-10. `Theme` - 24 edges
+1. `Trend` - 70 edges
+2. `AsyncMock` - 55 edges
+3. `TrendSelector` - 43 edges
+4. `MagicMock` - 43 edges
+5. `Theme` - 42 edges
+6. `AsyncMock` - 35 edges
+7. `AsyncMock` - 34 edges
+8. `ThemeAssociator` - 32 edges
+9. `ContentOption` - 31 edges
+10. `TrendSelector` - 27 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `int` --uses--> `Trend`  [INFERRED]
@@ -121,15 +137,15 @@
   modules/trend_selector.py → shared/models.py
 - `bool` --uses--> `Trend`  [INFERRED]
   modules/trend_selector.py → shared/models.py
-- `AsyncMock` --uses--> `TrendSelector`  [INFERRED]
-  tests/test_trend_selector.py → modules/trend_selector.py
-- `MagicMock` --uses--> `TrendSelector`  [INFERRED]
-  tests/test_trend_selector.py → modules/trend_selector.py
+- `ThemeAssociator` --uses--> `Theme`  [INFERRED]
+  modules/theme_associator.py → shared/models.py
+- `ThemeAssociator` --uses--> `Trend`  [INFERRED]
+  modules/theme_associator.py → shared/models.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (93 total, 4 thin omitted)
+## Communities (109 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -357,7 +373,7 @@ Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-001] 
 
 ### Community 66 - "Community 66"
 Cohesion: 0.05
-Nodes (23): Tests for shared/db.py., Test the query helper functions., Set up a mock pool for each test., Test fetch returns all rows., Test fetch_one returns a single row., Test fetch_one returns None when no rows., Test fetch_val returns a single value., Test execute returns status string. (+15 more)
+Nodes (22): Tests for shared/db.py., Test the query helper functions., Set up a mock pool for each test., Test fetch returns all rows., Test fetch_one returns a single row., Test fetch_one returns None when no rows., Test fetch_val returns a single value., Test execute returns status string. (+14 more)
 
 ### Community 67 - "Community 67"
 Cohesion: 0.05
@@ -376,8 +392,8 @@ Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
 ### Community 71 - "Community 71"
-Cohesion: 0.19
-Nodes (20): Enum, did-you-know shared utilities.  Provides: - config_loader: YAML config loading w, content_option_from_record(), ContentStatus, Platform, post_from_record(), PostStatus, Any (+12 more)
+Cohesion: 0.10
+Nodes (29): Enum, did-you-know shared utilities.  Provides: - config_loader: YAML config loading w, content_option_from_record(), ContentStatus, Platform, post_from_record(), PostStatus, Any (+21 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.33
@@ -392,20 +408,20 @@ Cohesion: 0.12
 Nodes (14): ContentOption, Represents a generated content option (text + image prompt + optional image)., Test ContentOption model creation and validation., Valid ContentOption with all required fields., Valid ContentOption with all optional fields populated., Platform can be created from string enum value., Invalid platform string should raise ValidationError., Empty fact (min_length=1) should raise ValidationError. (+6 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.08
-Nodes (13): TrendSelector module — selects trending topics from Google Trends.  Provides the, Represents a trending keyword from Google Trends., Trend, Score < 0 should raise ValidationError., Score > 100 should raise ValidationError., Boundary values for score (0.0 and 100.0)., Missing keyword should raise ValidationError., Empty keyword (min_length=1) should raise ValidationError. (+5 more)
+Cohesion: 0.12
+Nodes (14): Represents a trending keyword from Google Trends., Trend, Score < 0 should raise ValidationError., Score > 100 should raise ValidationError., Boundary values for score (0.0 and 100.0)., Missing keyword should raise ValidationError., Empty keyword (min_length=1) should raise ValidationError., Keyword exceeding max_length should raise ValidationError. (+6 more)
 
 ### Community 76 - "Community 76"
 Cohesion: 0.14
 Nodes (12): Post, Represents a published post on a platform.     Platform is inherited from the pa, Test Post model creation and validation., Valid Post with all required fields., Valid Post with all optional fields populated., Post with FAILED status and error message., Missing content_option_id should raise ValidationError., Missing platform should raise ValidationError. (+4 more)
 
 ### Community 77 - "Community 77"
-Cohesion: 0.17
-Nodes (10): Represents a short theme name derived from a trend., Theme, Test Theme model creation and validation., Valid Theme with all required fields., Valid Theme with optional fields populated., Empty name (min_length=1) should raise ValidationError., Name exceeding max_length should raise ValidationError., Missing trend_id should raise ValidationError. (+2 more)
+Cohesion: 0.13
+Nodes (13): Any, Trend, ThemeAssociator module — creates short theme names from trend keywords using AI., Represents a short theme name derived from a trend., Theme, Test Theme model creation and validation., Valid Theme with all required fields., Valid Theme with optional fields populated. (+5 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.17
-Nodes (7): Test model_dump() and model_dump_json() round-trip., ContentOption serializes and deserializes correctly., ContentOption serializes to JSON and back., HealthResponse serializes and deserializes correctly., Post serializes to JSON and back., Enum fields should serialize to their string values., TestSerialization
+Cohesion: 0.14
+Nodes (8): Test model_dump() and model_dump_json() round-trip., Trend serializes and deserializes correctly., ContentOption serializes and deserializes correctly., ContentOption serializes to JSON and back., HealthResponse serializes and deserializes correctly., Post serializes to JSON and back., Enum fields should serialize to their string values., TestSerialization
 
 ### Community 79 - "Community 79"
 Cohesion: 0.32
@@ -416,68 +432,132 @@ Cohesion: 0.32
 Nodes (6): HealthResponse, Health check response., Test HealthResponse API model., Valid HealthResponse., Default status and database values., TestHealthResponse
 
 ### Community 81 - "Community 81"
-Cohesion: 0.06
-Nodes (29): AsyncMock, MagicMock, Test that init_pool accepts an explicit DSN., Test generate_text with response_format for JSON mode., Test that empty prompt raises ValueError., Test that whitespace-only prompt raises ValueError., Test that empty choices array raises OpenRouterError., Test that 401 errors raise immediately without retry. (+21 more)
+Cohesion: 0.07
+Nodes (27): AsyncMock, MagicMock, Test that init_pool accepts an explicit DSN., Test the full init → query → close lifecycle., Test generate_text with response_format for JSON mode., Test that empty prompt raises ValueError., Test that whitespace-only prompt raises ValueError., Test that empty choices array raises OpenRouterError. (+19 more)
 
 ### Community 82 - "Community 82"
-Cohesion: 0.06
-Nodes (43): AsyncClient, bytes, Response, OpenRouterClient, OpenRouterError, OpenRouterRateLimitError, _parse_retry_after(), float (+35 more)
+Cohesion: 0.22
+Nodes (8): AsyncClient, bytes, str, Generate text using OpenRouter chat completion API.          Args:             p, Generate an image using OpenRouter image generation API.          Args:, Validate that prompt is a non-empty string., Send an HTTP request with exponential-backoff retry logic.          Retries on 4, Lazily create the httpx client on first use.
 
 ### Community 83 - "Community 83"
 Cohesion: 0.08
-Nodes (18): Core selection algorithm., Backup fallback behaviour., First backup trend is used when none have been used recently., Backup trends that have been used recently are skipped., When every backup trend has been used, returns None., No backup trends configured -> None., Saved backup trend has source='backup'., Additional edge-case coverage. (+10 more)
+Nodes (19): Core selection algorithm., Additional edge-case coverage., Duplicate keywords in candidates are handled., _get_used_keywords returns empty set when no rows., _get_used_keywords returns set of keywords from DB., Additional edge-case coverage., Config without backup_trends key still works., Duplicate keywords in candidates are handled. (+11 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.16
-Nodes (15): Any, float, int, str, Fetch trending searches from Google Trends API.          Fallback chain:, Parse the DataFrame returned by ``trending_searches()``.          Assigns a scor, Parse the data returned by ``realtime_trending_searches()``.          Extracts k, Query the ``trends`` table for keywords used in the last *days* days.          R (+7 more)
+Cohesion: 0.06
+Nodes (36): Any, float, int, str, Trend, Fetch trending searches from Google Trends API.          Fallback chain:, Fetch trending searches from Google Trends API.          Fallback chain:, Parse the DataFrame returned by ``trending_searches()``.          Assigns a scor (+28 more)
 
 ### Community 85 - "Community 85"
-Cohesion: 0.13
-Nodes (12): _is_food_related(), bool, Check whether a keyword appears to be food-related.      Performs a case-insensi, db_pool(), Tests for modules/trend_selector.py — TrendSelector class.  Covers: - ``_select_, Full config dict as loaded from backup_trends.yaml., Mock asyncpg connection pool with async helpers., TrendSelector instance with mocked db pool and sample config. (+4 more)
+Cohesion: 0.10
+Nodes (15): _is_food_related(), bool, TrendSelector module — selects trending topics from Google Trends.  Provides the, Check whether a keyword appears to be food-related.      Performs a case-insensi, db_pool(), Tests for modules/trend_selector.py — TrendSelector class.  Covers: - ``_select_, Full config dict as loaded from backup_trends.yaml., Mock asyncpg connection pool with async helpers. (+7 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.12
-Nodes (9): Test *_from_record() helper functions., Convert a dict-like record to ContentOption., Record with no hashtags should default to empty list., Convert a dict-like record to Trend., Record without source should get default., Convert a dict-like record to Theme., Convert a dict-like record to Post., Record with FAILED status and error message. (+1 more)
+Cohesion: 0.07
+Nodes (16): Theme name cleaning and validation., Leading/trailing whitespace is removed., Surrounding double quotes are removed., Surrounding single quotes are removed., Trailing period is removed., Trailing exclamation mark is removed., Trailing question mark is removed., More than 3 words are truncated to first 3. (+8 more)
 
 ### Community 87 - "Community 87"
-Cohesion: 0.14
-Nodes (8): pytrends integration (mocked)., Successfully fetches and parses trending searches., Returns empty list when trending_searches() raises., Falls through to realtime_trending_searches when trending_searches fails., When pytrends is not installed, returns empty list., Handles realtime returning an empty dict gracefully., Handles empty DataFrame from trending_searches()., TestFetchTrends
+Cohesion: 0.11
+Nodes (14): pytrends integration (mocked)., Successfully fetches and parses trending searches., Returns empty list when trending_searches() raises., pytrends integration (mocked)., Successfully fetches and parses trending searches., Falls through to realtime_trending_searches when trending_searches fails., Returns empty list when trending_searches() raises., When pytrends is not installed, returns empty list. (+6 more)
 
 ### Community 88 - "Community 88"
-Cohesion: 0.14
-Nodes (8): Full pipeline integration tests (mocked)., Full flow: fetch -> dedup -> save -> return Trend., When all API trends have been used, falls back to backup trends., When the API fails, uses backup trends., When API fails and all backups are used, returns None., When pytrends is not installed, uses backup trends., When API returns empty list, uses backup trends., TestRun
+Cohesion: 0.10
+Nodes (14): Full flow: fetch -> dedup -> save -> return Trend., Full pipeline integration tests (mocked)., When all API trends have been used, falls back to backup trends., Full flow: fetch -> dedup -> save -> return Trend., When the API fails, uses backup trends., When all API trends have been used, falls back to backup trends., When API fails and all backups are used, returns None., When the API fails, uses backup trends. (+6 more)
 
 ### Community 89 - "Community 89"
-Cohesion: 0.20
-Nodes (6): Unit tests for the parsing methods., Scores decrease by 5 from 100 for each trend., Extracts keywords from realtime trending entries., Empty entries list returns empty list., Empty dict returns empty list., TestParseTrendingSearches
+Cohesion: 0.07
+Nodes (26): 10. Deployment Considerations, 1. Feature Overview, 2. Problem Statement, 3. Service Ownership, 4.1 Config Changes (`config/backup_trends.yaml`), 4.2 Code Changes (`modules/trend_selector.py`), 4.3 Test Changes (`tests/test_trend_selector.py`), 4. Detailed Implementation (+18 more)
 
 ### Community 90 - "Community 90"
-Cohesion: 0.25
-Nodes (5): Database INSERT operations., Inserts a trend and returns a Trend model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Verifies the SQL query and parameters passed to the DB., TestSaveTrend
+Cohesion: 0.20
+Nodes (8): Database INSERT operations., Inserts a trend and returns a Trend model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Verifies the SQL query and parameters passed to the DB., Inserts a trend and returns a Trend model with generated id., Full pipeline integration tests (mocked)., Verifies the SQL query and parameters passed to the DB., TestSaveTrend
 
 ### Community 91 - "Community 91"
+Cohesion: 0.13
+Nodes (13): db_pool(), AsyncMock, Additional edge-case coverage., Config without theme_prompt key uses empty string default., Config without deduplication key uses 12 hours default., Dedup config without min_hours_between_similar uses 12 hours default., Mock asyncpg connection pool with async helpers., Unicode keyword is handled correctly. (+5 more)
+
+### Community 93 - "Community 93"
+Cohesion: 0.11
+Nodes (13): Backup fallback behaviour., First backup trend is used when none have been used recently., Backup trends that have been used recently are skipped., Backup fallback behaviour., First backup trend is used when none have been used recently., When every backup trend has been used, returns None., Backup trends that have been used recently are skipped., No backup trends configured -> None. (+5 more)
+
+### Community 94 - "Community 94"
+Cohesion: 0.20
+Nodes (11): bool, int, str, Call OpenRouter to generate a theme name from a keyword.          Args:, Clean and validate a theme name.          - Strips whitespace         - Removes, Check if a theme name is too similar to recently used themes.          Uses ILIK, INSERT a theme into the themes table and return a Theme model.          Args:, Creates short, memorable theme names (max 3 words) from trending keywords. (+3 more)
+
+### Community 95 - "Community 95"
+Cohesion: 0.15
+Nodes (11): associator(), Deduplication logic against recently used themes., Exact match returns True., Substring match in DB returns True., No matching theme returns False., ILIKE provides case-insensitive matching., The hours parameter is passed as part of the SQL interval., Empty theme name returns False (no match possible). (+3 more)
+
+### Community 96 - "Community 96"
+Cohesion: 0.15
+Nodes (11): Trend, Full pipeline integration tests (mocked)., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., When first theme is a duplicate, retries with alternative prompt., After all retries exhausted, last theme is accepted even if duplicate., Empty response from AI triggers a retry., API error during generation raises immediately., Cleaned theme name (truncated, stripped) is saved to DB. (+3 more)
+
+### Community 97 - "Community 97"
+Cohesion: 0.16
+Nodes (10): AsyncMock, Configurable geo and period for Google Trends API calls., TrendReq is called with the configured geo value., build_payload is called with the configured timeframe., Defaults to 'US' when geo not in config., Defaults to 'now 1-d' when period not in config., Both default when neither in config., Custom geo and period values are stored. (+2 more)
+
+### Community 98 - "Community 98"
+Cohesion: 0.17
+Nodes (7): Retry prompt asks for a different theme., Correct model, max_tokens, and temperature are passed to generate_text., Response is stripped of leading/trailing whitespace., API errors are re-raised after logging., OpenRouter-based theme name generation., Prompt is formatted with the keyword from config template., TestGenerateTheme
+
+### Community 99 - "Community 99"
+Cohesion: 0.27
+Nodes (7): OpenRouterRateLimitError, Raised on 429 Too Many Requests., Test the rate-limit subclass., Test default retry_after is 60 seconds., Test custom retry_after value., Test that the error message mentions the retry_after value., TestOpenRouterRateLimitError
+
+### Community 100 - "Community 100"
+Cohesion: 0.29
+Nodes (4): float, int, Sleep with exponential backoff and jitter.          Args:             attempt: C, Initialize the client.          Args:             api_key: OpenRouter API key (s
+
+### Community 101 - "Community 101"
+Cohesion: 0.32
+Nodes (6): OpenRouterError, Base error for OpenRouter API failures., Test the base OpenRouterError exception., Test that OpenRouterError stores message, status_code, response_body., Test that OpenRouterError works with just a message., TestOpenRouterError
+
+### Community 102 - "Community 102"
+Cohesion: 0.25
+Nodes (6): client(), Tests for shared/openrouter_client.py., Return an OpenRouterClient with a test API key., Test that the client is initialized with correct headers., Test that the client passes correct headers to httpx., TestClientHeaders
+
+### Community 103 - "Community 103"
+Cohesion: 0.25
+Nodes (5): Test client initialization and teardown., Test that the HTTP client is not created until the first request., Test that close() properly cleans up the client., Test that async context manager works., TestClientLifecycle
+
+### Community 104 - "Community 104"
+Cohesion: 0.25
+Nodes (5): Database INSERT operations for themes., Inserts a theme and returns a Theme model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Verifies the SQL query and parameters passed to the DB., TestSaveTheme
+
+### Community 105 - "Community 105"
+Cohesion: 0.40
+Nodes (3): OpenRouterClient, Async client for OpenRouter API (text + image generation).      Uses lazy client, Close the underlying HTTP client, if it was created.
+
+### Community 106 - "Community 106"
+Cohesion: 0.33
+Nodes (5): openrouter_client(), Tests for modules/theme_associator.py — ThemeAssociator class.  Covers: - ``_gen, Full config dict as loaded from content_template.yaml., Mock OpenRouterClient with async generate_text., sample_config()
+
+### Community 107 - "Community 107"
+Cohesion: 0.40
+Nodes (4): Response, _parse_retry_after(), Async HTTP client for OpenRouter API (text + image generation).  Provides: - Ope, Extract ``retry-after`` header value from a response.      Falls back to 60 seco
+
+### Community 108 - "Community 108"
 Cohesion: 0.50
-Nodes (3): Config.from_attributes should be True for ORM compatibility., Test Trend model creation and validation., TestTrend
+Nodes (3): Test that exponential backoff with jitter is used., Test that sleep is called with the correct exponential backoff values., TestRetryBackoff
 
 ## Knowledge Gaps
-- **485 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+480 more)
+- **504 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+499 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Trend` connect `Community 75` to `Community 71`, `Community 73`, `Community 74`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 81`, `Community 83`, `Community 84`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 89`, `Community 90`, `Community 91`?**
-  _High betweenness centrality (0.107) - this node is a cross-community bridge._
-- **Why does `AsyncMock` connect `Community 81` to `Community 66`, `Community 75`, `Community 82`, `Community 83`, `Community 84`, `Community 85`, `Community 87`, `Community 88`, `Community 90`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `MagicMock` connect `Community 81` to `Community 66`, `Community 75`, `Community 82`, `Community 83`, `Community 84`, `Community 87`, `Community 88`, `Community 89`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+- **Why does `Trend` connect `Community 75` to `Community 71`, `Community 73`, `Community 74`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 81`, `Community 83`, `Community 84`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 90`, `Community 91`, `Community 93`, `Community 94`, `Community 95`, `Community 96`, `Community 97`, `Community 98`, `Community 104`, `Community 106`?**
+  _High betweenness centrality (0.142) - this node is a cross-community bridge._
+- **Why does `AsyncMock` connect `Community 81` to `Community 66`, `Community 102`, `Community 103`, `Community 75`, `Community 108`, `Community 83`, `Community 84`, `Community 85`, `Community 87`, `Community 88`, `Community 90`, `Community 93`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+- **Why does `OpenRouterError` connect `Community 101` to `Community 99`, `Community 100`, `Community 102`, `Community 103`, `Community 107`, `Community 108`, `Community 81`, `Community 82`, `Community 30`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Are the 50 inferred relationships involving `Trend` (e.g. with `AsyncMock` and `MagicMock`) actually correct?**
+  _`Trend` has 50 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 29 inferred relationships involving `AsyncMock` (e.g. with `TrendSelector` and `Trend`) actually correct?**
   _`AsyncMock` has 29 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 31 inferred relationships involving `Trend` (e.g. with `AsyncMock` and `MagicMock`) actually correct?**
-  _`Trend` has 31 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 25 inferred relationships involving `MagicMock` (e.g. with `TrendSelector` and `Trend`) actually correct?**
-  _`MagicMock` has 25 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `TrendSelector` (e.g. with `TrendSelector` and `Trend`) actually correct?**
   _`TrendSelector` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 25 inferred relationships involving `MagicMock` (e.g. with `TrendSelector` and `Trend`) actually correct?**
+  _`MagicMock` has 25 INFERRED edges - model-reasoned connections that need verification._
