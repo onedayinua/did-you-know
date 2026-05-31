@@ -1,4 +1,51 @@
-max_length: 280
-tone: informative
-include_hashtags: true
-default_template: "Did you know that {{ fact }}?"
+# Content generation prompts and settings
+
+# Theme prompt — Module 2 uses this to create theme from trend
+theme_prompt: >
+  Given the trend '{keyword}', find associations: related cooking concepts,
+  ingredients, cultural angles, or health connections. Based on these
+  associations, create a short theme name (up to 3 words) that fits
+  naturally into: 'Did you know that {theme}?'
+
+  Return ONLY the theme name, nothing else. Example: "Crispy Cooking"
+
+# Text prompt — Module 3 uses this to generate fact + hashtags
+text_prompt: >
+  You are a culinary content creator. The theme is '{theme}'.
+  This theme will be used as the topic in: "Did you know that {theme}?"
+
+  Generate a supporting fact and hashtags. Requirements:
+  - Fact: engaging, educational, fun tone, 1-2 sentences that expand on the theme
+  - Hashtags: relevant to the theme
+
+  Return as JSON: {"fact": "...", "hashtags": ["...", "..."]}
+
+# Image prompt — Module 3 uses this to generate image description from fact
+image_prompt: >
+  You are an image prompt designer. Given this culinary fact:
+  "{fact}"
+
+  Create a detailed image description for a Pinterest pin. Style requirements:
+  - Warm, appetizing food photography style
+  - Bright natural lighting, shallow depth of field
+  - Overhead or 45-degree angle
+  - Include relevant food ingredients or dish
+  - No text overlay (text added separately)
+
+  Return a single descriptive paragraph (2-3 sentences) suitable for AI image generation.
+
+# Platform-specific content limits
+platforms:
+  pinterest:
+    character_limit: 500
+    hashtag_count: 5-10
+  instagram:
+    character_limit: 2200
+    hashtag_count: 10-30
+
+# Number of content variations to generate per theme
+variations: 3
+
+# Deduplication settings for themes
+deduplication:
+  min_hours_between_similar: 12

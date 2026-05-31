@@ -1,0 +1,23 @@
+# Fallback trends and queue configuration
+
+# Fallback trends used when Google Trends API fails
+backup_trends:
+  - keyword: "easy dinner recipes"
+    score: 85.0
+  - keyword: "healthy snacks"
+    score: 80.0
+  - keyword: "meal prep ideas"
+    score: 75.0
+  - keyword: "comfort food"
+    score: 70.0
+  - keyword: "quick breakfast"
+    score: 65.0
+
+# Queue management settings
+queue:
+  max_pending: 10
+  expire_days: 7
+  cleanup_on_generate: true
+
+# Trend selection settings
+trend_history_days: 30
