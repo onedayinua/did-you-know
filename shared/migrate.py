@@ -93,7 +93,7 @@ async def run_migrations(dsn: str, migrations_dir: str = "migrations") -> List[D
                 # Ensure lock is released even for non-db errors
                 try:
                     await conn.execute("SELECT pg_advisory_unlock($1)", lock_key)
-                except:
+                except Exception:
                     pass
                 print("FAILED")
                 raise MigrationError(version, name, e)

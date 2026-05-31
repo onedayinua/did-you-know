@@ -42,7 +42,10 @@ class TestSchemaMigrations:
         """)
         
         for table in tables:
-            await conn.execute(f'DROP TABLE IF EXISTS "{table["tablename"]}" CASCADE')
+            # Note: tablenames come from pg_tables system view and should be valid identifiers
+            # Using asyncpg.Identifier for proper identifier quoting
+            table_name = asyncpg.Identifier(table["tablename"])
+            await conn.execute(f'DROP TABLE IF EXISTS {table_name} CASCADE')
         
         # Also drop functions
         functions = await conn.fetch("""
@@ -52,7 +55,11 @@ class TestSchemaMigrations:
         """)
         
         for func in functions:
-            await conn.execute(f'DROP FUNCTION IF EXISTS {func["proname"]} CASCADE')
+            # Note: function names come from pg_proc system view and should be valid identifiers
+            # Using asyncpg.Identifier for proper identifier quoting
+            # Using () to match any function signature with that name
+            func_name = asyncpg.Identifier(func["proname"])
+            await conn.execute(f'DROP FUNCTION IF EXISTS {func_name}() CASCADE')
         
         # Clear schema_migrations if it exists
         await conn.execute("DROP TABLE IF EXISTS schema_migrations CASCADE")
