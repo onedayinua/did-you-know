@@ -1,16 +1,16 @@
 # Graph Report - did-you-know  (2026-05-31)
 
 ## Corpus Check
-- 64 files · ~34,067 words
+- 54 files · ~34,162 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 904 nodes · 966 edges · 73 communities (69 shown, 4 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.65)
+- 1092 nodes · 1449 edges · 81 communities (78 shown, 3 thin omitted)
+- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 188 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f2e0d760`
+- Built from commit: `25455025`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -81,35 +81,43 @@
 - [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
 - [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
+- [[_COMMUNITY_Community 75|Community 75]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `DatabaseTool` - 22 edges
-2. `run_migrations()` - 19 edges
-3. `Database Connection Tool for OpenCode Agents` - 13 edges
-4. `AI Content Channel - Architecture` - 13 edges
-5. `bash` - 11 edges
-6. `TestEnvVarSubstitution` - 11 edges
-7. `Ticket Movement Commands` - 11 edges
-8. `techlead` - 10 edges
-9. `str` - 10 edges
-10. `MigrationError` - 10 edges
+1. `ContentOption` - 31 edges
+2. `Trend` - 29 edges
+3. `Post` - 27 edges
+4. `TestTrend` - 26 edges
+5. `TestContentOption` - 26 edges
+6. `Theme` - 24 edges
+7. `TestPost` - 24 edges
+8. `TestHelperFunctions` - 23 edges
+9. `DatabaseTool` - 22 edges
+10. `TestTheme` - 22 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestMigrationParsing` --uses--> `MigrationError`  [INFERRED]
   tests/test_migrate.py → shared/migrate.py
 - `TestMigrationRunner` --uses--> `MigrationError`  [INFERRED]
   tests/test_migrate.py → shared/migrate.py
-- `TestConnectionRetry` --uses--> `MigrationError`  [INFERRED]
-  tests/test_migrate.py → shared/migrate.py
-- `example_basic_usage()` --calls--> `DatabaseTool`  [INFERRED]
-  .opencode/tools/example_usage.py → .opencode/tools/database_tool.py
-- `example_data_quality_check()` --calls--> `DatabaseTool`  [INFERRED]
-  .opencode/tools/example_usage.py → .opencode/tools/database_tool.py
+- `TestContentOption` --uses--> `ContentStatus`  [INFERRED]
+  tests/test_models.py → shared/models.py
+- `TestContentOptionResponse` --uses--> `ContentStatus`  [INFERRED]
+  tests/test_models.py → shared/models.py
+- `TestContentStatus` --uses--> `ContentStatus`  [INFERRED]
+  tests/test_models.py → shared/models.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (73 total, 4 thin omitted)
+## Communities (81 total, 3 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -355,29 +363,65 @@ Nodes (17): clear_cache(), get_backup_trends(), get_content_template(), get_plat
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
+### Community 71 - "Community 71"
+Cohesion: 0.10
+Nodes (29): Enum, did-you-know shared utilities.  Provides: - config_loader: YAML config loading w, content_option_from_record(), ContentStatus, Platform, post_from_record(), PostStatus, Any (+21 more)
+
 ### Community 72 - "Community 72"
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
+### Community 73 - "Community 73"
+Cohesion: 0.09
+Nodes (26): BaseModel, ApproveRequest, CancelRequest, PostResponse, No body needed — just the content_option_id from URL path., No body needed — just the content_option_id from URL path., No body needed — regenerates using existing theme., No body needed — regenerates using existing image_prompt. (+18 more)
+
+### Community 74 - "Community 74"
+Cohesion: 0.12
+Nodes (14): ContentOption, Represents a generated content option (text + image prompt + optional image)., Test ContentOption model creation and validation., Valid ContentOption with all required fields., Valid ContentOption with all optional fields populated., Platform can be created from string enum value., Invalid platform string should raise ValidationError., Empty fact (min_length=1) should raise ValidationError. (+6 more)
+
+### Community 75 - "Community 75"
+Cohesion: 0.12
+Nodes (14): Represents a trending keyword from Google Trends., Trend, Score < 0 should raise ValidationError., Score > 100 should raise ValidationError., Boundary values for score (0.0 and 100.0)., Missing keyword should raise ValidationError., Empty keyword (min_length=1) should raise ValidationError., Keyword exceeding max_length should raise ValidationError. (+6 more)
+
+### Community 76 - "Community 76"
+Cohesion: 0.14
+Nodes (12): Post, Represents a published post on a platform.     Platform is inherited from the pa, Test Post model creation and validation., Valid Post with all required fields., Valid Post with all optional fields populated., Post with FAILED status and error message., Missing content_option_id should raise ValidationError., Missing platform should raise ValidationError. (+4 more)
+
+### Community 77 - "Community 77"
+Cohesion: 0.17
+Nodes (10): Represents a short theme name derived from a trend., Theme, Test Theme model creation and validation., Valid Theme with all required fields., Valid Theme with optional fields populated., Empty name (min_length=1) should raise ValidationError., Name exceeding max_length should raise ValidationError., Missing trend_id should raise ValidationError. (+2 more)
+
+### Community 78 - "Community 78"
+Cohesion: 0.14
+Nodes (8): Test model_dump() and model_dump_json() round-trip., Trend serializes and deserializes correctly., ContentOption serializes and deserializes correctly., ContentOption serializes to JSON and back., HealthResponse serializes and deserializes correctly., Post serializes to JSON and back., Enum fields should serialize to their string values., TestSerialization
+
+### Community 79 - "Community 79"
+Cohesion: 0.32
+Nodes (6): ContentOptionResponse, API response for a single content option., Test ContentOptionResponse API model., Valid ContentOptionResponse with all fields., image_url should default to None., TestContentOptionResponse
+
+### Community 80 - "Community 80"
+Cohesion: 0.32
+Nodes (6): HealthResponse, Health check response., Test HealthResponse API model., Valid HealthResponse., Default status and database values., TestHealthResponse
+
 ## Knowledge Gaps
 - **481 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+476 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `agent` connect `Community 54` to `Community 34`, `Community 36`, `Community 37`, `Community 38`, `Community 24`, `Community 28`?**
+- **Why does `ContentOption` connect `Community 74` to `Community 71`, `Community 73`, `Community 75`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`?**
   _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **Why does `run_migrations()` connect `Community 7` to `Community 26`, `Community 13`, `Community 30`, `Community 31`?**
+- **Why does `TestHelperFunctions` connect `Community 71` to `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 77`, `Community 79`, `Community 80`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `agent` connect `Community 54` to `Community 34`, `Community 36`, `Community 37`, `Community 38`, `Community 24`, `Community 28`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Are the 3 inferred relationships involving `DatabaseTool` (e.g. with `example_basic_usage()` and `example_data_quality_check()`) actually correct?**
-  _`DatabaseTool` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `$schema`, `instructions`, `id` to the rest of the system?**
-  _597 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.0693815987933635 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.058823529411764705 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
+- **Are the 13 inferred relationships involving `ContentOption` (e.g. with `TestContentOption` and `TestContentOptionResponse`) actually correct?**
+  _`ContentOption` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 13 inferred relationships involving `Trend` (e.g. with `TestContentOption` and `TestContentOptionResponse`) actually correct?**
+  _`Trend` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 13 inferred relationships involving `Post` (e.g. with `TestContentOption` and `TestContentOptionResponse`) actually correct?**
+  _`Post` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 14 inferred relationships involving `TestTrend` (e.g. with `ApproveRequest` and `CancelRequest`) actually correct?**
+  _`TestTrend` has 14 INFERRED edges - model-reasoned connections that need verification._

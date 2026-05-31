@@ -1,6 +1,6 @@
 {
   "/workspaces/did-you-know/opencode.json": {
-    "mtime": 1780234324.7918196,
+    "mtime": 1780238693.3673744,
     "ast_hash": "f8587512647e619b68e686276b07a71d",
     "semantic_hash": ""
   },
@@ -35,42 +35,42 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/migrations/0001_create_trends.sql": {
-    "mtime": 1780216298.8327415,
+    "mtime": 1780238693.3552084,
     "ast_hash": "76a23c9b5d1f870409859bf2bbe2f677",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/migrations/0002_create_themes.sql": {
-    "mtime": 1780216308.6042302,
+    "mtime": 1780238693.3574977,
     "ast_hash": "649b0e62ad9208614eab24e413992565",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/migrations/0003_create_content.sql": {
-    "mtime": 1780216324.985142,
+    "mtime": 1780238693.3615832,
     "ast_hash": "ae851fa4e387e39ad469ecfe1efa5af6",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/migrations/0004_create_posts.sql": {
-    "mtime": 1780216341.7675912,
+    "mtime": 1780238693.364548,
     "ast_hash": "f6a57b76792775a3a9e2d726edb465a7",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/migrate.py": {
-    "mtime": 1780222433.3906791,
+    "mtime": 1780238693.3877718,
     "ast_hash": "184ce878d8533e47885b3bf3da748376",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_migrate.py": {
-    "mtime": 1780220232.9218125,
+    "mtime": 1780238693.3998864,
     "ast_hash": "eb6b48fb97bdb248d9a3f27a6aaa410d",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_schema_migrations.py": {
-    "mtime": 1780232878.5407739,
+    "mtime": 1780238693.4049022,
     "ast_hash": "bcdab37328f866b5bf4d89c20190272c",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/AGENTS.md": {
-    "mtime": 1780231894.416431,
+    "mtime": 1780238692.991669,
     "ast_hash": "3f09635c2b877e8a4f6265a583d7e4ad",
     "semantic_hash": ""
   },
@@ -80,12 +80,12 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/README.md": {
-    "mtime": 1780219962.2224112,
+    "mtime": 1780238692.9934344,
     "ast_hash": "137ce9b6293af2ee40cd32c0f9d4f57b",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/.devcontainer/docker-compose.yml": {
-    "mtime": 1780224840.3322341,
+    "mtime": 1780238692.9834235,
     "ast_hash": "af5db523fbcb6fb61996c178beda6b6b",
     "semantic_hash": ""
   },
@@ -164,11 +164,6 @@
     "ast_hash": "d8cacf58feec633e62d030d4763b51c6",
     "semantic_hash": ""
   },
-  "/workspaces/did-you-know/board/todo/TKT-003_shared_pydantic_models.md": {
-    "mtime": 1780215066.524815,
-    "ast_hash": "b99a0319cd7dd8510674f68ca7a5addc",
-    "semantic_hash": ""
-  },
   "/workspaces/did-you-know/board/todo/TKT-004_openrouter_client.md": {
     "mtime": 1780215071.0267088,
     "ast_hash": "8bdc77074a75bd599774d83bdb40ac82",
@@ -215,12 +210,12 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/architecture/ai_content_channel.md": {
-    "mtime": 1780214583.1225257,
+    "mtime": 1780238693.0556169,
     "ast_hash": "b08b9628cac9d2a90373f28d0c4e5baf",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/database_schema_and_migration.md": {
-    "mtime": 1780215621.8018975,
+    "mtime": 1780238693.058745,
     "ast_hash": "20a328153cb80f3297d8e35b5caaa28e",
     "semantic_hash": ""
   },
@@ -230,52 +225,52 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_content_generator.md": {
-    "mtime": 1780215674.2859578,
+    "mtime": 1780238693.0630972,
     "ast_hash": "cf8db008cc89054ba2388fcc6faeb83e",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_fastapi_web_ui.md": {
-    "mtime": 1780215988.1831744,
+    "mtime": 1780238693.065889,
     "ast_hash": "5d9a0b34e0c8b0721e1791cd202ab5ac",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_platform_poster.md": {
-    "mtime": 1780215719.2045045,
+    "mtime": 1780238693.0687268,
     "ast_hash": "fa3c79722205fc2e9467d6ef796a8dbd",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_theme_associator.md": {
-    "mtime": 1780215327.2635965,
+    "mtime": 1780238693.0710459,
     "ast_hash": "220ceafee00f982bd3aa306323a33164",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_trend_selector.md": {
-    "mtime": 1780214907.147184,
+    "mtime": 1780238693.0738015,
     "ast_hash": "369080ed18f98978d13b1f2d1f108db3",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_visual_generator.md": {
-    "mtime": 1780215689.175246,
+    "mtime": 1780238693.0765982,
     "ast_hash": "652962b36ed65b6bac549be1f54dca27",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/scheduler_and_cli.md": {
-    "mtime": 1780215761.0261242,
+    "mtime": 1780238693.0789063,
     "ast_hash": "2943d612dcb753c921c3738bb385c602",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/shared_config_and_db_pool.md": {
-    "mtime": 1780214830.3344715,
+    "mtime": 1780238693.0818825,
     "ast_hash": "ae097cb2c9b23f206b4f5ee4d37511f2",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/shared_openrouter_client.md": {
-    "mtime": 1780214873.8924932,
+    "mtime": 1780238693.0848126,
     "ast_hash": "45a1994cbff5ea3937159129ec838947",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/shared_pydantic_models.md": {
-    "mtime": 1780215632.7450297,
+    "mtime": 1780238693.0950348,
     "ast_hash": "92329458c970489e9dff309b1678d90f",
     "semantic_hash": ""
   },
@@ -285,7 +280,7 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/yaml_configuration_files.md": {
-    "mtime": 1780214889.9984882,
+    "mtime": 1780238693.0975516,
     "ast_hash": "88c322b8121ec86284e0ec8aa90048fd",
     "semantic_hash": ""
   },
@@ -295,38 +290,48 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/__init__.py": {
-    "mtime": 1780234462.9851878,
-    "ast_hash": "8f621cc3fab2b61f6a56ac1b5cf6c280",
+    "mtime": 1780238693.3759742,
+    "ast_hash": "1fed1356963804c2f0563608893b7efe",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/config_loader.py": {
-    "mtime": 1780234469.6033864,
+    "mtime": 1780238693.3796809,
     "ast_hash": "51f925c1757acfb3a772b12266027d04",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/db.py": {
-    "mtime": 1780234476.5836418,
+    "mtime": 1780238693.3838153,
     "ast_hash": "48927f892dbcfe497a8f15a9e7e54e39",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_config_loader.py": {
-    "mtime": 1780234488.347133,
+    "mtime": 1780238693.3936436,
     "ast_hash": "323526e9e778b59a1e04d6aa1a619f18",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_db_pool.py": {
-    "mtime": 1780234588.5452247,
+    "mtime": 1780238693.3963623,
     "ast_hash": "ac0a91ab3a4868b5ecdd537dfee4e0af",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/content_template.yaml": {
-    "mtime": 1780234461.8115628,
+    "mtime": 1780238693.0517232,
     "ast_hash": "827acd43f84e7d4b0ad348a116187232",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/done/TKT-002_shared_config_and_db_pool.md": {
     "mtime": 1780235085.6080277,
     "ast_hash": "552a3069cf8ca9007d132cc88a884e9d",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/shared/models.py": {
+    "mtime": 1780238693.3911479,
+    "ast_hash": "c4ce78521020d43cfa066ac5dcb54945",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_models.py": {
+    "mtime": 1780238693.4028084,
+    "ast_hash": "e3986e21793ac14c393bbadacb8074ff",
     "semantic_hash": ""
   }
 }

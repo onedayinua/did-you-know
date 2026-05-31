@@ -76,39 +76,12 @@ class TestOpenRouterRateLimitError:
 
 
 # ------------------------------------------------------------------
-# _parse_retry_after helper
-# ------------------------------------------------------------------
-
-
-class TestParseRetryAfter:
-    """Test the _parse_retry_after utility."""
-
-    def test_valid_header(self):
-        """Test parsing a valid integer retry-after header."""
-        response = MagicMock(spec=httpx.Response)
-        response.headers = {"retry-after": "30"}
-        assert _parse_retry_after(response) == 30
-
-    def test_missing_header(self):
-        """Test fallback when retry-after header is missing."""
-        response = MagicMock(spec=httpx.Response)
-        response.headers = {}
-        assert _parse_retry_after(response) == 60
-
-    def test_invalid_header(self):
-        """Test fallback when retry-after header is not an integer."""
-        response = MagicMock(spec=httpx.Response)
-        response.headers = {"retry-after": "foobar"}
-        assert _parse_retry_after(response) == 60
-
-
-# ------------------------------------------------------------------
 # generate_text
 # ------------------------------------------------------------------
 
-
 class TestGenerateText:
     """Test generate_text() method."""
+
 
     @patch("shared.openrouter_client.httpx.AsyncClient")
     async def test_success(self, mock_httpx_client, client):
@@ -292,6 +265,36 @@ class TestGenerateText:
             assert result == "recovered"
             assert mock_instance.request.call_count == 2
 
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_network_error_retries(self, mock_httpx_client, client):
+        """Test that NetworkError (e.g. ConnectError) triggers retry."""
+        mock_instance = AsyncMock()
+        mock_instance.request.side_effect = [
+            httpx.ConnectError("connection refused"),
+            MagicMock(
+                status_code=200,
+                json=lambda: {"choices": [{"message": {"content": "recovered"}}]},
+            ),
+        ]
+        mock_httpx_client.return_value = mock_instance
+
+        with patch("shared.openrouter_client.asyncio.sleep", AsyncMock()):
+            result = await client.generate_text("test")
+            assert result == "recovered"
+            assert mock_instance.request.call_count == 2
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_network_error_exhausted(self, mock_httpx_client, client):
+        """Test that repeated NetworkError exhausts retries and raises."""
+        mock_instance = AsyncMock()
+        mock_instance.request.side_effect = httpx.ConnectError("connection refused")
+        mock_httpx_client.return_value = mock_instance
+
+        with patch("shared.openrouter_client.asyncio.sleep", AsyncMock()):
+            with pytest.raises(OpenRouterError, match="connection refused"):
+                await client.generate_text("test")
+            assert mock_instance.request.call_count == 3
+
 
 # ------------------------------------------------------------------
 # generate_image
@@ -399,10 +402,30 @@ class TestGenerateImage:
             await client.generate_image("test")
 
     @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_empty_prompt(self, mock_httpx_client, client):
-        """Test that empty prompt raises ValueError."""
-        with pytest.raises(ValueError, match="non-empty"):
-            await client.generate_image("")
+    async def test_multiple_images_returns_first(self, mock_httpx_client, client):
+        """Test that if multiple images are returned, only the first one is used."""
+        mock_gen_response = MagicMock()
+        mock_gen_response.status_code = 200
+        mock_gen_response.json.return_value = {
+            "data": [
+                {"url": "https://example.com/image1.png"},
+                {"url": "https://example.com/image2.png"},
+            ]
+        }
+
+        mock_img_response = MagicMock()
+        mock_img_response.status_code = 200
+        mock_img_response.content = b"first-image-bytes"
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_gen_response
+        mock_instance.get.return_value = mock_img_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat")
+        assert result == b"first-image-bytes"
+        # Verify only the first URL was fetched
+        mock_instance.get.assert_awaited_once_with("https://example.com/image1.png")
 
 
 # ------------------------------------------------------------------

@@ -287,7 +287,7 @@ class OpenRouterClient:
             try:
                 client = await self._ensure_client()
                 response = await client.request(method, path, json=json)
-            except httpx.TimeoutException as exc:
+            except (httpx.TimeoutException, httpx.NetworkError) as exc:
                 logger.warning(
                     "Request timeout (attempt %d/%d): %s",
                     attempt,
