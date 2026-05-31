@@ -18,7 +18,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from modules.trend_selector import TrendSelector, _is_food_related
+from modules.trend_selector import TrendSelector
 from shared.models import Trend
 
 
@@ -56,42 +56,6 @@ def db_pool() -> AsyncMock:
 def selector(db_pool: AsyncMock, sample_config: dict) -> TrendSelector:
     """TrendSelector instance with mocked db pool and sample config."""
     return TrendSelector(db_pool, sample_config)
-
-
-# ===================================================================
-# Helper: _is_food_related
-# ===================================================================
-
-
-class TestIsFoodRelated:
-    """Verify the food-related keyword filter."""
-
-    def test_food_keyword(self):
-        assert _is_food_related("chicken recipe") is True
-
-    def test_non_food_keyword(self):
-        assert _is_food_related("python programming") is False
-
-    def test_mixed_keyword(self):
-        assert _is_food_related("gaming recipes") is True
-
-    def test_case_insensitive(self):
-        assert _is_food_related("Easy Dinner") is True
-
-    def test_hyphenated(self):
-        assert _is_food_related("air-fryer recipes") is True
-
-    def test_underscored(self):
-        assert _is_food_related("meal_prep") is True
-
-    def test_empty_string(self):
-        assert _is_food_related("") is False
-
-    def test_single_word_food(self):
-        assert _is_food_related("pizza") is True
-
-    def test_single_word_non_food(self):
-        assert _is_food_related("technology") is False
 
 
 # ===================================================================
@@ -283,12 +247,12 @@ class TestFetchTrends:
 
         results = await selector._fetch_trends()
 
-        # Should only return food-related keywords
-        assert len(results) == 2
+        # No longer filtered — all keywords pass through
+        assert len(results) == 3
         keywords = [r["keyword"] for r in results]
         assert "chicken recipes" in keywords
         assert "healthy dinner ideas" in keywords
-        assert "python programming" not in keywords
+        assert "python programming" in keywords
 
     @patch("modules.trend_selector.HAS_PYTRENDS", True)
     @patch("modules.trend_selector.TrendReq")
@@ -326,11 +290,11 @@ class TestFetchTrends:
 
         results = await selector._fetch_trends()
 
-        assert len(results) == 2
+        assert len(results) == 3
         keywords = [r["keyword"] for r in results]
         assert "easy pasta dinner" in keywords
         assert "homemade pizza" in keywords
-        assert "latest gadgets" not in keywords
+        assert "latest gadgets" in keywords
 
     @patch("modules.trend_selector.HAS_PYTRENDS", False)
     async def test_returns_empty_when_pytrends_not_installed(
@@ -655,7 +619,7 @@ class TestEdgeCases:
     async def test_non_food_only_api_results(
         self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
     ):
-        """When API returns only non-food results, uses backup."""
+        """When API returns only non-food results, they pass through (no filter)."""
         import pandas as pd
 
         mock_df = pd.DataFrame({0: ["python programming", "gaming", "technology"]})
@@ -663,20 +627,22 @@ class TestEdgeCases:
         instance = mock_trend_req.return_value
         instance.trending_searches.return_value = mock_df
 
+        # No recently used keywords
         db_pool.fetch.return_value = []
         db_pool.fetch_one.return_value = {
             "id": 6,
-            "keyword": "easy dinner recipes",
-            "score": 85.0,
-            "source": "backup",
+            "keyword": "python programming",
+            "score": 100.0,
+            "source": "google_trends",
             "created_at": None,
         }
 
         result = await selector.run()
 
         assert result is not None
-        assert result.keyword == "easy dinner recipes"
-        assert result.source == "backup"
+        # "python programming" has the highest score (100.0), so it's selected
+        assert result.keyword == "python programming"
+        assert result.source == "google_trends"
 
 
 # ===================================================================
@@ -718,11 +684,11 @@ class TestParseTrendingSearches:
 
         results = TrendSelector._parse_realtime_trending(mock_pytrends)
 
-        assert len(results) == 2
+        assert len(results) == 3
         keywords = [r["keyword"] for r in results]
         assert "easy chicken dinner" in keywords
         assert "homemade pizza recipe" in keywords
-        assert "world news update" not in keywords
+        assert "world news update" in keywords
 
     @patch("modules.trend_selector.HAS_PYTRENDS", True)
     def test_parse_realtime_empty_entries(self):

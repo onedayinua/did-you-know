@@ -2,7 +2,7 @@
 
 Provides the TrendSelector class which:
 1. Fetches trending searches from Google Trends (via pytrends)
-2. Filters for food-related keywords
+2. Filters for food-related keywords using Google Trends' Food & Drink category
 3. Deduplicates against recently used keywords in the database
 4. Selects the highest-scoring unused keyword
 5. Saves it to the trends table
@@ -27,32 +27,16 @@ try:
 except ImportError:  # pragma: no cover
     HAS_PYTRENDS = False
 
-# ---------------------------------------------------------------------------
-# Food-related keywords for basic filtering
-# ---------------------------------------------------------------------------
-_FOOD_KEYWORDS: set[str] = {
-    "recipe", "recipes", "cooking", "baking", "food", "dinner", "lunch",
-    "breakfast", "snack", "snacks", "dessert", "desserts", "meal", "meals",
-    "healthy", "vegan", "vegetarian", "keto", "paleo", "gluten-free",
-    "smoothie", "soup", "salad", "pasta", "pizza", "chicken", "beef",
-    "pork", "fish", "seafood", "bread", "cake", "cookie", "cookies",
-    "pie", "muffin", "muffins", "pancake", "pancakes", "waffle", "waffles",
-    "rice", "noodle", "noodles", "stir-fry", "grill", "roast", "bake",
-    "instant pot", "air fryer", "slow cooker", "crockpot", "casserole",
-    "appetizer", "appetizers", "side dish", "side dishes", "drink", "drinks",
-    "cocktail", "cocktails", "sauce", "sauces", "dip", "dips",
-    "easy dinner", "quick meal", "comfort food", "meal prep",
-    "healthy snacks", "easy recipes", "quick breakfast",
-}
 
 
 class TrendSelector:
     """Selects trending topics from Google Trends.
 
-    The selector fetches real-time trends, filters for food-related keywords,
-    checks the database for recently used keywords, and picks the highest-scoring
-    unused trend.  When the Google Trends API is unavailable, it falls back to
-    a list of backup trends defined in ``config/backup_trends.yaml``.
+    The selector fetches real-time trends (using Google Trends' Food & Drink
+    category), checks the database for recently used keywords, and picks the
+    highest-scoring unused trend.  When the Google Trends API is unavailable,
+    it falls back to a list of backup trends defined in
+    ``config/backup_trends.yaml``.
 
     Args:
         db_pool: An asyncpg connection pool used for database queries.
@@ -148,7 +132,7 @@ class TrendSelector:
         """Parse the DataFrame returned by ``trending_searches()``.
 
         Assigns a score of 100.0 to the top trend, decreasing by 5 for each
-        subsequent trend.  Results are filtered to food-related keywords.
+        subsequent trend.
         """
         try:
             df = pytrends.trending_searches()
@@ -163,8 +147,7 @@ class TrendSelector:
         for idx, row in df.iterrows():
             keyword = str(row.iloc[0]).strip()
             score = max(100.0 - idx * 5, 0.0)
-            if _is_food_related(keyword):
-                results.append({"keyword": keyword, "score": score})
+            results.append({"keyword": keyword, "score": score})
 
         return results
 
@@ -173,8 +156,7 @@ class TrendSelector:
         """Parse the data returned by ``realtime_trending_searches()``.
 
         Extracts keywords from the entries and assigns a score of 90.0
-        (decreasing by 3 per entry).  Results are filtered to food-related
-        keywords.
+        (decreasing by 3 per entry).
         """
         try:
             data = pytrends.realtime_trending_searches()
@@ -208,8 +190,7 @@ class TrendSelector:
                 continue
 
             score = max(90.0 - idx * 3, 0.0)
-            if _is_food_related(keyword):
-                results.append({"keyword": keyword, "score": score})
+            results.append({"keyword": keyword, "score": score})
 
         return results
 
@@ -328,24 +309,4 @@ class TrendSelector:
         return None
 
 
-# ---------------------------------------------------------------------------
-# Helper functions
-# ---------------------------------------------------------------------------
 
-
-def _is_food_related(keyword: str) -> bool:
-    """Check whether a keyword appears to be food-related.
-
-    Performs a case-insensitive check against a known set of food-related
-    terms.  A keyword is considered food-related if *any* word in the keyword
-    matches a term in the set.
-
-    Args:
-        keyword: The keyword to check.
-
-    Returns:
-        ``True`` if the keyword is food-related.
-    """
-    lower = keyword.lower()
-    words = lower.replace("-", " ").replace("_", " ").split()
-    return any(w in _FOOD_KEYWORDS for w in words)
