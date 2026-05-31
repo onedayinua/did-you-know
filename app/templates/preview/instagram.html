@@ -1,0 +1,25 @@
+{% extends "preview/base.html" %}
+{% block title %}Instagram Preview{% endblock %}
+{% block extra_styles %}
+.instagram-image { max-height: 500px; object-fit: cover; }
+{% endblock %}
+{% block content %}
+<h1>{{ option.theme }}</h1>
+<div class="metrics">
+    <h3>Instagram Post Metrics</h3>
+    <div class="metric-row">
+        <span class="label">Character Count</span>
+        <span class="value {% if option.fact_length > 2200 %}over{% else %}under{% endif %}">
+            {{ option.fact_length }} / 2200
+        </span>
+    </div>
+    <div class="metric-row">
+        <span class="label">Hashtag Count</span>
+        <span class="value {% if option.hashtag_count < 10 or option.hashtag_count > 30 %}over{% else %}under{% endif %}">
+            {{ option.hashtag_count }} (target: 10-30)
+        </span>
+    </div>
+</div>
+<div class="fact-text">{{ option.fact }}</div>
+<div class="hashtags">{{ option.hashtags|join(' ') }}</div>
+{% endblock %}
