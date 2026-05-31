@@ -39,6 +39,8 @@ def sample_config() -> dict:
             {"keyword": "quick breakfast", "score": 65.0},
         ],
         "trend_history_days": 30,
+        "geo": "US",
+        "period": "now 1-d",
     }
 
 
@@ -741,3 +743,104 @@ class TestParseTrendingSearches:
 
         results = TrendSelector._parse_realtime_trending(mock_pytrends)
         assert results == []
+
+
+# ===================================================================
+# Geo & Period Configuration
+# ===================================================================
+
+
+class TestGeoPeriodConfig:
+    """Configurable geo and period for Google Trends API calls."""
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    @patch("modules.trend_selector.TrendReq")
+    async def test_uses_configured_geo(
+        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+    ):
+        """TrendReq is called with the configured geo value."""
+        import pandas as pd
+        instance = mock_trend_req.return_value
+        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
+
+        await selector._fetch_trends()
+
+        # Verify geo was passed to TrendReq constructor
+        _, kwargs = mock_trend_req.call_args
+        assert kwargs.get("geo") == "US"
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    @patch("modules.trend_selector.TrendReq")
+    async def test_uses_configured_period(
+        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+    ):
+        """build_payload is called with the configured timeframe."""
+        import pandas as pd
+        instance = mock_trend_req.return_value
+        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
+
+        await selector._fetch_trends()
+
+        # Verify build_payload was called with timeframe
+        instance.build_payload.assert_called_once_with(
+            kw_list=[], timeframe="now 1-d"
+        )
+
+    async def test_default_geo_when_missing(self, db_pool: AsyncMock):
+        """Defaults to 'US' when geo not in config."""
+        sel = TrendSelector(db_pool, {
+            "backup_trends": [],
+            "trend_history_days": 30,
+            "period": "now 1-d",
+        })
+        assert sel._geo == "US"
+
+    async def test_default_period_when_missing(self, db_pool: AsyncMock):
+        """Defaults to 'now 1-d' when period not in config."""
+        sel = TrendSelector(db_pool, {
+            "backup_trends": [],
+            "trend_history_days": 30,
+            "geo": "US",
+        })
+        assert sel._period == "now 1-d"
+
+    async def test_both_default_when_missing(self, db_pool: AsyncMock):
+        """Both default when neither in config."""
+        sel = TrendSelector(db_pool, {
+            "backup_trends": [],
+            "trend_history_days": 30,
+        })
+        assert sel._geo == "US"
+        assert sel._period == "now 1-d"
+
+    async def test_custom_geo_and_period(self, db_pool: AsyncMock):
+        """Custom geo and period values are stored."""
+        sel = TrendSelector(db_pool, {
+            "backup_trends": [],
+            "trend_history_days": 30,
+            "geo": "GB",
+            "period": "now 4-H",
+        })
+        assert sel._geo == "GB"
+        assert sel._period == "now 4-H"
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    @patch("modules.trend_selector.TrendReq")
+    async def test_empty_geo_passed_through(
+        self, mock_trend_req: MagicMock, db_pool: AsyncMock
+    ):
+        """Empty string geo is passed through (worldwide)."""
+        import pandas as pd
+        sel = TrendSelector(db_pool, {
+            "backup_trends": [],
+            "trend_history_days": 30,
+            "geo": "",
+            "period": "now 1-d",
+        })
+        instance = mock_trend_req.return_value
+        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
+
+        await sel._fetch_trends()
+
+        _, kwargs = mock_trend_req.call_args
+        assert kwargs.get("geo") == ""
