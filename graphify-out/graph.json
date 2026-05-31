@@ -5071,60 +5071,6 @@
       "norm_label": "migration from old version"
     },
     {
-      "label": "TKT-002_shared_config_and_db_pool.md",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L1",
-      "id": "board_development_tkt_002_shared_config_and_db_pool_md",
-      "community": 70,
-      "norm_label": "tkt-002_shared_config_and_db_pool.md"
-    },
-    {
-      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L21",
-      "id": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "community": 70,
-      "norm_label": "[tkt-002] shared config loader & db connection pool"
-    },
-    {
-      "label": "Description",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L23",
-      "id": "development_tkt_002_shared_config_and_db_pool_description",
-      "community": 70,
-      "norm_label": "description"
-    },
-    {
-      "label": "Dependencies",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L26",
-      "id": "development_tkt_002_shared_config_and_db_pool_dependencies",
-      "community": 70,
-      "norm_label": "dependencies"
-    },
-    {
-      "label": "Technical Specification",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L30",
-      "id": "development_tkt_002_shared_config_and_db_pool_technical_specification",
-      "community": 70,
-      "norm_label": "technical specification"
-    },
-    {
-      "label": "Tasks",
-      "file_type": "document",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L33",
-      "id": "development_tkt_002_shared_config_and_db_pool_tasks",
-      "community": 70,
-      "norm_label": "tasks"
-    },
-    {
       "label": "TKT-001_database_schema_and_migration.md",
       "file_type": "document",
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
@@ -5176,6 +5122,60 @@
       "source_location": "L93",
       "id": "done_tkt_001_database_schema_and_migration_tasks",
       "community": 65,
+      "norm_label": "tasks"
+    },
+    {
+      "label": "TKT-002_shared_config_and_db_pool.md",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L1",
+      "id": "board_done_tkt_002_shared_config_and_db_pool_md",
+      "community": 72,
+      "norm_label": "tkt-002_shared_config_and_db_pool.md"
+    },
+    {
+      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L10",
+      "id": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "community": 72,
+      "norm_label": "[tkt-002] shared config loader & db connection pool"
+    },
+    {
+      "label": "Description",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L12",
+      "id": "done_tkt_002_shared_config_and_db_pool_description",
+      "community": 72,
+      "norm_label": "description"
+    },
+    {
+      "label": "Dependencies",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L15",
+      "id": "done_tkt_002_shared_config_and_db_pool_dependencies",
+      "community": 72,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "Technical Specification",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L19",
+      "id": "done_tkt_002_shared_config_and_db_pool_technical_specification",
+      "community": 72,
+      "norm_label": "technical specification"
+    },
+    {
+      "label": "Tasks",
+      "file_type": "document",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L22",
+      "id": "done_tkt_002_shared_config_and_db_pool_tasks",
+      "community": 72,
       "norm_label": "tasks"
     },
     {
@@ -7906,6 +7906,60 @@
       "norm_label": "9. deployment considerations"
     },
     {
+      "label": "TKT-002_shared_config_and_db_pool.md",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L1",
+      "community": 70,
+      "norm_label": "tkt-002_shared_config_and_db_pool.md",
+      "id": "board_development_tkt_002_shared_config_and_db_pool_md"
+    },
+    {
+      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "community": 70,
+      "norm_label": "[tkt-002] shared config loader & db connection pool",
+      "id": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool"
+    },
+    {
+      "label": "Description",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "community": 70,
+      "norm_label": "description",
+      "id": "development_tkt_002_shared_config_and_db_pool_description"
+    },
+    {
+      "label": "Dependencies",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "community": 70,
+      "norm_label": "dependencies",
+      "id": "development_tkt_002_shared_config_and_db_pool_dependencies"
+    },
+    {
+      "label": "Technical Specification",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "community": 70,
+      "norm_label": "technical specification",
+      "id": "development_tkt_002_shared_config_and_db_pool_technical_specification"
+    },
+    {
+      "label": "Tasks",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "community": 70,
+      "norm_label": "tasks",
+      "id": "development_tkt_002_shared_config_and_db_pool_tasks"
+    },
+    {
       "label": "Any",
       "file_type": "code",
       "source_file": ".opencode/tools/database_tool.py",
@@ -8293,9 +8347,9 @@
       "source_file": "opencode.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_opencode_models_deepseek_v4_flash",
-      "target": "did_you_know_opencode_deepseek_v4_flash_options",
-      "confidence_score": 1.0
+      "target": "did_you_know_opencode_deepseek_v4_flash_options"
     },
     {
       "relation": "contains",
@@ -8303,9 +8357,9 @@
       "source_file": "opencode.json",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_opencode_deepseek_v4_flash_options",
-      "target": "did_you_know_opencode_options_reasoning",
-      "confidence_score": 1.0
+      "target": "did_you_know_opencode_options_reasoning"
     },
     {
       "relation": "contains",
@@ -8313,9 +8367,9 @@
       "source_file": "opencode.json",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_opencode_options_reasoning",
-      "target": "did_you_know_opencode_reasoning_effort",
-      "confidence_score": 1.0
+      "target": "did_you_know_opencode_reasoning_effort"
     },
     {
       "relation": "contains",
@@ -9758,9 +9812,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L218",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_query",
-      "target": "opencode_tools_database_tool_py_any",
-      "confidence_score": 1.0
+      "target": "opencode_tools_database_tool_py_any"
     },
     {
       "relation": "calls",
@@ -9790,9 +9844,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L488",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_execute_and_print",
-      "target": "opencode_tools_database_tool_py_any",
-      "confidence_score": 1.0
+      "target": "opencode_tools_database_tool_py_any"
     },
     {
       "relation": "references",
@@ -9801,9 +9855,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L452",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_get_database_stats",
-      "target": "opencode_tools_database_tool_py_any",
-      "confidence_score": 1.0
+      "target": "opencode_tools_database_tool_py_any"
     },
     {
       "relation": "references",
@@ -9812,9 +9866,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L336",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_get_table_schema",
-      "target": "opencode_tools_database_tool_py_any",
-      "confidence_score": 1.0
+      "target": "opencode_tools_database_tool_py_any"
     },
     {
       "relation": "rationale_for",
@@ -10141,9 +10195,9 @@
       "source_file": "shared/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_init_rationale_1",
-      "target": "shared_init_py",
-      "confidence_score": 1.0
+      "target": "shared_init_py"
     },
     {
       "relation": "contains",
@@ -10151,9 +10205,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L99",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_clear_cache",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_clear_cache"
     },
     {
       "relation": "contains",
@@ -10161,9 +10215,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_get_backup_trends",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_backup_trends"
     },
     {
       "relation": "contains",
@@ -10171,9 +10225,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_get_content_template",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_content_template"
     },
     {
       "relation": "contains",
@@ -10181,9 +10235,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_get_platforms_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_platforms_config"
     },
     {
       "relation": "contains",
@@ -10191,9 +10245,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_load_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_load_config"
     },
     {
       "relation": "contains",
@@ -10201,9 +10255,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_substitute_env_vars",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_env_vars"
     },
     {
       "relation": "contains",
@@ -10211,9 +10265,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_py",
-      "target": "shared_config_loader_substitute_recursively",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_recursively"
     },
     {
       "relation": "rationale_for",
@@ -10221,9 +10275,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_1",
-      "target": "shared_config_loader_py",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py"
     },
     {
       "relation": "rationale_for",
@@ -10231,9 +10285,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_21",
-      "target": "shared_config_loader_substitute_env_vars",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_env_vars"
     },
     {
       "relation": "references",
@@ -10242,9 +10296,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_substitute_env_vars",
-      "target": "shared_config_loader_py_str",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_str"
     },
     {
       "relation": "calls",
@@ -10253,9 +10307,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_substitute_recursively",
-      "target": "shared_config_loader_substitute_env_vars",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_env_vars"
     },
     {
       "relation": "references",
@@ -10264,9 +10318,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_backup_trends",
-      "target": "shared_config_loader_py_str",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_str"
     },
     {
       "relation": "references",
@@ -10275,9 +10329,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_content_template",
-      "target": "shared_config_loader_py_str",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_str"
     },
     {
       "relation": "references",
@@ -10286,9 +10340,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_platforms_config",
-      "target": "shared_config_loader_py_str",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_str"
     },
     {
       "relation": "references",
@@ -10297,9 +10351,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_load_config",
-      "target": "shared_config_loader_py_str",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_str"
     },
     {
       "relation": "calls",
@@ -10308,9 +10362,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_load_config",
-      "target": "shared_config_loader_substitute_recursively",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_recursively"
     },
     {
       "relation": "rationale_for",
@@ -10318,9 +10372,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_41",
-      "target": "shared_config_loader_substitute_recursively",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_substitute_recursively"
     },
     {
       "relation": "references",
@@ -10329,9 +10383,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_substitute_recursively",
-      "target": "shared_config_loader_py_any",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_any"
     },
     {
       "relation": "references",
@@ -10340,9 +10394,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_backup_trends",
-      "target": "shared_config_loader_py_any",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_any"
     },
     {
       "relation": "references",
@@ -10351,9 +10405,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_content_template",
-      "target": "shared_config_loader_py_any",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_any"
     },
     {
       "relation": "references",
@@ -10362,9 +10416,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_platforms_config",
-      "target": "shared_config_loader_py_any",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_any"
     },
     {
       "relation": "references",
@@ -10373,9 +10427,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_load_config",
-      "target": "shared_config_loader_py_any",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_py_any"
     },
     {
       "relation": "calls",
@@ -10384,9 +10438,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_backup_trends",
-      "target": "shared_config_loader_load_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_load_config"
     },
     {
       "relation": "calls",
@@ -10395,9 +10449,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_content_template",
-      "target": "shared_config_loader_load_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_load_config"
     },
     {
       "relation": "calls",
@@ -10406,9 +10460,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_get_platforms_config",
-      "target": "shared_config_loader_load_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_load_config"
     },
     {
       "relation": "rationale_for",
@@ -10416,9 +10470,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_52",
-      "target": "shared_config_loader_load_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_load_config"
     },
     {
       "relation": "rationale_for",
@@ -10426,9 +10480,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_85",
-      "target": "shared_config_loader_get_content_template",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_content_template"
     },
     {
       "relation": "rationale_for",
@@ -10436,9 +10490,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_90",
-      "target": "shared_config_loader_get_platforms_config",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_platforms_config"
     },
     {
       "relation": "rationale_for",
@@ -10446,9 +10500,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L95",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_95",
-      "target": "shared_config_loader_get_backup_trends",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_get_backup_trends"
     },
     {
       "relation": "rationale_for",
@@ -10456,9 +10510,9 @@
       "source_file": "shared/config_loader.py",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_config_loader_rationale_100",
-      "target": "shared_config_loader_clear_cache",
-      "confidence_score": 1.0
+      "target": "shared_config_loader_clear_cache"
     },
     {
       "relation": "contains",
@@ -10466,9 +10520,9 @@
       "source_file": "shared/db.py",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_close_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_close_pool"
     },
     {
       "relation": "contains",
@@ -10476,9 +10530,9 @@
       "source_file": "shared/db.py",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_execute",
-      "confidence_score": 1.0
+      "target": "shared_db_execute"
     },
     {
       "relation": "contains",
@@ -10486,9 +10540,9 @@
       "source_file": "shared/db.py",
       "source_location": "L125",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_execute_many",
-      "confidence_score": 1.0
+      "target": "shared_db_execute_many"
     },
     {
       "relation": "contains",
@@ -10496,9 +10550,9 @@
       "source_file": "shared/db.py",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_fetch",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch"
     },
     {
       "relation": "contains",
@@ -10506,9 +10560,9 @@
       "source_file": "shared/db.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_fetch_one",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch_one"
     },
     {
       "relation": "contains",
@@ -10516,9 +10570,9 @@
       "source_file": "shared/db.py",
       "source_location": "L103",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_fetch_val",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch_val"
     },
     {
       "relation": "contains",
@@ -10526,9 +10580,9 @@
       "source_file": "shared/db.py",
       "source_location": "L72",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "contains",
@@ -10536,9 +10590,9 @@
       "source_file": "shared/db.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_init_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_init_pool"
     },
     {
       "relation": "contains",
@@ -10546,9 +10600,9 @@
       "source_file": "shared/db.py",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_py",
-      "target": "shared_db_transaction",
-      "confidence_score": 1.0
+      "target": "shared_db_transaction"
     },
     {
       "relation": "rationale_for",
@@ -10556,9 +10610,9 @@
       "source_file": "shared/db.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_1",
-      "target": "shared_db_py",
-      "confidence_score": 1.0
+      "target": "shared_db_py"
     },
     {
       "relation": "calls",
@@ -10567,9 +10621,9 @@
       "source_file": "shared/db.py",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_init_pool",
-      "target": "shared_db_close_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_close_pool"
     },
     {
       "relation": "references",
@@ -10578,9 +10632,9 @@
       "source_file": "shared/db.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_init_pool",
-      "target": "shared_db_py_int",
-      "confidence_score": 1.0
+      "target": "shared_db_py_int"
     },
     {
       "relation": "references",
@@ -10589,9 +10643,9 @@
       "source_file": "shared/db.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_init_pool",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "rationale_for",
@@ -10599,9 +10653,9 @@
       "source_file": "shared/db.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_22",
-      "target": "shared_db_init_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_init_pool"
     },
     {
       "relation": "references",
@@ -10610,9 +10664,9 @@
       "source_file": "shared/db.py",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_execute",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "references",
@@ -10621,9 +10675,9 @@
       "source_file": "shared/db.py",
       "source_location": "L125",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_execute_many",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "references",
@@ -10632,9 +10686,9 @@
       "source_file": "shared/db.py",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "references",
@@ -10643,9 +10697,9 @@
       "source_file": "shared/db.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_one",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "references",
@@ -10654,9 +10708,9 @@
       "source_file": "shared/db.py",
       "source_location": "L103",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_val",
-      "target": "shared_db_py_str",
-      "confidence_score": 1.0
+      "target": "shared_db_py_str"
     },
     {
       "relation": "rationale_for",
@@ -10664,9 +10718,9 @@
       "source_file": "shared/db.py",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_61",
-      "target": "shared_db_close_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_close_pool"
     },
     {
       "relation": "calls",
@@ -10675,9 +10729,9 @@
       "source_file": "shared/db.py",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_execute",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "calls",
@@ -10686,9 +10740,9 @@
       "source_file": "shared/db.py",
       "source_location": "L127",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_execute_many",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "calls",
@@ -10697,9 +10751,9 @@
       "source_file": "shared/db.py",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "calls",
@@ -10708,9 +10762,9 @@
       "source_file": "shared/db.py",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_one",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "calls",
@@ -10719,9 +10773,9 @@
       "source_file": "shared/db.py",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_val",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "references",
@@ -10730,9 +10784,9 @@
       "source_file": "shared/db.py",
       "source_location": "L72",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_get_pool",
-      "target": "pool",
-      "confidence_score": 1.0
+      "target": "pool"
     },
     {
       "relation": "rationale_for",
@@ -10740,9 +10794,9 @@
       "source_file": "shared/db.py",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_73",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "calls",
@@ -10751,9 +10805,9 @@
       "source_file": "shared/db.py",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_transaction",
-      "target": "shared_db_get_pool",
-      "confidence_score": 1.0
+      "target": "shared_db_get_pool"
     },
     {
       "relation": "references",
@@ -10762,9 +10816,9 @@
       "source_file": "shared/db.py",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch",
-      "target": "record",
-      "confidence_score": 1.0
+      "target": "record"
     },
     {
       "relation": "references",
@@ -10773,9 +10827,9 @@
       "source_file": "shared/db.py",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch",
-      "target": "shared_db_py_any",
-      "confidence_score": 1.0
+      "target": "shared_db_py_any"
     },
     {
       "relation": "rationale_for",
@@ -10783,9 +10837,9 @@
       "source_file": "shared/db.py",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_86",
-      "target": "shared_db_fetch",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch"
     },
     {
       "relation": "references",
@@ -10794,9 +10848,9 @@
       "source_file": "shared/db.py",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_execute",
-      "target": "shared_db_py_any",
-      "confidence_score": 1.0
+      "target": "shared_db_py_any"
     },
     {
       "relation": "references",
@@ -10805,9 +10859,9 @@
       "source_file": "shared/db.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_one",
-      "target": "shared_db_py_any",
-      "confidence_score": 1.0
+      "target": "shared_db_py_any"
     },
     {
       "relation": "references",
@@ -10816,9 +10870,9 @@
       "source_file": "shared/db.py",
       "source_location": "L103",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_val",
-      "target": "shared_db_py_any",
-      "confidence_score": 1.0
+      "target": "shared_db_py_any"
     },
     {
       "relation": "references",
@@ -10827,9 +10881,9 @@
       "source_file": "shared/db.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_fetch_one",
-      "target": "record",
-      "confidence_score": 1.0
+      "target": "record"
     },
     {
       "relation": "rationale_for",
@@ -10837,9 +10891,9 @@
       "source_file": "shared/db.py",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_97",
-      "target": "shared_db_fetch_one",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch_one"
     },
     {
       "relation": "rationale_for",
@@ -10847,9 +10901,9 @@
       "source_file": "shared/db.py",
       "source_location": "L104",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_104",
-      "target": "shared_db_fetch_val",
-      "confidence_score": 1.0
+      "target": "shared_db_fetch_val"
     },
     {
       "relation": "rationale_for",
@@ -10857,9 +10911,9 @@
       "source_file": "shared/db.py",
       "source_location": "L115",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_115",
-      "target": "shared_db_execute",
-      "confidence_score": 1.0
+      "target": "shared_db_execute"
     },
     {
       "relation": "rationale_for",
@@ -10867,9 +10921,9 @@
       "source_file": "shared/db.py",
       "source_location": "L126",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_126",
-      "target": "shared_db_execute_many",
-      "confidence_score": 1.0
+      "target": "shared_db_execute_many"
     },
     {
       "relation": "rationale_for",
@@ -10877,9 +10931,9 @@
       "source_file": "shared/db.py",
       "source_location": "L134",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_rationale_134",
-      "target": "shared_db_transaction",
-      "confidence_score": 1.0
+      "target": "shared_db_transaction"
     },
     {
       "relation": "references",
@@ -10888,9 +10942,9 @@
       "source_file": "shared/db.py",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_db_transaction",
-      "target": "shared_db_py_connection",
-      "confidence_score": 1.0
+      "target": "shared_db_py_connection"
     },
     {
       "relation": "contains",
@@ -11454,9 +11508,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L144",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_migrate_connect_with_retry",
-      "target": "shared_migrate_py_connection",
-      "confidence_score": 1.0
+      "target": "shared_migrate_py_connection"
     },
     {
       "relation": "references",
@@ -11497,9 +11551,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L159",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_migrate_ensure_migrations_table",
-      "target": "shared_migrate_py_connection",
-      "confidence_score": 1.0
+      "target": "shared_migrate_py_connection"
     },
     {
       "relation": "references",
@@ -11508,9 +11562,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L170",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_migrate_get_applied_versions",
-      "target": "shared_migrate_py_connection",
-      "confidence_score": 1.0
+      "target": "shared_migrate_py_connection"
     },
     {
       "relation": "references",
@@ -11519,9 +11573,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L176",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shared_migrate_record_migration",
-      "target": "shared_migrate_py_connection",
-      "confidence_score": 1.0
+      "target": "shared_migrate_py_connection"
     },
     {
       "relation": "references",
@@ -11613,9 +11667,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L88",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_py",
-      "target": "tests_test_config_loader_testconfigloader",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader"
     },
     {
       "relation": "contains",
@@ -11623,9 +11677,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_py",
-      "target": "tests_test_config_loader_testenvvarsubstitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution"
     },
     {
       "relation": "rationale_for",
@@ -11633,9 +11687,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_1",
-      "target": "tests_test_config_loader_py",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_py"
     },
     {
       "relation": "rationale_for",
@@ -11643,9 +11697,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_18",
-      "target": "tests_test_config_loader_testenvvarsubstitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution"
     },
     {
       "relation": "method",
@@ -11653,9 +11707,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value"
     },
     {
       "relation": "method",
@@ -11663,9 +11717,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L50",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var"
     },
     {
       "relation": "method",
@@ -11673,9 +11727,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L80",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution"
     },
     {
       "relation": "method",
@@ -11683,9 +11737,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal"
     },
     {
       "relation": "method",
@@ -11693,9 +11747,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars"
     },
     {
       "relation": "method",
@@ -11703,9 +11757,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L65",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution"
     },
     {
       "relation": "method",
@@ -11713,9 +11767,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough"
     },
     {
       "relation": "method",
@@ -11723,9 +11777,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution"
     },
     {
       "relation": "method",
@@ -11733,9 +11787,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testenvvarsubstitution",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string"
     },
     {
       "relation": "rationale_for",
@@ -11743,9 +11797,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_21",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution"
     },
     {
       "relation": "rationale_for",
@@ -11753,9 +11807,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_27",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string"
     },
     {
       "relation": "rationale_for",
@@ -11763,9 +11817,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_33",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal"
     },
     {
       "relation": "rationale_for",
@@ -11773,9 +11827,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_39",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars"
     },
     {
       "relation": "rationale_for",
@@ -11783,9 +11837,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_45",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value"
     },
     {
       "relation": "rationale_for",
@@ -11793,9 +11847,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_51",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var"
     },
     {
       "relation": "rationale_for",
@@ -11803,9 +11857,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_57",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough"
     },
     {
       "relation": "rationale_for",
@@ -11813,9 +11867,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_66",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution"
     },
     {
       "relation": "rationale_for",
@@ -11823,9 +11877,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_81",
-      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution"
     },
     {
       "relation": "rationale_for",
@@ -11833,9 +11887,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_89",
-      "target": "tests_test_config_loader_testconfigloader",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader"
     },
     {
       "relation": "method",
@@ -11843,9 +11897,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L151",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax"
     },
     {
       "relation": "method",
@@ -11853,9 +11907,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L131",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour"
     },
     {
       "relation": "method",
@@ -11863,9 +11917,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution"
     },
     {
       "relation": "method",
@@ -11873,9 +11927,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml"
     },
     {
       "relation": "method",
@@ -11883,9 +11937,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file"
     },
     {
       "relation": "method",
@@ -11893,9 +11947,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config"
     },
     {
       "relation": "method",
@@ -11903,9 +11957,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L162",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_testconfigloader",
-      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions"
     },
     {
       "relation": "rationale_for",
@@ -11913,9 +11967,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L92",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_92",
-      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file"
     },
     {
       "relation": "rationale_for",
@@ -11923,9 +11977,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_97",
-      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml"
     },
     {
       "relation": "rationale_for",
@@ -11933,9 +11987,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_109",
-      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config"
     },
     {
       "relation": "rationale_for",
@@ -11943,9 +11997,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_120",
-      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution"
     },
     {
       "relation": "rationale_for",
@@ -11953,9 +12007,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_132",
-      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour"
     },
     {
       "relation": "rationale_for",
@@ -11963,9 +12017,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L152",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_152",
-      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax"
     },
     {
       "relation": "rationale_for",
@@ -11973,9 +12027,9 @@
       "source_file": "tests/test_config_loader.py",
       "source_location": "L163",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_config_loader_rationale_163",
-      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions",
-      "confidence_score": 1.0
+      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions"
     },
     {
       "relation": "contains",
@@ -11983,9 +12037,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_py",
-      "target": "tests_test_db_pool_testdbpoolinit",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit"
     },
     {
       "relation": "contains",
@@ -11993,9 +12047,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L104",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_py",
-      "target": "tests_test_db_pool_testdbqueryhelpers",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers"
     },
     {
       "relation": "contains",
@@ -12003,9 +12057,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L174",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_py",
-      "target": "tests_test_db_pool_testdbtransaction",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction"
     },
     {
       "relation": "rationale_for",
@@ -12013,9 +12067,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_1",
-      "target": "tests_test_db_pool_py",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_py"
     },
     {
       "relation": "rationale_for",
@@ -12023,9 +12077,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_16",
-      "target": "tests_test_db_pool_testdbpoolinit",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit"
     },
     {
       "relation": "method",
@@ -12033,9 +12087,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L70",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized"
     },
     {
       "relation": "method",
@@ -12043,9 +12097,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle"
     },
     {
       "relation": "method",
@@ -12053,9 +12107,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized"
     },
     {
       "relation": "method",
@@ -12063,9 +12117,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn"
     },
     {
       "relation": "method",
@@ -12073,9 +12127,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env"
     },
     {
       "relation": "method",
@@ -12083,9 +12137,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn"
     },
     {
       "relation": "method",
@@ -12093,9 +12147,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbpoolinit",
-      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool"
     },
     {
       "relation": "rationale_for",
@@ -12103,9 +12157,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_19",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn"
     },
     {
       "relation": "rationale_for",
@@ -12113,9 +12167,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_25",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn"
     },
     {
       "relation": "rationale_for",
@@ -12123,9 +12177,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_41",
-      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env"
     },
     {
       "relation": "rationale_for",
@@ -12133,9 +12187,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_53",
-      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool"
     },
     {
       "relation": "rationale_for",
@@ -12143,9 +12197,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L65",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_65",
-      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized"
     },
     {
       "relation": "rationale_for",
@@ -12153,9 +12207,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_71",
-      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized"
     },
     {
       "relation": "rationale_for",
@@ -12163,9 +12217,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_77",
-      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle"
     },
     {
       "relation": "rationale_for",
@@ -12173,9 +12227,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L105",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_105",
-      "target": "tests_test_db_pool_testdbqueryhelpers",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers"
     },
     {
       "relation": "method",
@@ -12183,9 +12237,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool"
     },
     {
       "relation": "method",
@@ -12193,9 +12247,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L152",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute"
     },
     {
       "relation": "method",
@@ -12203,9 +12257,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L159",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many"
     },
     {
       "relation": "method",
@@ -12213,9 +12267,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L125",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch"
     },
     {
       "relation": "method",
@@ -12223,9 +12277,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one"
     },
     {
       "relation": "method",
@@ -12233,9 +12287,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none"
     },
     {
       "relation": "method",
@@ -12243,9 +12297,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L145",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val"
     },
     {
       "relation": "method",
@@ -12253,9 +12307,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L165",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbqueryhelpers",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args"
     },
     {
       "relation": "rationale_for",
@@ -12263,9 +12317,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_109",
-      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool"
     },
     {
       "relation": "rationale_for",
@@ -12273,9 +12327,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L126",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_126",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch"
     },
     {
       "relation": "rationale_for",
@@ -12283,9 +12337,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_133",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one"
     },
     {
       "relation": "rationale_for",
@@ -12293,9 +12347,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_140",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none"
     },
     {
       "relation": "rationale_for",
@@ -12303,9 +12357,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L146",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_146",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val"
     },
     {
       "relation": "rationale_for",
@@ -12313,9 +12367,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_153",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute"
     },
     {
       "relation": "rationale_for",
@@ -12323,9 +12377,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L160",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_160",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many"
     },
     {
       "relation": "rationale_for",
@@ -12333,9 +12387,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L166",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_166",
-      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args"
     },
     {
       "relation": "rationale_for",
@@ -12343,9 +12397,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L175",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_175",
-      "target": "tests_test_db_pool_testdbtransaction",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction"
     },
     {
       "relation": "method",
@@ -12353,9 +12407,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L178",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbtransaction",
-      "target": "tests_test_db_pool_testdbtransaction_setup_pool",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction_setup_pool"
     },
     {
       "relation": "method",
@@ -12363,9 +12417,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L199",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbtransaction",
-      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit"
     },
     {
       "relation": "method",
@@ -12373,9 +12427,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L206",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_testdbtransaction",
-      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback"
     },
     {
       "relation": "rationale_for",
@@ -12383,9 +12437,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L200",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_200",
-      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit"
     },
     {
       "relation": "rationale_for",
@@ -12393,9 +12447,9 @@
       "source_file": "tests/test_db_pool.py",
       "source_location": "L207",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_db_pool_rationale_207",
-      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback",
-      "confidence_score": 1.0
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback"
     },
     {
       "relation": "contains",
@@ -14850,56 +14904,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L21",
-      "weight": 1.0,
-      "source": "board_development_tkt_002_shared_config_and_db_pool_md",
-      "target": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L26",
-      "weight": 1.0,
-      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "development_tkt_002_shared_config_and_db_pool_dependencies",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "development_tkt_002_shared_config_and_db_pool_description",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "development_tkt_002_shared_config_and_db_pool_tasks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "development_tkt_002_shared_config_and_db_pool_technical_specification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L81",
       "weight": 1.0,
@@ -14946,6 +14950,56 @@
       "confidence_score": 1.0,
       "source": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
       "target": "done_tkt_001_database_schema_and_migration_technical_specification"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "board_done_tkt_002_shared_config_and_db_pool_md",
+      "target": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "done_tkt_002_shared_config_and_db_pool_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "done_tkt_002_shared_config_and_db_pool_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "done_tkt_002_shared_config_and_db_pool_tasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/done/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "done_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "done_tkt_002_shared_config_and_db_pool_technical_specification",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -17730,6 +17784,56 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "board_development_tkt_002_shared_config_and_db_pool_md",
+      "target": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_dependencies"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_description"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_tasks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_technical_specification"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
       "source_location": "L21",
       "weight": 1.0,
@@ -17829,5 +17933,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3946033293e48b21302603de0d04e45a01b8e5ae"
+  "built_at_commit": "f2e0d7601e2dd8dc1e5780e67ac533a2f69e324f"
 }

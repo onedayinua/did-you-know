@@ -1,16 +1,16 @@
 # Graph Report - did-you-know  (2026-05-31)
 
 ## Corpus Check
-- 64 files · ~34,064 words
+- 64 files · ~34,067 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 898 nodes · 961 edges · 72 communities (68 shown, 4 thin omitted)
+- 904 nodes · 966 edges · 73 communities (69 shown, 4 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.65)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `39460332`
+- Built from commit: `f2e0d760`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -80,6 +80,7 @@
 - [[_COMMUNITY_Community 69|Community 69]]
 - [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `DatabaseTool` - 22 edges
@@ -108,7 +109,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (72 total, 4 thin omitted)
+## Communities (73 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -354,8 +355,12 @@ Nodes (17): clear_cache(), get_backup_trends(), get_content_template(), get_plat
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
+### Community 72 - "Community 72"
+Cohesion: 0.33
+Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
+
 ## Knowledge Gaps
-- **477 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+472 more)
+- **481 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+476 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -369,7 +374,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 3 inferred relationships involving `DatabaseTool` (e.g. with `example_basic_usage()` and `example_data_quality_check()`) actually correct?**
   _`DatabaseTool` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `$schema`, `instructions`, `id` to the rest of the system?**
-  _593 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _597 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.0693815987933635 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
