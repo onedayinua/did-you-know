@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environment files
 .env
 !.env.example
@@ -60,3 +61,8 @@ htmlcov/
 board/
 */__pycache__/**
 did_you_know.egg-info
+=======
+board/
+*/__pycache__/**
+did_you_know.egg-info
+>>>>>>> 3a5ec03 (Fix)
