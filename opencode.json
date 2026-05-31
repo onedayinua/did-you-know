@@ -9,6 +9,7 @@
         "qwen3-thinking": { "id": "qwen/qwen3-235b-a22b-thinking-2507" },
         "gemma-4-31b-it": { "id": "google/gemma-4-31b-it" },
         "deepseek-v3.2": { "id": "deepseek/deepseek-v3.2" },
+        "deepseek-v4-flash": { "id": "deepseek/deepseek-v4-flash" },
         "grok-4.1": { "id": "x-ai/grok-4.1-fast" }
       }
     }
@@ -46,7 +47,7 @@
     },
     "developer": {
       "mode": "subagent",
-      "model": "openrouter/qwen3-coder-next",
+      "model": "openrouter/deepseek-v4-flash",
       "temperature": 1.0,
       "top_p": 0.9,
       "min_p": 0.01,
@@ -92,7 +93,7 @@
     },
     "writer": {
       "mode": "subagent",
-      "model": "openrouter/qwen3-coder-30b",
+      "model": "openrouter/deepseek-v4-flash",
       "temperature": 0.1,
       "min_p": 0.02,
       "prompt": "{file:.opencode/agents/writer.md}",

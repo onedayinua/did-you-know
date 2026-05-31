@@ -1,7 +1,7 @@
 {
   "/workspaces/did-you-know/opencode.json": {
-    "mtime": 1780224559.8336842,
-    "ast_hash": "e69c9f96a44fec1e81dd1e803b11b2a1",
+    "mtime": 1780233321.8231895,
+    "ast_hash": "7c45bdc2bbcde8e3619f38857f9ee57b",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/.devcontainer/devcontainer.json": {
@@ -65,13 +65,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_schema_migrations.py": {
-    "mtime": 1780223161.4447017,
-    "ast_hash": "6062ba5de5424e16c365b8853edffb6b",
+    "mtime": 1780232878.5407739,
+    "ast_hash": "bcdab37328f866b5bf4d89c20190272c",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/AGENTS.md": {
-    "mtime": 1780155434.8108726,
-    "ast_hash": "1ec2bf5de71395c7a9a98618b45b376f",
+    "mtime": 1780231894.416431,
+    "ast_hash": "3f09635c2b877e8a4f6265a583d7e4ad",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/PROJECT.md": {
@@ -162,11 +162,6 @@
   "/workspaces/did-you-know/.opencode/tools/README.md": {
     "mtime": 1777488648.2356384,
     "ast_hash": "d8cacf58feec633e62d030d4763b51c6",
-    "semantic_hash": ""
-  },
-  "/workspaces/did-you-know/board/qa/TKT-001_database_schema_and_migration.md": {
-    "mtime": 1780223389.1080084,
-    "ast_hash": "061b7ba54a0d07ae2ae02f1bc751309f",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/todo/TKT-002_shared_config_and_db_pool.md": {
@@ -297,6 +292,11 @@
   "/workspaces/did-you-know/docs/technical/yaml_configuration_files.md": {
     "mtime": 1780214889.9984882,
     "ast_hash": "88c322b8121ec86284e0ec8aa90048fd",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/board/done/TKT-001_database_schema_and_migration.md": {
+    "mtime": 1780223389.1080084,
+    "ast_hash": "061b7ba54a0d07ae2ae02f1bc751309f",
     "semantic_hash": ""
   }
 }
