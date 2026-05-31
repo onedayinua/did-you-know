@@ -19,36 +19,36 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/did_you_know
 
   db:
     image: postgres:latest
     restart: unless-stopped
     volumes:
-      - postgres-data:/var/lib/postgresql
+      - did_you_know-data:/var/lib/postgresql
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: did_you_know
       POSTGRES_PASSWORD: postgres
 
   dbqa:
     image: postgres:latest
     restart: unless-stopped
     volumes:
-      - postgres-qa-data:/var/lib/postgresql
+      - did_you_know-qa-data:/var/lib/postgresql
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres_qa
+      POSTGRES_DB: did_you_know_qa
       POSTGRES_PASSWORD: postgres
   
   pgweb:
     image: sosedoff/pgweb:latest
     restart: unless-stopped
     ports:
-      - "8081:8081"
+      - "8085:8081"
     environment:
       # We use the service name 'db' from above as the host
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres?sslmode=disable
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/did_you_know?sslmode=disable
     depends_on:
       - db
 
@@ -56,5 +56,5 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 volumes:
-  postgres-data:
-  postgres-qa-data:
+  did_you_know-data:
+  did_you_know-qa-data:

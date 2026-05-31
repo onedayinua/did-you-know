@@ -52,15 +52,21 @@ Each service should have `.env.test` configuration files for development and tes
 - Point to sandbox/staging API endpoints
 - Include all required environment variables from `.env.example`
 
-## graphify
+## graphify (MANDATORY REPOSITORY NAVIGATION)
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships. 
+
+**CRITICAL CONSTRAINT:** Do NOT use standard bash commands like `cd`, `ls`, `find`, `tree`, or `grep` for initial codebase discovery or navigation. You MUST use `graphify` as your primary lens for understanding the repo.
 
 When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+### Mandatory Execution Order:
+1. **Initial Discovery:** For any codebase questions, you MUST first run `graphify query "<question>"` (assuming `graphify-out/graph.json` exists). Do not manually browse source files until this is done.
+2. **Deep Dives:** Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. 
+3. **Broad Navigation:** If `graphify-out/wiki/index.md` exists, read it for broad navigation instead of raw source browsing.
+4. **Architecture Review:** Read `graphify-out/GRAPH_REPORT.md` ONLY if the query/path/explain commands do not surface enough context.
+5. **Post-Modification:** After modifying any code, you MUST run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+### Exceptions:
+- Dirty `graphify-out/` files are expected. Do not skip using `graphify` just because the graph files are dirty.
+- Only skip `graphify` if the user explicitly tells you to, or if the current task is specifically to debug stale/incorrect graphify output.

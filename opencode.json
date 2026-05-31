@@ -82,7 +82,7 @@
     },
     "qa": {
       "mode": "subagent",
-      "model": "openrouter/qwen3-coder-30b",
+      "model": "openrouter/gemma-4-31b-it",
       "temperature": 0.7,
       "min_p": 0.02,
       "prompt": "{file:.opencode/agents/qa.md}",
@@ -96,6 +96,24 @@
       "temperature": 0.1,
       "min_p": 0.02,
       "prompt": "{file:.opencode/agents/writer.md}",
+      "permission": {
+        "bash": "deny",
+          "write": {
+          "*": "deny",
+          "*.md": "allow"
+        },
+        "edit": {
+          "*": "deny",
+          "*.md": "allow"
+        }
+      }
+    },
+    "reviewer": {
+      "mode": "subagent",
+      "model": "openrouter/gemma-4-31b-it",
+      "temperature": 0.1,
+      "min_p": 0.02,
+      "prompt": "{file:.opencode/agents/reviewer.md}",
       "permission": {
         "bash": "deny",
           "write": {
