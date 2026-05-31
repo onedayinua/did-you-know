@@ -22,22 +22,47 @@ async def lifespan(app: FastAPI):
 
     Startup:
         - Initialize DB pool from DATABASE_URL env var
-        - (Scheduler will be added in TKT-012)
+        - Initialize OpenRouter client
+        - Load all configs
+        - Setup and start APScheduler
 
     Shutdown:
-        - Close DB pool gracefully
+        - Shutdown scheduler gracefully
+        - Close OpenRouter client
+        - Close DB pool
     """
     # Startup
-    from shared.db import init_pool
+    from shared.db import init_pool, get_pool
+    from shared.openrouter_client import OpenRouterClient
+    from shared.config_loader import load_config
+    from app.scheduler import setup_scheduler, scheduler as apscheduler
 
     await init_pool()
-    logger.info("Application started")
+
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    openrouter_client = OpenRouterClient(api_key)
+
+    content_config = load_config("content_template")
+    platforms_config = load_config("platforms")
+    backup_config = load_config("backup_trends")
+
+    pool = await get_pool()
+    setup_scheduler(pool, openrouter_client, {
+        "content_template": content_config,
+        "platforms": platforms_config,
+        "backup_trends": backup_config,
+    })
+    apscheduler.start()
+
+    logger.info("Application started with scheduler")
 
     yield
 
     # Shutdown
-    from shared.db import close_pool
+    apscheduler.shutdown()
+    await openrouter_client.close()
 
+    from shared.db import close_pool
     await close_pool()
     logger.info("Application shutdown complete")
 
