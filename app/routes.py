@@ -72,9 +72,9 @@ async def dashboard(request: Request, platform: str | None = None):
 
     options = [_row_to_dict(r) for r in rows]
     return templates.TemplateResponse(
+        request,
         "dashboard.html",
         {
-            "request": request,
             "options": options,
             "current_platform": platform,
         },
@@ -114,9 +114,9 @@ async def option_detail(request: Request, id: int):
 
     option = _row_to_dict(row)
     return templates.TemplateResponse(
+        request,
         "dashboard.html",
         {
-            "request": request,
             "options": [option],
             "current_platform": None,
             "detail_mode": True,
@@ -339,9 +339,9 @@ async def preview_all(request: Request, id: int):
     platform = option["platform"]
 
     return templates.TemplateResponse(
+        request,
         f"preview/{platform}.html",
         {
-            "request": request,
             "option": option,
         },
     )
@@ -377,9 +377,9 @@ async def preview_platform(request: Request, id: int, platform: str):
 
     option = _row_to_dict(row)
     return templates.TemplateResponse(
+        request,
         f"preview/{platform}.html",
         {
-            "request": request,
             "option": option,
         },
     )
@@ -436,9 +436,9 @@ async def history(request: Request, platform: str | None = None):
         history_items.append(item)
 
     return templates.TemplateResponse(
+        request,
         "dashboard.html",
         {
-            "request": request,
             "options": [],
             "history_items": history_items,
             "current_platform": platform,
