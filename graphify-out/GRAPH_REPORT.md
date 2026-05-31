@@ -1,16 +1,16 @@
 # Graph Report - did-you-know  (2026-05-31)
 
 ## Corpus Check
-- 59 files · ~31,935 words
+- 64 files · ~34,064 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 760 nodes · 794 edges · 66 communities (63 shown, 3 thin omitted)
+- 898 nodes · 961 edges · 72 communities (68 shown, 4 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.65)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a30eb0af`
+- Built from commit: `39460332`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,6 +74,12 @@
 - [[_COMMUNITY_Community 57|Community 57]]
 - [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `DatabaseTool` - 22 edges
@@ -81,11 +87,11 @@
 3. `Database Connection Tool for OpenCode Agents` - 13 edges
 4. `AI Content Channel - Architecture` - 13 edges
 5. `bash` - 11 edges
-6. `Ticket Movement Commands` - 11 edges
-7. `techlead` - 10 edges
-8. `str` - 10 edges
-9. `MigrationError` - 10 edges
-10. `_parse_migration_files()` - 10 edges
+6. `TestEnvVarSubstitution` - 11 edges
+7. `Ticket Movement Commands` - 11 edges
+8. `techlead` - 10 edges
+9. `str` - 10 edges
+10. `MigrationError` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestMigrationParsing` --uses--> `MigrationError`  [INFERRED]
@@ -102,11 +108,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (66 total, 3 thin omitted)
+## Communities (72 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
-Nodes (33): Any, bool, float, int, str, DatabaseTool, main(), Determine database type from URL.                  Args:             url: Databa (+25 more)
+Nodes (34): Any, bool, Any, float, int, str, DatabaseTool, main() (+26 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.06
@@ -133,8 +139,8 @@ Cohesion: 0.08
 Nodes (23): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+15 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.09
-Nodes (15): Integration tests for the actual schema migrations., Verify all tables, indexes, and constraints are created correctly., Verify all tables, indexes, and constraints are created correctly., Integration tests for the actual schema migrations., Verify CHECK constraints on status columns., Verify CHECK constraints on status columns., Create a test database connection., Verify updated_at triggers work correctly. (+7 more)
+Cohesion: 0.10
+Nodes (17): Run all pending migrations.          Args:         dsn: PostgreSQL connection st, run_migrations(), Integration tests for the actual schema migrations., Verify all tables, indexes, and constraints are created correctly., Verify all tables, indexes, and constraints are created correctly., Integration tests for the actual schema migrations., Verify CHECK constraints on status columns., Verify CHECK constraints on status columns. (+9 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.11
@@ -157,8 +163,8 @@ Cohesion: 0.12
 Nodes (15): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+7 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.20
-Nodes (17): Connection, _connect_with_retry(), _ensure_migrations_table(), _get_applied_versions(), _get_dsn_from_env(), main(), float, int (+9 more)
+Cohesion: 0.19
+Nodes (16): Connection, _connect_with_retry(), _ensure_migrations_table(), _get_applied_versions(), _get_dsn_from_env(), main(), Connection, float (+8 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.12
@@ -177,8 +183,8 @@ Cohesion: 0.12
 Nodes (15): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+7 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.12
-Nodes (17): id, id, id, id, deepseek-v3.2, deepseek-v4-flash, gemma-4-31b-it, grok-4.1 (+9 more)
+Cohesion: 0.10
+Nodes (20): id, id, options, id, id, deepseek-v3.2, deepseek-v4-flash, gemma-4-31b-it (+12 more)
 
 ### Community 19 - "Community 19"
 Cohesion: 0.13
@@ -225,12 +231,12 @@ Cohesion: 0.20
 Nodes (9): Database Schema, Development, Did You Know? - AI Content Channel, License, Migration Runner, Project Structure, Quick Start, Setting up development environment (+1 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.20
-Nodes (8): Exception, MigrationError, Raised when a migration fails to apply., Tests for the migration runner., Test MigrationError exception formatting., Test connection retry logic., Test the retry logic (mocked)., TestConnectionRetry
+Cohesion: 0.24
+Nodes (7): Exception, MigrationError, Raised when a migration fails to apply., Tests for the migration runner., Test connection retry logic., Test the retry logic (mocked)., TestConnectionRetry
 
 ### Community 31 - "Community 31"
-Cohesion: 0.25
-Nodes (5): Test successful migration application., Test error handling for bad migration SQL., Test the migration runner integration., Create a test migrations directory., TestMigrationRunner
+Cohesion: 0.20
+Nodes (6): Test successful migration application., Test error handling for bad migration SQL., Test MigrationError exception formatting., Test the migration runner integration., Create a test migrations directory., TestMigrationRunner
 
 ### Community 32 - "Community 32"
 Cohesion: 0.22
@@ -328,25 +334,45 @@ Nodes (3): Architectural Structure & Lifespan, Context & Constraints, Skill: Fas
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-001] Database Schema & Migration Runner
 
+### Community 66 - "Community 66"
+Cohesion: 0.05
+Nodes (24): Tests for shared/db.py., Test the query helper functions., Set up a mock pool for each test., Test fetch returns all rows., Test fetch_one returns a single row., Test fetch_one returns None when no rows., Test fetch_val returns a single value., Test execute returns status string. (+16 more)
+
+### Community 67 - "Community 67"
+Cohesion: 0.05
+Nodes (21): Tests for shared/config_loader.py., Test loading a valid YAML config file., Test that env vars are substituted in loaded config., Test that config is cached after first load., Test that malformed YAML raises an error., Test that shortcut functions call load_config correctly., Test environment variable substitution logic., Test basic ${VAR_NAME} substitution. (+13 more)
+
+### Community 68 - "Community 68"
+Cohesion: 0.13
+Nodes (25): Pool, Record, close_pool(), execute(), execute_many(), fetch(), fetch_one(), fetch_val() (+17 more)
+
+### Community 69 - "Community 69"
+Cohesion: 0.20
+Nodes (17): clear_cache(), get_backup_trends(), get_content_template(), get_platforms_config(), load_config(), Any, str, YAML config loader with ${ENV_VAR} substitution and caching. (+9 more)
+
+### Community 70 - "Community 70"
+Cohesion: 0.33
+Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
+
 ## Knowledge Gaps
-- **469 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+464 more)
+- **477 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+472 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `agent` connect `Community 54` to `Community 34`, `Community 36`, `Community 37`, `Community 38`, `Community 24`, `Community 28`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `run_migrations()` connect `Community 13` to `Community 26`, `Community 7`, `Community 30`, `Community 31`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `provider` connect `Community 18` to `Community 54`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **Why does `run_migrations()` connect `Community 7` to `Community 26`, `Community 13`, `Community 30`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `DatabaseTool` (e.g. with `example_basic_usage()` and `example_data_quality_check()`) actually correct?**
   _`DatabaseTool` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `$schema`, `instructions`, `id` to the rest of the system?**
-  _526 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _593 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06901960784313725 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0693815987933635 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.058823529411764705 - nodes in this community are weakly interconnected._
+- **Should `Community 2` be split into smaller, more focused modules?**
+  _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._

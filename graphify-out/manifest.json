@@ -1,7 +1,7 @@
 {
   "/workspaces/did-you-know/opencode.json": {
-    "mtime": 1780233321.8231895,
-    "ast_hash": "7c45bdc2bbcde8e3619f38857f9ee57b",
+    "mtime": 1780234324.7918196,
+    "ast_hash": "f8587512647e619b68e686276b07a71d",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/.devcontainer/devcontainer.json": {
@@ -164,11 +164,6 @@
     "ast_hash": "d8cacf58feec633e62d030d4763b51c6",
     "semantic_hash": ""
   },
-  "/workspaces/did-you-know/board/todo/TKT-002_shared_config_and_db_pool.md": {
-    "mtime": 1780215062.2000775,
-    "ast_hash": "e3819065e4267717912f06d7c4a6524f",
-    "semantic_hash": ""
-  },
   "/workspaces/did-you-know/board/todo/TKT-003_shared_pydantic_models.md": {
     "mtime": 1780215066.524815,
     "ast_hash": "b99a0319cd7dd8510674f68ca7a5addc",
@@ -297,6 +292,41 @@
   "/workspaces/did-you-know/board/done/TKT-001_database_schema_and_migration.md": {
     "mtime": 1780223389.1080084,
     "ast_hash": "061b7ba54a0d07ae2ae02f1bc751309f",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/shared/__init__.py": {
+    "mtime": 1780234462.9851878,
+    "ast_hash": "8f621cc3fab2b61f6a56ac1b5cf6c280",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/shared/config_loader.py": {
+    "mtime": 1780234469.6033864,
+    "ast_hash": "51f925c1757acfb3a772b12266027d04",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/shared/db.py": {
+    "mtime": 1780234476.5836418,
+    "ast_hash": "48927f892dbcfe497a8f15a9e7e54e39",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_config_loader.py": {
+    "mtime": 1780234488.347133,
+    "ast_hash": "323526e9e778b59a1e04d6aa1a619f18",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_db_pool.py": {
+    "mtime": 1780234588.5452247,
+    "ast_hash": "ac0a91ab3a4868b5ecdd537dfee4e0af",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/board/development/TKT-002_shared_config_and_db_pool.md": {
+    "mtime": 1780215062.2000775,
+    "ast_hash": "e3819065e4267717912f06d7c4a6524f",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/config/content_template.yaml": {
+    "mtime": 1780234461.8115628,
+    "ast_hash": "827acd43f84e7d4b0ad348a116187232",
     "semantic_hash": ""
   }
 }

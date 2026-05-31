@@ -166,10 +166,37 @@
       "norm_label": "id"
     },
     {
-      "label": "grok-4.1",
+      "label": "options",
+      "file_type": "code",
+      "source_file": "opencode.json",
+      "source_location": "L12",
+      "id": "did_you_know_opencode_deepseek_v4_flash_options",
+      "community": 18,
+      "norm_label": "options"
+    },
+    {
+      "label": "reasoning",
       "file_type": "code",
       "source_file": "opencode.json",
       "source_location": "L13",
+      "id": "did_you_know_opencode_options_reasoning",
+      "community": 18,
+      "norm_label": "reasoning"
+    },
+    {
+      "label": "effort",
+      "file_type": "code",
+      "source_file": "opencode.json",
+      "source_location": "L14",
+      "id": "did_you_know_opencode_reasoning_effort",
+      "community": 18,
+      "norm_label": "effort"
+    },
+    {
+      "label": "grok-4.1",
+      "file_type": "code",
+      "source_file": "opencode.json",
+      "source_location": "L17",
       "id": "did_you_know_opencode_models_grok_4_1",
       "community": 18,
       "norm_label": "grok-4.1"
@@ -178,7 +205,7 @@
       "label": "id",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L13",
+      "source_location": "L17",
       "id": "did_you_know_opencode_grok_4_1_id",
       "community": 18,
       "norm_label": "id"
@@ -187,7 +214,7 @@
       "label": "agent",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L17",
+      "source_location": "L21",
       "id": "did_you_know_opencode_agent",
       "community": 54,
       "norm_label": "agent"
@@ -196,7 +223,7 @@
       "label": "techlead",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L18",
+      "source_location": "L22",
       "id": "did_you_know_opencode_agent_techlead",
       "community": 34,
       "norm_label": "techlead"
@@ -205,7 +232,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L19",
+      "source_location": "L23",
       "id": "did_you_know_opencode_techlead_mode",
       "community": 34,
       "norm_label": "mode"
@@ -214,7 +241,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L20",
+      "source_location": "L24",
       "id": "did_you_know_opencode_techlead_model",
       "community": 34,
       "norm_label": "model"
@@ -223,7 +250,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L21",
+      "source_location": "L25",
       "id": "did_you_know_opencode_techlead_temperature",
       "community": 34,
       "norm_label": "temperature"
@@ -232,7 +259,7 @@
       "label": "top_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L22",
+      "source_location": "L26",
       "id": "did_you_know_opencode_techlead_top_p",
       "community": 34,
       "norm_label": "top_p"
@@ -241,7 +268,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L23",
+      "source_location": "L27",
       "id": "did_you_know_opencode_techlead_min_p",
       "community": 34,
       "norm_label": "min_p"
@@ -250,7 +277,7 @@
       "label": "maxTokens",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L24",
+      "source_location": "L28",
       "id": "did_you_know_opencode_techlead_maxtokens",
       "community": 34,
       "norm_label": "maxtokens"
@@ -259,7 +286,7 @@
       "label": "extra_body",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L25",
+      "source_location": "L29",
       "id": "did_you_know_opencode_techlead_extra_body",
       "community": 28,
       "norm_label": "extra_body"
@@ -268,7 +295,7 @@
       "label": "include_reasoning",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L26",
+      "source_location": "L30",
       "id": "did_you_know_opencode_extra_body_include_reasoning",
       "community": 28,
       "norm_label": "include_reasoning"
@@ -277,7 +304,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L28",
+      "source_location": "L32",
       "id": "did_you_know_opencode_techlead_prompt",
       "community": 34,
       "norm_label": "prompt"
@@ -286,7 +313,7 @@
       "label": "permission",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L29",
+      "source_location": "L33",
       "id": "did_you_know_opencode_techlead_permission",
       "community": 35,
       "norm_label": "permission"
@@ -295,7 +322,7 @@
       "label": "bash",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L30",
+      "source_location": "L34",
       "id": "did_you_know_opencode_permission_bash",
       "community": 39,
       "norm_label": "bash"
@@ -304,7 +331,7 @@
       "label": "*",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L31",
+      "source_location": "L35",
       "id": "did_you_know_opencode_bash",
       "community": 39,
       "norm_label": "*"
@@ -313,7 +340,7 @@
       "label": "git *",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L32",
+      "source_location": "L36",
       "id": "did_you_know_opencode_bash_git",
       "community": 39,
       "norm_label": "git *"
@@ -322,7 +349,7 @@
       "label": "ls *",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L33",
+      "source_location": "L37",
       "id": "did_you_know_opencode_bash_ls",
       "community": 39,
       "norm_label": "ls *"
@@ -331,7 +358,7 @@
       "label": "mv board/*",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L34",
+      "source_location": "L38",
       "id": "did_you_know_opencode_bash_mv_board",
       "community": 39,
       "norm_label": "mv board/*"
@@ -340,7 +367,7 @@
       "label": "cat board/*",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L35",
+      "source_location": "L39",
       "id": "did_you_know_opencode_bash_cat_board",
       "community": 39,
       "norm_label": "cat board/*"
@@ -349,7 +376,7 @@
       "label": "mkdir *",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L36",
+      "source_location": "L40",
       "id": "did_you_know_opencode_bash_mkdir",
       "community": 39,
       "norm_label": "mkdir *"
@@ -358,7 +385,7 @@
       "label": "write",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L38",
+      "source_location": "L42",
       "id": "did_you_know_opencode_permission_write",
       "community": 35,
       "norm_label": "write"
@@ -367,7 +394,7 @@
       "label": "*",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L39",
+      "source_location": "L43",
       "id": "did_you_know_opencode_write",
       "community": 35,
       "norm_label": "*"
@@ -376,7 +403,7 @@
       "label": "*.md",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L40",
+      "source_location": "L44",
       "id": "did_you_know_opencode_write_md",
       "community": 35,
       "norm_label": "*.md"
@@ -385,7 +412,7 @@
       "label": "edit",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L42",
+      "source_location": "L46",
       "id": "did_you_know_opencode_permission_edit",
       "community": 35,
       "norm_label": "edit"
@@ -394,7 +421,7 @@
       "label": "*",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L43",
+      "source_location": "L47",
       "id": "did_you_know_opencode_edit",
       "community": 35,
       "norm_label": "*"
@@ -403,7 +430,7 @@
       "label": "*.md",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L44",
+      "source_location": "L48",
       "id": "did_you_know_opencode_edit_md",
       "community": 35,
       "norm_label": "*.md"
@@ -412,7 +439,7 @@
       "label": "developer",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L48",
+      "source_location": "L52",
       "id": "did_you_know_opencode_agent_developer",
       "community": 24,
       "norm_label": "developer"
@@ -421,7 +448,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L49",
+      "source_location": "L53",
       "id": "did_you_know_opencode_developer_mode",
       "community": 24,
       "norm_label": "mode"
@@ -430,7 +457,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L50",
+      "source_location": "L54",
       "id": "did_you_know_opencode_developer_model",
       "community": 24,
       "norm_label": "model"
@@ -439,7 +466,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L51",
+      "source_location": "L55",
       "id": "did_you_know_opencode_developer_temperature",
       "community": 24,
       "norm_label": "temperature"
@@ -448,7 +475,7 @@
       "label": "top_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L52",
+      "source_location": "L56",
       "id": "did_you_know_opencode_developer_top_p",
       "community": 24,
       "norm_label": "top_p"
@@ -457,7 +484,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L53",
+      "source_location": "L57",
       "id": "did_you_know_opencode_developer_min_p",
       "community": 24,
       "norm_label": "min_p"
@@ -466,7 +493,7 @@
       "label": "maxTokens",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L54",
+      "source_location": "L58",
       "id": "did_you_know_opencode_developer_maxtokens",
       "community": 24,
       "norm_label": "maxtokens"
@@ -475,7 +502,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L55",
+      "source_location": "L59",
       "id": "did_you_know_opencode_developer_prompt",
       "community": 24,
       "norm_label": "prompt"
@@ -484,7 +511,7 @@
       "label": "permissions",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L56",
+      "source_location": "L60",
       "id": "did_you_know_opencode_developer_permissions",
       "community": 24,
       "norm_label": "permissions"
@@ -493,7 +520,7 @@
       "label": "bash",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L57",
+      "source_location": "L61",
       "id": "did_you_know_opencode_permissions_bash",
       "community": 24,
       "norm_label": "bash"
@@ -502,7 +529,7 @@
       "label": "write",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L58",
+      "source_location": "L62",
       "id": "did_you_know_opencode_permissions_write",
       "community": 24,
       "norm_label": "write"
@@ -511,7 +538,7 @@
       "label": "edit",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L59",
+      "source_location": "L63",
       "id": "did_you_know_opencode_permissions_edit",
       "community": 24,
       "norm_label": "edit"
@@ -520,7 +547,7 @@
       "label": "architect",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L62",
+      "source_location": "L66",
       "id": "did_you_know_opencode_agent_architect",
       "community": 28,
       "norm_label": "architect"
@@ -529,7 +556,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L63",
+      "source_location": "L67",
       "id": "did_you_know_opencode_architect_mode",
       "community": 28,
       "norm_label": "mode"
@@ -538,7 +565,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L64",
+      "source_location": "L68",
       "id": "did_you_know_opencode_architect_model",
       "community": 28,
       "norm_label": "model"
@@ -547,7 +574,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L65",
+      "source_location": "L69",
       "id": "did_you_know_opencode_architect_temperature",
       "community": 28,
       "norm_label": "temperature"
@@ -556,7 +583,7 @@
       "label": "top_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L66",
+      "source_location": "L70",
       "id": "did_you_know_opencode_architect_top_p",
       "community": 28,
       "norm_label": "top_p"
@@ -565,7 +592,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L67",
+      "source_location": "L71",
       "id": "did_you_know_opencode_architect_min_p",
       "community": 28,
       "norm_label": "min_p"
@@ -574,7 +601,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L68",
+      "source_location": "L72",
       "id": "did_you_know_opencode_architect_prompt",
       "community": 28,
       "norm_label": "prompt"
@@ -583,7 +610,7 @@
       "label": "extra_body",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L69",
+      "source_location": "L73",
       "id": "did_you_know_opencode_architect_extra_body",
       "community": 28,
       "norm_label": "extra_body"
@@ -592,7 +619,7 @@
       "label": "permission",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L72",
+      "source_location": "L76",
       "id": "did_you_know_opencode_architect_permission",
       "community": 35,
       "norm_label": "permission"
@@ -601,7 +628,7 @@
       "label": "qa",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L84",
+      "source_location": "L88",
       "id": "did_you_know_opencode_agent_qa",
       "community": 36,
       "norm_label": "qa"
@@ -610,7 +637,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L85",
+      "source_location": "L89",
       "id": "did_you_know_opencode_qa_mode",
       "community": 36,
       "norm_label": "mode"
@@ -619,7 +646,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L86",
+      "source_location": "L90",
       "id": "did_you_know_opencode_qa_model",
       "community": 36,
       "norm_label": "model"
@@ -628,7 +655,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L87",
+      "source_location": "L91",
       "id": "did_you_know_opencode_qa_temperature",
       "community": 36,
       "norm_label": "temperature"
@@ -637,7 +664,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L88",
+      "source_location": "L92",
       "id": "did_you_know_opencode_qa_min_p",
       "community": 36,
       "norm_label": "min_p"
@@ -646,7 +673,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L89",
+      "source_location": "L93",
       "id": "did_you_know_opencode_qa_prompt",
       "community": 36,
       "norm_label": "prompt"
@@ -655,7 +682,7 @@
       "label": "permission",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L90",
+      "source_location": "L94",
       "id": "did_you_know_opencode_qa_permission",
       "community": 36,
       "norm_label": "permission"
@@ -664,7 +691,7 @@
       "label": "writer",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L94",
+      "source_location": "L98",
       "id": "did_you_know_opencode_agent_writer",
       "community": 38,
       "norm_label": "writer"
@@ -673,7 +700,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L95",
+      "source_location": "L99",
       "id": "did_you_know_opencode_writer_mode",
       "community": 38,
       "norm_label": "mode"
@@ -682,7 +709,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L96",
+      "source_location": "L100",
       "id": "did_you_know_opencode_writer_model",
       "community": 38,
       "norm_label": "model"
@@ -691,7 +718,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L97",
+      "source_location": "L101",
       "id": "did_you_know_opencode_writer_temperature",
       "community": 38,
       "norm_label": "temperature"
@@ -700,7 +727,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L98",
+      "source_location": "L102",
       "id": "did_you_know_opencode_writer_min_p",
       "community": 38,
       "norm_label": "min_p"
@@ -709,7 +736,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L99",
+      "source_location": "L103",
       "id": "did_you_know_opencode_writer_prompt",
       "community": 38,
       "norm_label": "prompt"
@@ -718,7 +745,7 @@
       "label": "permission",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L100",
+      "source_location": "L104",
       "id": "did_you_know_opencode_writer_permission",
       "community": 38,
       "norm_label": "permission"
@@ -727,7 +754,7 @@
       "label": "reviewer",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L112",
+      "source_location": "L116",
       "id": "did_you_know_opencode_agent_reviewer",
       "community": 37,
       "norm_label": "reviewer"
@@ -736,7 +763,7 @@
       "label": "mode",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L113",
+      "source_location": "L117",
       "id": "did_you_know_opencode_reviewer_mode",
       "community": 37,
       "norm_label": "mode"
@@ -745,7 +772,7 @@
       "label": "model",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L114",
+      "source_location": "L118",
       "id": "did_you_know_opencode_reviewer_model",
       "community": 37,
       "norm_label": "model"
@@ -754,7 +781,7 @@
       "label": "temperature",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L115",
+      "source_location": "L119",
       "id": "did_you_know_opencode_reviewer_temperature",
       "community": 37,
       "norm_label": "temperature"
@@ -763,7 +790,7 @@
       "label": "min_p",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L116",
+      "source_location": "L120",
       "id": "did_you_know_opencode_reviewer_min_p",
       "community": 37,
       "norm_label": "min_p"
@@ -772,7 +799,7 @@
       "label": "prompt",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L117",
+      "source_location": "L121",
       "id": "did_you_know_opencode_reviewer_prompt",
       "community": 37,
       "norm_label": "prompt"
@@ -781,7 +808,7 @@
       "label": "permission",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L118",
+      "source_location": "L122",
       "id": "did_you_know_opencode_reviewer_permission",
       "community": 37,
       "norm_label": "permission"
@@ -790,7 +817,7 @@
       "label": "plugin",
       "file_type": "code",
       "source_file": "opencode.json",
-      "source_location": "L131",
+      "source_location": "L135",
       "id": "did_you_know_opencode_plugin",
       "community": 54,
       "norm_label": "plugin"
@@ -971,7 +998,7 @@
       "file_type": "code",
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L218",
-      "id": "any",
+      "id": "opencode_tools_database_tool_py_any",
       "community": 0,
       "norm_label": "any"
     },
@@ -1354,6 +1381,420 @@
       "norm_label": "global:prompt()"
     },
     {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "shared/__init__.py",
+      "source_location": "L1",
+      "id": "shared_init_py",
+      "community": 71,
+      "norm_label": "__init__.py"
+    },
+    {
+      "label": "did-you-know shared utilities.  Provides: - config_loader: YAML config loading w",
+      "file_type": "rationale",
+      "source_file": "shared/__init__.py",
+      "source_location": "L1",
+      "id": "shared_init_rationale_1",
+      "community": 71,
+      "norm_label": "did-you-know shared utilities.  provides: - config_loader: yaml config loading w"
+    },
+    {
+      "label": "config_loader.py",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L1",
+      "id": "shared_config_loader_py",
+      "community": 69,
+      "norm_label": "config_loader.py"
+    },
+    {
+      "label": "_substitute_env_vars()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L20",
+      "id": "shared_config_loader_substitute_env_vars",
+      "community": 69,
+      "norm_label": "_substitute_env_vars()"
+    },
+    {
+      "label": "str",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L20",
+      "id": "shared_config_loader_py_str",
+      "community": 69,
+      "norm_label": "str"
+    },
+    {
+      "label": "_substitute_recursively()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L40",
+      "id": "shared_config_loader_substitute_recursively",
+      "community": 69,
+      "norm_label": "_substitute_recursively()"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L40",
+      "id": "shared_config_loader_py_any",
+      "community": 69,
+      "norm_label": "any"
+    },
+    {
+      "label": "load_config()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L51",
+      "id": "shared_config_loader_load_config",
+      "community": 69,
+      "norm_label": "load_config()"
+    },
+    {
+      "label": "get_content_template()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L84",
+      "id": "shared_config_loader_get_content_template",
+      "community": 69,
+      "norm_label": "get_content_template()"
+    },
+    {
+      "label": "get_platforms_config()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L89",
+      "id": "shared_config_loader_get_platforms_config",
+      "community": 69,
+      "norm_label": "get_platforms_config()"
+    },
+    {
+      "label": "get_backup_trends()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L94",
+      "id": "shared_config_loader_get_backup_trends",
+      "community": 69,
+      "norm_label": "get_backup_trends()"
+    },
+    {
+      "label": "clear_cache()",
+      "file_type": "code",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L99",
+      "id": "shared_config_loader_clear_cache",
+      "community": 69,
+      "norm_label": "clear_cache()"
+    },
+    {
+      "label": "YAML config loader with ${ENV_VAR} substitution and caching.",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L1",
+      "id": "shared_config_loader_rationale_1",
+      "community": 69,
+      "norm_label": "yaml config loader with ${env_var} substitution and caching."
+    },
+    {
+      "label": "Replace ${VAR_NAME} and ${VAR_NAME:default} patterns with env var values.      I",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L21",
+      "id": "shared_config_loader_rationale_21",
+      "community": 69,
+      "norm_label": "replace ${var_name} and ${var_name:default} patterns with env var values.      i"
+    },
+    {
+      "label": "Walk a nested structure and substitute env vars in all string values.",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L41",
+      "id": "shared_config_loader_rationale_41",
+      "community": 69,
+      "norm_label": "walk a nested structure and substitute env vars in all string values."
+    },
+    {
+      "label": "Load a YAML config file by name (without .yaml extension).      Args:         na",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L52",
+      "id": "shared_config_loader_rationale_52",
+      "community": 69,
+      "norm_label": "load a yaml config file by name (without .yaml extension).      args:         na"
+    },
+    {
+      "label": "Shortcut for load_config('content_template').",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L85",
+      "id": "shared_config_loader_rationale_85",
+      "community": 69,
+      "norm_label": "shortcut for load_config('content_template')."
+    },
+    {
+      "label": "Shortcut for load_config('platforms').",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L90",
+      "id": "shared_config_loader_rationale_90",
+      "community": 69,
+      "norm_label": "shortcut for load_config('platforms')."
+    },
+    {
+      "label": "Shortcut for load_config('backup_trends').",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L95",
+      "id": "shared_config_loader_rationale_95",
+      "community": 69,
+      "norm_label": "shortcut for load_config('backup_trends')."
+    },
+    {
+      "label": "Clear the config cache (useful in tests).",
+      "file_type": "rationale",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L100",
+      "id": "shared_config_loader_rationale_100",
+      "community": 69,
+      "norm_label": "clear the config cache (useful in tests)."
+    },
+    {
+      "label": "db.py",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L1",
+      "id": "shared_db_py",
+      "community": 68,
+      "norm_label": "db.py"
+    },
+    {
+      "label": "init_pool()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "id": "shared_db_init_pool",
+      "community": 68,
+      "norm_label": "init_pool()"
+    },
+    {
+      "label": "str",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "id": "shared_db_py_str",
+      "community": 68,
+      "norm_label": "str"
+    },
+    {
+      "label": "int",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "id": "shared_db_py_int",
+      "community": 68,
+      "norm_label": "int"
+    },
+    {
+      "label": "close_pool()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L60",
+      "id": "shared_db_close_pool",
+      "community": 68,
+      "norm_label": "close_pool()"
+    },
+    {
+      "label": "get_pool()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L72",
+      "id": "shared_db_get_pool",
+      "community": 68,
+      "norm_label": "get_pool()"
+    },
+    {
+      "label": "Pool",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L72",
+      "id": "pool",
+      "community": 68,
+      "norm_label": "pool"
+    },
+    {
+      "label": "fetch()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "id": "shared_db_fetch",
+      "community": 68,
+      "norm_label": "fetch()"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "id": "shared_db_py_any",
+      "community": 68,
+      "norm_label": "any"
+    },
+    {
+      "label": "Record",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "id": "record",
+      "community": 68,
+      "norm_label": "record"
+    },
+    {
+      "label": "fetch_one()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L96",
+      "id": "shared_db_fetch_one",
+      "community": 68,
+      "norm_label": "fetch_one()"
+    },
+    {
+      "label": "fetch_val()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L103",
+      "id": "shared_db_fetch_val",
+      "community": 68,
+      "norm_label": "fetch_val()"
+    },
+    {
+      "label": "execute()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L114",
+      "id": "shared_db_execute",
+      "community": 68,
+      "norm_label": "execute()"
+    },
+    {
+      "label": "execute_many()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L125",
+      "id": "shared_db_execute_many",
+      "community": 68,
+      "norm_label": "execute_many()"
+    },
+    {
+      "label": "transaction()",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L133",
+      "id": "shared_db_transaction",
+      "community": 68,
+      "norm_label": "transaction()"
+    },
+    {
+      "label": "Connection",
+      "file_type": "code",
+      "source_file": "shared/db.py",
+      "source_location": "L133",
+      "id": "shared_db_py_connection",
+      "community": 68,
+      "norm_label": "connection"
+    },
+    {
+      "label": "Async PostgreSQL connection pool with high-level query helpers.",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L1",
+      "id": "shared_db_rationale_1",
+      "community": 68,
+      "norm_label": "async postgresql connection pool with high-level query helpers."
+    },
+    {
+      "label": "Initialize the connection pool.      Args:         dsn: PostgreSQL connection st",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L22",
+      "id": "shared_db_rationale_22",
+      "community": 68,
+      "norm_label": "initialize the connection pool.      args:         dsn: postgresql connection st"
+    },
+    {
+      "label": "Close the connection pool gracefully.",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L61",
+      "id": "shared_db_rationale_61",
+      "community": 68,
+      "norm_label": "close the connection pool gracefully."
+    },
+    {
+      "label": "Get the active connection pool.      Raises:         RuntimeError: If the pool h",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L73",
+      "id": "shared_db_rationale_73",
+      "community": 68,
+      "norm_label": "get the active connection pool.      raises:         runtimeerror: if the pool h"
+    },
+    {
+      "label": "Execute a SELECT query and return all rows.      Returns:         List of asyncp",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L86",
+      "id": "shared_db_rationale_86",
+      "community": 68,
+      "norm_label": "execute a select query and return all rows.      returns:         list of asyncp"
+    },
+    {
+      "label": "Execute a SELECT query and return a single row or None.",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L97",
+      "id": "shared_db_rationale_97",
+      "community": 68,
+      "norm_label": "execute a select query and return a single row or none."
+    },
+    {
+      "label": "Execute a query and return the first column of the first row.      Returns:",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L104",
+      "id": "shared_db_rationale_104",
+      "community": 68,
+      "norm_label": "execute a query and return the first column of the first row.      returns:"
+    },
+    {
+      "label": "Execute an INSERT/UPDATE/DELETE query.      Returns:         Status string (e.g.",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L115",
+      "id": "shared_db_rationale_115",
+      "community": 68,
+      "norm_label": "execute an insert/update/delete query.      returns:         status string (e.g."
+    },
+    {
+      "label": "Execute a query with multiple parameter sets (batch insert/update).",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L126",
+      "id": "shared_db_rationale_126",
+      "community": 68,
+      "norm_label": "execute a query with multiple parameter sets (batch insert/update)."
+    },
+    {
+      "label": "Context manager for database transactions.      Usage:         async with db.tra",
+      "file_type": "rationale",
+      "source_file": "shared/db.py",
+      "source_location": "L134",
+      "id": "shared_db_rationale_134",
+      "community": 68,
+      "norm_label": "context manager for database transactions.      usage:         async with db.tra"
+    },
+    {
       "label": "migrate.py",
       "file_type": "code",
       "source_file": "shared/migrate.py",
@@ -1413,7 +1854,7 @@
       "source_file": "shared/migrate.py",
       "source_location": "L20",
       "id": "shared_migrate_run_migrations",
-      "community": 13,
+      "community": 7,
       "norm_label": "run_migrations()"
     },
     {
@@ -1448,7 +1889,7 @@
       "file_type": "code",
       "source_file": "shared/migrate.py",
       "source_location": "L144",
-      "id": "connection",
+      "id": "shared_migrate_py_connection",
       "community": 13,
       "norm_label": "connection"
     },
@@ -1512,7 +1953,7 @@
       "source_file": "shared/migrate.py",
       "source_location": "L21",
       "id": "shared_migrate_rationale_21",
-      "community": 13,
+      "community": 7,
       "norm_label": "run all pending migrations.          args:         dsn: postgresql connection st"
     },
     {
@@ -1568,6 +2009,735 @@
       "id": "shared_migrate_rationale_185",
       "community": 13,
       "norm_label": "get database_url from environment with fallback."
+    },
+    {
+      "label": "test_config_loader.py",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L1",
+      "id": "tests_test_config_loader_py",
+      "community": 67,
+      "norm_label": "test_config_loader.py"
+    },
+    {
+      "label": "TestEnvVarSubstitution",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L17",
+      "id": "tests_test_config_loader_testenvvarsubstitution",
+      "community": 67,
+      "norm_label": "testenvvarsubstitution"
+    },
+    {
+      "label": ".test_simple_substitution()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L20",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution",
+      "community": 67,
+      "norm_label": ".test_simple_substitution()"
+    },
+    {
+      "label": ".test_substitution_in_string()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L26",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string",
+      "community": 67,
+      "norm_label": ".test_substitution_in_string()"
+    },
+    {
+      "label": ".test_missing_var_keeps_literal()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L32",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal",
+      "community": 67,
+      "norm_label": ".test_missing_var_keeps_literal()"
+    },
+    {
+      "label": ".test_multiple_vars()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L38",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars",
+      "community": 67,
+      "norm_label": ".test_multiple_vars()"
+    },
+    {
+      "label": ".test_default_value()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L44",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_default_value",
+      "community": 67,
+      "norm_label": ".test_default_value()"
+    },
+    {
+      "label": ".test_default_with_existing_var()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L50",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var",
+      "community": 67,
+      "norm_label": ".test_default_with_existing_var()"
+    },
+    {
+      "label": ".test_non_string_passthrough()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L56",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough",
+      "community": 67,
+      "norm_label": ".test_non_string_passthrough()"
+    },
+    {
+      "label": ".test_nested_dict_substitution()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L65",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution",
+      "community": 67,
+      "norm_label": ".test_nested_dict_substitution()"
+    },
+    {
+      "label": ".test_list_substitution()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L80",
+      "id": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution",
+      "community": 67,
+      "norm_label": ".test_list_substitution()"
+    },
+    {
+      "label": "TestConfigLoader",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L88",
+      "id": "tests_test_config_loader_testconfigloader",
+      "community": 67,
+      "norm_label": "testconfigloader"
+    },
+    {
+      "label": ".test_load_nonexistent_file()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L91",
+      "id": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file",
+      "community": 67,
+      "norm_label": ".test_load_nonexistent_file()"
+    },
+    {
+      "label": ".test_load_empty_yaml()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L96",
+      "id": "tests_test_config_loader_testconfigloader_test_load_empty_yaml",
+      "community": 67,
+      "norm_label": ".test_load_empty_yaml()"
+    },
+    {
+      "label": ".test_load_valid_config()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L108",
+      "id": "tests_test_config_loader_testconfigloader_test_load_valid_config",
+      "community": 67,
+      "norm_label": ".test_load_valid_config()"
+    },
+    {
+      "label": ".test_config_with_env_substitution()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L119",
+      "id": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution",
+      "community": 67,
+      "norm_label": ".test_config_with_env_substitution()"
+    },
+    {
+      "label": ".test_caching_behaviour()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L131",
+      "id": "tests_test_config_loader_testconfigloader_test_caching_behaviour",
+      "community": 67,
+      "norm_label": ".test_caching_behaviour()"
+    },
+    {
+      "label": ".test_bad_yaml_syntax()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L151",
+      "id": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax",
+      "community": 67,
+      "norm_label": ".test_bad_yaml_syntax()"
+    },
+    {
+      "label": ".test_shortcut_functions()",
+      "file_type": "code",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L162",
+      "id": "tests_test_config_loader_testconfigloader_test_shortcut_functions",
+      "community": 67,
+      "norm_label": ".test_shortcut_functions()"
+    },
+    {
+      "label": "Tests for shared/config_loader.py.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L1",
+      "id": "tests_test_config_loader_rationale_1",
+      "community": 67,
+      "norm_label": "tests for shared/config_loader.py."
+    },
+    {
+      "label": "Test environment variable substitution logic.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L18",
+      "id": "tests_test_config_loader_rationale_18",
+      "community": 67,
+      "norm_label": "test environment variable substitution logic."
+    },
+    {
+      "label": "Test basic ${VAR_NAME} substitution.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L21",
+      "id": "tests_test_config_loader_rationale_21",
+      "community": 67,
+      "norm_label": "test basic ${var_name} substitution."
+    },
+    {
+      "label": "Test substitution within a larger string.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L27",
+      "id": "tests_test_config_loader_rationale_27",
+      "community": 67,
+      "norm_label": "test substitution within a larger string."
+    },
+    {
+      "label": "Test that missing env vars keep the literal pattern.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L33",
+      "id": "tests_test_config_loader_rationale_33",
+      "community": 67,
+      "norm_label": "test that missing env vars keep the literal pattern."
+    },
+    {
+      "label": "Test multiple env vars in one string.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L39",
+      "id": "tests_test_config_loader_rationale_39",
+      "community": 67,
+      "norm_label": "test multiple env vars in one string."
+    },
+    {
+      "label": "Test ${VAR:default} syntax.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L45",
+      "id": "tests_test_config_loader_rationale_45",
+      "community": 67,
+      "norm_label": "test ${var:default} syntax."
+    },
+    {
+      "label": "Test default is ignored when env var exists.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L51",
+      "id": "tests_test_config_loader_rationale_51",
+      "community": 67,
+      "norm_label": "test default is ignored when env var exists."
+    },
+    {
+      "label": "Test that non-string values pass through unchanged.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L57",
+      "id": "tests_test_config_loader_rationale_57",
+      "community": 67,
+      "norm_label": "test that non-string values pass through unchanged."
+    },
+    {
+      "label": "Test recursive substitution in nested dicts.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L66",
+      "id": "tests_test_config_loader_rationale_66",
+      "community": 67,
+      "norm_label": "test recursive substitution in nested dicts."
+    },
+    {
+      "label": "Test recursive substitution in lists.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L81",
+      "id": "tests_test_config_loader_rationale_81",
+      "community": 67,
+      "norm_label": "test recursive substitution in lists."
+    },
+    {
+      "label": "Test YAML config loading.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L89",
+      "id": "tests_test_config_loader_rationale_89",
+      "community": 67,
+      "norm_label": "test yaml config loading."
+    },
+    {
+      "label": "Test that loading a missing file raises FileNotFoundError.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L92",
+      "id": "tests_test_config_loader_rationale_92",
+      "community": 67,
+      "norm_label": "test that loading a missing file raises filenotfounderror."
+    },
+    {
+      "label": "Test loading an empty or comment-only YAML file.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L97",
+      "id": "tests_test_config_loader_rationale_97",
+      "community": 67,
+      "norm_label": "test loading an empty or comment-only yaml file."
+    },
+    {
+      "label": "Test loading a valid YAML config file.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L109",
+      "id": "tests_test_config_loader_rationale_109",
+      "community": 67,
+      "norm_label": "test loading a valid yaml config file."
+    },
+    {
+      "label": "Test that env vars are substituted in loaded config.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L120",
+      "id": "tests_test_config_loader_rationale_120",
+      "community": 67,
+      "norm_label": "test that env vars are substituted in loaded config."
+    },
+    {
+      "label": "Test that config is cached after first load.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L132",
+      "id": "tests_test_config_loader_rationale_132",
+      "community": 67,
+      "norm_label": "test that config is cached after first load."
+    },
+    {
+      "label": "Test that malformed YAML raises an error.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L152",
+      "id": "tests_test_config_loader_rationale_152",
+      "community": 67,
+      "norm_label": "test that malformed yaml raises an error."
+    },
+    {
+      "label": "Test that shortcut functions call load_config correctly.",
+      "file_type": "rationale",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L163",
+      "id": "tests_test_config_loader_rationale_163",
+      "community": 67,
+      "norm_label": "test that shortcut functions call load_config correctly."
+    },
+    {
+      "label": "test_db_pool.py",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L1",
+      "id": "tests_test_db_pool_py",
+      "community": 66,
+      "norm_label": "test_db_pool.py"
+    },
+    {
+      "label": "TestDbPoolInit",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L15",
+      "id": "tests_test_db_pool_testdbpoolinit",
+      "community": 66,
+      "norm_label": "testdbpoolinit"
+    },
+    {
+      "label": ".test_init_pool_no_dsn()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L18",
+      "id": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn",
+      "community": 66,
+      "norm_label": ".test_init_pool_no_dsn()"
+    },
+    {
+      "label": ".test_init_pool_explicit_dsn()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L24",
+      "id": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn",
+      "community": 66,
+      "norm_label": ".test_init_pool_explicit_dsn()"
+    },
+    {
+      "label": ".test_init_pool_from_env()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L40",
+      "id": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env",
+      "community": 66,
+      "norm_label": ".test_init_pool_from_env()"
+    },
+    {
+      "label": ".test_reinitialize_pool()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L52",
+      "id": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool",
+      "community": 66,
+      "norm_label": ".test_reinitialize_pool()"
+    },
+    {
+      "label": ".test_get_pool_not_initialized()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L64",
+      "id": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized",
+      "community": 66,
+      "norm_label": ".test_get_pool_not_initialized()"
+    },
+    {
+      "label": ".test_close_pool_not_initialized()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L70",
+      "id": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized",
+      "community": 66,
+      "norm_label": ".test_close_pool_not_initialized()"
+    },
+    {
+      "label": ".test_full_lifecycle()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L76",
+      "id": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle",
+      "community": 66,
+      "norm_label": ".test_full_lifecycle()"
+    },
+    {
+      "label": "TestDbQueryHelpers",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L104",
+      "id": "tests_test_db_pool_testdbqueryhelpers",
+      "community": 66,
+      "norm_label": "testdbqueryhelpers"
+    },
+    {
+      "label": ".setup_pool()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L108",
+      "id": "tests_test_db_pool_testdbqueryhelpers_setup_pool",
+      "community": 66,
+      "norm_label": ".setup_pool()"
+    },
+    {
+      "label": ".test_fetch()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L125",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_fetch",
+      "community": 66,
+      "norm_label": ".test_fetch()"
+    },
+    {
+      "label": ".test_fetch_one()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L132",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one",
+      "community": 66,
+      "norm_label": ".test_fetch_one()"
+    },
+    {
+      "label": ".test_fetch_one_none()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L139",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none",
+      "community": 66,
+      "norm_label": ".test_fetch_one_none()"
+    },
+    {
+      "label": ".test_fetch_val()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L145",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val",
+      "community": 66,
+      "norm_label": ".test_fetch_val()"
+    },
+    {
+      "label": ".test_execute()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L152",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_execute",
+      "community": 66,
+      "norm_label": ".test_execute()"
+    },
+    {
+      "label": ".test_execute_many()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L159",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_execute_many",
+      "community": 66,
+      "norm_label": ".test_execute_many()"
+    },
+    {
+      "label": ".test_fetch_with_args()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L165",
+      "id": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args",
+      "community": 66,
+      "norm_label": ".test_fetch_with_args()"
+    },
+    {
+      "label": "TestDbTransaction",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L174",
+      "id": "tests_test_db_pool_testdbtransaction",
+      "community": 66,
+      "norm_label": "testdbtransaction"
+    },
+    {
+      "label": ".setup_pool()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L178",
+      "id": "tests_test_db_pool_testdbtransaction_setup_pool",
+      "community": 66,
+      "norm_label": ".setup_pool()"
+    },
+    {
+      "label": ".test_transaction_commit()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L199",
+      "id": "tests_test_db_pool_testdbtransaction_test_transaction_commit",
+      "community": 66,
+      "norm_label": ".test_transaction_commit()"
+    },
+    {
+      "label": ".test_transaction_rollback()",
+      "file_type": "code",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L206",
+      "id": "tests_test_db_pool_testdbtransaction_test_transaction_rollback",
+      "community": 66,
+      "norm_label": ".test_transaction_rollback()"
+    },
+    {
+      "label": "Tests for shared/db.py.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L1",
+      "id": "tests_test_db_pool_rationale_1",
+      "community": 66,
+      "norm_label": "tests for shared/db.py."
+    },
+    {
+      "label": "Test pool initialization and teardown.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L16",
+      "id": "tests_test_db_pool_rationale_16",
+      "community": 66,
+      "norm_label": "test pool initialization and teardown."
+    },
+    {
+      "label": "Test that init_pool raises ValueError without DSN.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L19",
+      "id": "tests_test_db_pool_rationale_19",
+      "community": 66,
+      "norm_label": "test that init_pool raises valueerror without dsn."
+    },
+    {
+      "label": "Test that init_pool accepts an explicit DSN.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L25",
+      "id": "tests_test_db_pool_rationale_25",
+      "community": 66,
+      "norm_label": "test that init_pool accepts an explicit dsn."
+    },
+    {
+      "label": "Test that init_pool reads DATABASE_URL from env.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L41",
+      "id": "tests_test_db_pool_rationale_41",
+      "community": 66,
+      "norm_label": "test that init_pool reads database_url from env."
+    },
+    {
+      "label": "Test that re-initializing closes the old pool.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L53",
+      "id": "tests_test_db_pool_rationale_53",
+      "community": 66,
+      "norm_label": "test that re-initializing closes the old pool."
+    },
+    {
+      "label": "Test that get_pool raises RuntimeError before init.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L65",
+      "id": "tests_test_db_pool_rationale_65",
+      "community": 66,
+      "norm_label": "test that get_pool raises runtimeerror before init."
+    },
+    {
+      "label": "Test that close_pool handles None gracefully.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L71",
+      "id": "tests_test_db_pool_rationale_71",
+      "community": 66,
+      "norm_label": "test that close_pool handles none gracefully."
+    },
+    {
+      "label": "Test the full init \u2192 query \u2192 close lifecycle.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L77",
+      "id": "tests_test_db_pool_rationale_77",
+      "community": 66,
+      "norm_label": "test the full init \u2192 query \u2192 close lifecycle."
+    },
+    {
+      "label": "Test the query helper functions.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L105",
+      "id": "tests_test_db_pool_rationale_105",
+      "community": 66,
+      "norm_label": "test the query helper functions."
+    },
+    {
+      "label": "Set up a mock pool for each test.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L109",
+      "id": "tests_test_db_pool_rationale_109",
+      "community": 66,
+      "norm_label": "set up a mock pool for each test."
+    },
+    {
+      "label": "Test fetch returns all rows.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L126",
+      "id": "tests_test_db_pool_rationale_126",
+      "community": 66,
+      "norm_label": "test fetch returns all rows."
+    },
+    {
+      "label": "Test fetch_one returns a single row.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L133",
+      "id": "tests_test_db_pool_rationale_133",
+      "community": 66,
+      "norm_label": "test fetch_one returns a single row."
+    },
+    {
+      "label": "Test fetch_one returns None when no rows.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L140",
+      "id": "tests_test_db_pool_rationale_140",
+      "community": 66,
+      "norm_label": "test fetch_one returns none when no rows."
+    },
+    {
+      "label": "Test fetch_val returns a single value.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L146",
+      "id": "tests_test_db_pool_rationale_146",
+      "community": 66,
+      "norm_label": "test fetch_val returns a single value."
+    },
+    {
+      "label": "Test execute returns status string.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L153",
+      "id": "tests_test_db_pool_rationale_153",
+      "community": 66,
+      "norm_label": "test execute returns status string."
+    },
+    {
+      "label": "Test execute_many with multiple parameter sets.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L160",
+      "id": "tests_test_db_pool_rationale_160",
+      "community": 66,
+      "norm_label": "test execute_many with multiple parameter sets."
+    },
+    {
+      "label": "Test fetch with parameters.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L166",
+      "id": "tests_test_db_pool_rationale_166",
+      "community": 66,
+      "norm_label": "test fetch with parameters."
+    },
+    {
+      "label": "Test the transaction context manager.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L175",
+      "id": "tests_test_db_pool_rationale_175",
+      "community": 66,
+      "norm_label": "test the transaction context manager."
+    },
+    {
+      "label": "Test that transaction commits on success.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L200",
+      "id": "tests_test_db_pool_rationale_200",
+      "community": 66,
+      "norm_label": "test that transaction commits on success."
+    },
+    {
+      "label": "Test that transaction rolls back on exception.",
+      "file_type": "rationale",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L207",
+      "id": "tests_test_db_pool_rationale_207",
+      "community": 66,
+      "norm_label": "test that transaction rolls back on exception."
     },
     {
       "label": "test_migrate.py",
@@ -1665,7 +2835,7 @@
       "source_file": "tests/test_migrate.py",
       "source_location": "L184",
       "id": "tests_test_migrate_testmigrationrunner_test_migration_error_class",
-      "community": 30,
+      "community": 31,
       "norm_label": ".test_migration_error_class()"
     },
     {
@@ -1782,7 +2952,7 @@
       "source_file": "tests/test_migrate.py",
       "source_location": "L185",
       "id": "tests_test_migrate_rationale_185",
-      "community": 30,
+      "community": 31,
       "norm_label": "test migrationerror exception formatting."
     },
     {
@@ -3901,6 +5071,60 @@
       "norm_label": "migration from old version"
     },
     {
+      "label": "TKT-002_shared_config_and_db_pool.md",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L1",
+      "id": "board_development_tkt_002_shared_config_and_db_pool_md",
+      "community": 70,
+      "norm_label": "tkt-002_shared_config_and_db_pool.md"
+    },
+    {
+      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "id": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "community": 70,
+      "norm_label": "[tkt-002] shared config loader & db connection pool"
+    },
+    {
+      "label": "Description",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "id": "development_tkt_002_shared_config_and_db_pool_description",
+      "community": 70,
+      "norm_label": "description"
+    },
+    {
+      "label": "Dependencies",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "id": "development_tkt_002_shared_config_and_db_pool_dependencies",
+      "community": 70,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "Technical Specification",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "id": "development_tkt_002_shared_config_and_db_pool_technical_specification",
+      "community": 70,
+      "norm_label": "technical specification"
+    },
+    {
+      "label": "Tasks",
+      "file_type": "document",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "id": "development_tkt_002_shared_config_and_db_pool_tasks",
+      "community": 70,
+      "norm_label": "tasks"
+    },
+    {
       "label": "TKT-001_database_schema_and_migration.md",
       "file_type": "document",
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
@@ -3952,60 +5176,6 @@
       "source_location": "L93",
       "id": "done_tkt_001_database_schema_and_migration_tasks",
       "community": 65,
-      "norm_label": "tasks"
-    },
-    {
-      "label": "TKT-002_shared_config_and_db_pool.md",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L1",
-      "id": "board_todo_tkt_002_shared_config_and_db_pool_md",
-      "community": 43,
-      "norm_label": "tkt-002_shared_config_and_db_pool.md"
-    },
-    {
-      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L21",
-      "id": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "community": 43,
-      "norm_label": "[tkt-002] shared config loader & db connection pool"
-    },
-    {
-      "label": "Description",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L23",
-      "id": "todo_tkt_002_shared_config_and_db_pool_description",
-      "community": 43,
-      "norm_label": "description"
-    },
-    {
-      "label": "Dependencies",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L26",
-      "id": "todo_tkt_002_shared_config_and_db_pool_dependencies",
-      "community": 43,
-      "norm_label": "dependencies"
-    },
-    {
-      "label": "Technical Specification",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L30",
-      "id": "todo_tkt_002_shared_config_and_db_pool_technical_specification",
-      "community": 43,
-      "norm_label": "technical specification"
-    },
-    {
-      "label": "Tasks",
-      "file_type": "document",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L33",
-      "id": "todo_tkt_002_shared_config_and_db_pool_tasks",
-      "community": 43,
       "norm_label": "tasks"
     },
     {
@@ -6736,6 +7906,78 @@
       "norm_label": "9. deployment considerations"
     },
     {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": ".opencode/tools/database_tool.py",
+      "source_location": "L218",
+      "community": 0,
+      "norm_label": "any",
+      "id": "any"
+    },
+    {
+      "label": "Connection",
+      "file_type": "code",
+      "source_file": "shared/migrate.py",
+      "source_location": "L144",
+      "community": 13,
+      "norm_label": "connection",
+      "id": "connection"
+    },
+    {
+      "label": "TKT-002_shared_config_and_db_pool.md",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L1",
+      "community": 43,
+      "norm_label": "tkt-002_shared_config_and_db_pool.md",
+      "id": "board_todo_tkt_002_shared_config_and_db_pool_md"
+    },
+    {
+      "label": "[TKT-002] Shared Config Loader & DB Connection Pool",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "community": 43,
+      "norm_label": "[tkt-002] shared config loader & db connection pool",
+      "id": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool"
+    },
+    {
+      "label": "Description",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "community": 43,
+      "norm_label": "description",
+      "id": "todo_tkt_002_shared_config_and_db_pool_description"
+    },
+    {
+      "label": "Dependencies",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "community": 43,
+      "norm_label": "dependencies",
+      "id": "todo_tkt_002_shared_config_and_db_pool_dependencies"
+    },
+    {
+      "label": "Technical Specification",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "community": 43,
+      "norm_label": "technical specification",
+      "id": "todo_tkt_002_shared_config_and_db_pool_technical_specification"
+    },
+    {
+      "label": "Tasks",
+      "file_type": "document",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "community": 43,
+      "norm_label": "tasks",
+      "id": "todo_tkt_002_shared_config_and_db_pool_tasks"
+    },
+    {
       "label": "Test applying all 4 migrations in sequence.",
       "file_type": "rationale",
       "source_file": "tests/test_schema_migrations.py",
@@ -6931,9 +8173,9 @@
       "source_file": "opencode.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_opencode_openrouter_models",
-      "target": "did_you_know_opencode_models_deepseek_v4_flash",
-      "confidence_score": 1.0
+      "target": "did_you_know_opencode_models_deepseek_v4_flash"
     },
     {
       "relation": "contains",
@@ -7041,8 +8283,38 @@
       "source_file": "opencode.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_opencode_models_deepseek_v4_flash",
-      "target": "did_you_know_opencode_deepseek_v4_flash_id",
+      "target": "did_you_know_opencode_deepseek_v4_flash_id"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "opencode.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "did_you_know_opencode_models_deepseek_v4_flash",
+      "target": "did_you_know_opencode_deepseek_v4_flash_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "opencode.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "did_you_know_opencode_deepseek_v4_flash_options",
+      "target": "did_you_know_opencode_options_reasoning",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "opencode.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "did_you_know_opencode_options_reasoning",
+      "target": "did_you_know_opencode_reasoning_effort",
       "confidence_score": 1.0
     },
     {
@@ -8480,6 +9752,17 @@
       "target": "any"
     },
     {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": ".opencode/tools/database_tool.py",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "tools_database_tool_databasetool_query",
+      "target": "opencode_tools_database_tool_py_any",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -8507,9 +9790,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L488",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_execute_and_print",
-      "target": "any"
+      "target": "opencode_tools_database_tool_py_any",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -8518,9 +9801,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L452",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_get_database_stats",
-      "target": "any"
+      "target": "opencode_tools_database_tool_py_any",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -8529,9 +9812,9 @@
       "source_file": ".opencode/tools/database_tool.py",
       "source_location": "L336",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "tools_database_tool_databasetool_get_table_schema",
-      "target": "any"
+      "target": "opencode_tools_database_tool_py_any",
+      "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
@@ -8587,6 +9870,17 @@
       "target": "tools_database_tool_databasetool_list_tables"
     },
     {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": ".opencode/tools/database_tool.py",
+      "source_location": "L336",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_database_tool_databasetool_get_table_schema",
+      "target": "any"
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": ".opencode/tools/database_tool.py",
@@ -8618,6 +9912,17 @@
       "target": "tools_database_tool_databasetool_get_row_count"
     },
     {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": ".opencode/tools/database_tool.py",
+      "source_location": "L452",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_database_tool_databasetool_get_database_stats",
+      "target": "any"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -8647,6 +9952,17 @@
       "confidence_score": 1.0,
       "source": "tools_database_tool_rationale_476",
       "target": "tools_database_tool_databasetool_session"
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": ".opencode/tools/database_tool.py",
+      "source_location": "L488",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_database_tool_databasetool_execute_and_print",
+      "target": "any"
     },
     {
       "relation": "calls",
@@ -8818,6 +10134,763 @@
       "confidence_score": 1.0,
       "source": "cenv_bin_activate_ps1",
       "target": "bin_activate_global_prompt"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/__init__.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "shared_init_rationale_1",
+      "target": "shared_init_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_clear_cache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_get_backup_trends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_get_content_template",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_get_platforms_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_load_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_substitute_env_vars",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "shared_config_loader_py",
+      "target": "shared_config_loader_substitute_recursively",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_1",
+      "target": "shared_config_loader_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_21",
+      "target": "shared_config_loader_substitute_env_vars",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "shared_config_loader_substitute_env_vars",
+      "target": "shared_config_loader_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "shared_config_loader_substitute_recursively",
+      "target": "shared_config_loader_substitute_env_vars",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_backup_trends",
+      "target": "shared_config_loader_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_content_template",
+      "target": "shared_config_loader_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_platforms_config",
+      "target": "shared_config_loader_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "shared_config_loader_load_config",
+      "target": "shared_config_loader_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "shared_config_loader_load_config",
+      "target": "shared_config_loader_substitute_recursively",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_41",
+      "target": "shared_config_loader_substitute_recursively",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "shared_config_loader_substitute_recursively",
+      "target": "shared_config_loader_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_backup_trends",
+      "target": "shared_config_loader_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_content_template",
+      "target": "shared_config_loader_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_platforms_config",
+      "target": "shared_config_loader_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "shared_config_loader_load_config",
+      "target": "shared_config_loader_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_backup_trends",
+      "target": "shared_config_loader_load_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_content_template",
+      "target": "shared_config_loader_load_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "shared_config_loader_get_platforms_config",
+      "target": "shared_config_loader_load_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_52",
+      "target": "shared_config_loader_load_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_85",
+      "target": "shared_config_loader_get_content_template",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_90",
+      "target": "shared_config_loader_get_platforms_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_95",
+      "target": "shared_config_loader_get_backup_trends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/config_loader.py",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "shared_config_loader_rationale_100",
+      "target": "shared_config_loader_clear_cache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_close_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_execute_many",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_fetch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_fetch_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_fetch_val",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_init_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "shared_db_py",
+      "target": "shared_db_transaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "shared_db_rationale_1",
+      "target": "shared_db_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "shared_db_init_pool",
+      "target": "shared_db_close_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "shared_db_init_pool",
+      "target": "shared_db_py_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "shared_db_init_pool",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "shared_db_rationale_22",
+      "target": "shared_db_init_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "shared_db_execute",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "shared_db_execute_many",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "shared_db_fetch",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "shared_db_fetch_one",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "shared_db_fetch_val",
+      "target": "shared_db_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "shared_db_rationale_61",
+      "target": "shared_db_close_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "shared_db_execute",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L127",
+      "weight": 1.0,
+      "source": "shared_db_execute_many",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "shared_db_fetch",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "shared_db_fetch_one",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "shared_db_fetch_val",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "shared_db_get_pool",
+      "target": "pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "shared_db_rationale_73",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "shared_db_transaction",
+      "target": "shared_db_get_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "shared_db_fetch",
+      "target": "record",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "shared_db_fetch",
+      "target": "shared_db_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "shared_db_rationale_86",
+      "target": "shared_db_fetch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "shared_db_execute",
+      "target": "shared_db_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "shared_db_fetch_one",
+      "target": "shared_db_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "shared_db_fetch_val",
+      "target": "shared_db_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "shared_db_fetch_one",
+      "target": "record",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "shared_db_rationale_97",
+      "target": "shared_db_fetch_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "shared_db_rationale_104",
+      "target": "shared_db_fetch_val",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "shared_db_rationale_115",
+      "target": "shared_db_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "shared_db_rationale_126",
+      "target": "shared_db_execute_many",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "shared_db_rationale_134",
+      "target": "shared_db_transaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/db.py",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "shared_db_transaction",
+      "target": "shared_db_py_connection",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -9376,6 +11449,17 @@
     },
     {
       "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/migrate.py",
+      "source_location": "L144",
+      "weight": 1.0,
+      "source": "shared_migrate_connect_with_retry",
+      "target": "shared_migrate_py_connection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "shared/migrate.py",
@@ -9413,9 +11497,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L159",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "shared_migrate_ensure_migrations_table",
-      "target": "connection"
+      "target": "shared_migrate_py_connection",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -9424,9 +11508,9 @@
       "source_file": "shared/migrate.py",
       "source_location": "L170",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "shared_migrate_get_applied_versions",
-      "target": "connection"
+      "target": "shared_migrate_py_connection",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -9435,8 +11519,19 @@
       "source_file": "shared/migrate.py",
       "source_location": "L176",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "shared_migrate_record_migration",
+      "target": "shared_migrate_py_connection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/migrate.py",
+      "source_location": "L159",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "shared_migrate_ensure_migrations_table",
       "target": "connection"
     },
     {
@@ -9448,6 +11543,17 @@
       "confidence_score": 1.0,
       "source": "shared_migrate_rationale_160",
       "target": "shared_migrate_ensure_migrations_table"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/migrate.py",
+      "source_location": "L170",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "shared_migrate_get_applied_versions",
+      "target": "connection"
     },
     {
       "relation": "rationale_for",
@@ -9470,6 +11576,17 @@
       "target": "shared_migrate_record_migration"
     },
     {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "shared/migrate.py",
+      "source_location": "L176",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "shared_migrate_record_migration",
+      "target": "connection"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -9489,6 +11606,796 @@
       "confidence_score": 1.0,
       "source": "shared_migrate_rationale_185",
       "target": "shared_migrate_get_dsn_from_env"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_py",
+      "target": "tests_test_config_loader_testconfigloader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_py",
+      "target": "tests_test_config_loader_testenvvarsubstitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_1",
+      "target": "tests_test_config_loader_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_18",
+      "target": "tests_test_config_loader_testenvvarsubstitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testenvvarsubstitution",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_21",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_simple_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_27",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_substitution_in_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_33",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_missing_var_keeps_literal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_39",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_multiple_vars",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_45",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_51",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_default_with_existing_var",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_57",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_non_string_passthrough",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_66",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_nested_dict_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_81",
+      "target": "tests_test_config_loader_testenvvarsubstitution_test_list_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_89",
+      "target": "tests_test_config_loader_testconfigloader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L151",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L131",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L119",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L162",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_testconfigloader",
+      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_92",
+      "target": "tests_test_config_loader_testconfigloader_test_load_nonexistent_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_97",
+      "target": "tests_test_config_loader_testconfigloader_test_load_empty_yaml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_109",
+      "target": "tests_test_config_loader_testconfigloader_test_load_valid_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_120",
+      "target": "tests_test_config_loader_testconfigloader_test_config_with_env_substitution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_132",
+      "target": "tests_test_config_loader_testconfigloader_test_caching_behaviour",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_152",
+      "target": "tests_test_config_loader_testconfigloader_test_bad_yaml_syntax",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_config_loader.py",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "tests_test_config_loader_rationale_163",
+      "target": "tests_test_config_loader_testconfigloader_test_shortcut_functions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_py",
+      "target": "tests_test_db_pool_testdbpoolinit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_py",
+      "target": "tests_test_db_pool_testdbqueryhelpers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_py",
+      "target": "tests_test_db_pool_testdbtransaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_1",
+      "target": "tests_test_db_pool_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_16",
+      "target": "tests_test_db_pool_testdbpoolinit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbpoolinit",
+      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_19",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_no_dsn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_25",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_explicit_dsn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_41",
+      "target": "tests_test_db_pool_testdbpoolinit_test_init_pool_from_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_53",
+      "target": "tests_test_db_pool_testdbpoolinit_test_reinitialize_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_65",
+      "target": "tests_test_db_pool_testdbpoolinit_test_get_pool_not_initialized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_71",
+      "target": "tests_test_db_pool_testdbpoolinit_test_close_pool_not_initialized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_77",
+      "target": "tests_test_db_pool_testdbpoolinit_test_full_lifecycle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L105",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_105",
+      "target": "tests_test_db_pool_testdbqueryhelpers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L159",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbqueryhelpers",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_109",
+      "target": "tests_test_db_pool_testdbqueryhelpers_setup_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_126",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_133",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_140",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_one_none",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L146",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_146",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_val",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_153",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_160",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_execute_many",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L166",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_166",
+      "target": "tests_test_db_pool_testdbqueryhelpers_test_fetch_with_args",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L175",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_175",
+      "target": "tests_test_db_pool_testdbtransaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbtransaction",
+      "target": "tests_test_db_pool_testdbtransaction_setup_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L199",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbtransaction",
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L206",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_testdbtransaction",
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L200",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_200",
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_commit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_db_pool.py",
+      "source_location": "L207",
+      "weight": 1.0,
+      "source": "tests_test_db_pool_rationale_207",
+      "target": "tests_test_db_pool_testdbtransaction_test_transaction_rollback",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -9866,9 +12773,9 @@
       "source_file": "tests/test_schema_migrations.py",
       "source_location": "L70",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_schema_migrations_rationale_70",
-      "target": "tests_test_schema_migrations_testschemamigrations_test_full_migration_sequence",
-      "confidence_score": 1.0
+      "target": "tests_test_schema_migrations_testschemamigrations_test_full_migration_sequence"
     },
     {
       "relation": "rationale_for",
@@ -9886,9 +12793,9 @@
       "source_file": "tests/test_schema_migrations.py",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_schema_migrations_rationale_100",
-      "target": "tests_test_schema_migrations_testschemamigrations_test_verify_tables_and_indexes",
-      "confidence_score": 1.0
+      "target": "tests_test_schema_migrations_testschemamigrations_test_verify_tables_and_indexes"
     },
     {
       "relation": "rationale_for",
@@ -9906,9 +12813,9 @@
       "source_file": "tests/test_schema_migrations.py",
       "source_location": "L162",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_schema_migrations_rationale_162",
-      "target": "tests_test_schema_migrations_testschemamigrations_test_verify_check_constraints",
-      "confidence_score": 1.0
+      "target": "tests_test_schema_migrations_testschemamigrations_test_verify_check_constraints"
     },
     {
       "relation": "rationale_for",
@@ -9926,9 +12833,9 @@
       "source_file": "tests/test_schema_migrations.py",
       "source_location": "L220",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_schema_migrations_rationale_220",
-      "target": "tests_test_schema_migrations_testschemamigrations_test_updated_at_triggers",
-      "confidence_score": 1.0
+      "target": "tests_test_schema_migrations_testschemamigrations_test_updated_at_triggers"
     },
     {
       "relation": "rationale_for",
@@ -9946,9 +12853,9 @@
       "source_file": "tests/test_schema_migrations.py",
       "source_location": "L287",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_schema_migrations_rationale_287",
-      "target": "tests_test_schema_migrations_testschemamigrations_test_idempotency",
-      "confidence_score": 1.0
+      "target": "tests_test_schema_migrations_testschemamigrations_test_idempotency"
     },
     {
       "relation": "rationale_for",
@@ -9976,9 +12883,9 @@
       "source_file": "AGENTS.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "agents_md",
-      "target": "did_you_know_agents_graphify_mandatory_repository_navigation",
-      "confidence_score": 1.0
+      "target": "did_you_know_agents_graphify_mandatory_repository_navigation"
     },
     {
       "relation": "contains",
@@ -10076,9 +12983,9 @@
       "source_file": "AGENTS.md",
       "source_location": "L70",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_agents_graphify_mandatory_repository_navigation",
-      "target": "did_you_know_agents_exceptions",
-      "confidence_score": 1.0
+      "target": "did_you_know_agents_exceptions"
     },
     {
       "relation": "contains",
@@ -10086,9 +12993,9 @@
       "source_file": "AGENTS.md",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "did_you_know_agents_graphify_mandatory_repository_navigation",
-      "target": "did_you_know_agents_mandatory_execution_order",
-      "confidence_score": 1.0
+      "target": "did_you_know_agents_mandatory_execution_order"
     },
     {
       "relation": "contains",
@@ -11943,12 +14850,62 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "board_development_tkt_002_shared_config_and_db_pool_md",
+      "target": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_tasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/development/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "development_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "development_tkt_002_shared_config_and_db_pool_technical_specification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "board_done_tkt_001_database_schema_and_migration_md",
-      "target": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
-      "confidence_score": 1.0
+      "target": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner"
     },
     {
       "relation": "contains",
@@ -11956,9 +14913,9 @@
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
-      "target": "done_tkt_001_database_schema_and_migration_dependencies",
-      "confidence_score": 1.0
+      "target": "done_tkt_001_database_schema_and_migration_dependencies"
     },
     {
       "relation": "contains",
@@ -11966,9 +14923,9 @@
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L83",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
-      "target": "done_tkt_001_database_schema_and_migration_description",
-      "confidence_score": 1.0
+      "target": "done_tkt_001_database_schema_and_migration_description"
     },
     {
       "relation": "contains",
@@ -11976,9 +14933,9 @@
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
-      "target": "done_tkt_001_database_schema_and_migration_tasks",
-      "confidence_score": 1.0
+      "target": "done_tkt_001_database_schema_and_migration_tasks"
     },
     {
       "relation": "contains",
@@ -11986,59 +14943,9 @@
       "source_file": "board/done/TKT-001_database_schema_and_migration.md",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "done_tkt_001_database_schema_and_migration_tkt_001_database_schema_migration_runner",
-      "target": "done_tkt_001_database_schema_and_migration_technical_specification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L21",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "board_todo_tkt_002_shared_config_and_db_pool_md",
-      "target": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L26",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "todo_tkt_002_shared_config_and_db_pool_dependencies"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "todo_tkt_002_shared_config_and_db_pool_description"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "todo_tkt_002_shared_config_and_db_pool_tasks"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
-      "target": "todo_tkt_002_shared_config_and_db_pool_technical_specification"
+      "target": "done_tkt_001_database_schema_and_migration_technical_specification"
     },
     {
       "relation": "contains",
@@ -14823,6 +17730,56 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "board_todo_tkt_002_shared_config_and_db_pool_md",
+      "target": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "todo_tkt_002_shared_config_and_db_pool_dependencies"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "todo_tkt_002_shared_config_and_db_pool_description"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "todo_tkt_002_shared_config_and_db_pool_tasks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "board/todo/TKT-002_shared_config_and_db_pool.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "todo_tkt_002_shared_config_and_db_pool_tkt_002_shared_config_loader_db_connection_pool",
+      "target": "todo_tkt_002_shared_config_and_db_pool_technical_specification"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "board/qa/TKT-001_database_schema_and_migration.md",
       "source_location": "L81",
       "weight": 1.0,
@@ -14872,5 +17829,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a30eb0af89a9a9be557cdb544be35ffd59af31b8"
+  "built_at_commit": "3946033293e48b21302603de0d04e45a01b8e5ae"
 }
