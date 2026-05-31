@@ -1,5 +1,5 @@
 ---
-status: todo
+status: development
 service: shared
 type: feature
 ticket_id: TKT-003
@@ -7,14 +7,18 @@ created: "2026-05-31T00:00:00Z"
 tech_spec: docs/technical/shared_pydantic_models.md
 pr:
   url: ""
-  branch: ""
+  branch: "TKT-003_20260531_1200"
 tasks:
   - "Define entity models (Trend, Theme, ContentOption, Post)"
   - "Define status enums (ContentStatus, PostStatus)"
   - "Define API request/response models"
   - "Build record-to-model helper functions"
   - "Write model validation tests"
-history: []
+history:
+  - timestamp: "2026-05-31T12:00:00Z"
+    action: "assigned"
+    agent: "developer"
+    status: "development"
 comments: []
 ---
 
