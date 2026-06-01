@@ -427,7 +427,7 @@ class ContentGenerator:
         for opt in options:
             import json as json_module
             hashtags_json = json_module.dumps(opt["hashtags"])
-            row = await self._db.fetch_one(
+            row = await self._db.fetchrow(
                 query,
                 batch_id,
                 platform,

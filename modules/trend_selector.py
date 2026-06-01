@@ -12,6 +12,7 @@ Provides the TrendSelector class which:
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 from typing import Any
 
 from shared.models import Trend
@@ -208,7 +209,7 @@ class TrendSelector:
               FROM trends
              WHERE created_at >= CURRENT_TIMESTAMP - $1::interval
         """
-        rows = await self._db.fetch(query, f"{days} days")
+        rows = await self._db.fetch(query, timedelta(days=days))
         return {row["keyword"] for row in rows}
 
     async def _select_best(
@@ -258,7 +259,7 @@ class TrendSelector:
             VALUES ($1, $2, $3)
             RETURNING id, keyword, score, source, created_at
         """
-        row = await self._db.fetch_one(query, keyword, score, source)
+        row = await self._db.fetchrow(query, keyword, score, source)
         if row is None:
             raise RuntimeError("INSERT into trends table returned no row.")
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import timedelta
 from typing import Any
 
 from shared.models import Theme, Trend
@@ -178,7 +179,7 @@ class ThemeAssociator:
             )
             LIMIT 1
         """
-        row = await self._db.fetch_one(query, f"{hours} hours", theme_name)
+        row = await self._db.fetchrow(query, timedelta(hours=hours), theme_name)
         return row is not None
 
     async def _save_theme(self, name: str, trend_id: int) -> Theme:
@@ -199,7 +200,7 @@ class ThemeAssociator:
             VALUES ($1, $2)
             RETURNING id, name, trend_id, created_at
         """
-        row = await self._db.fetch_one(query, name, trend_id)
+        row = await self._db.fetchrow(query, name, trend_id)
         if row is None:
             raise RuntimeError("INSERT into themes table returned no row.")
 
