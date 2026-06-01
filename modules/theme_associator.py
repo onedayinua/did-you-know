@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import timedelta
 from typing import Any
 
 from shared.models import Theme, Trend
@@ -178,7 +179,7 @@ class ThemeAssociator:
             )
             LIMIT 1
         """
-        row = await self._db.fetchrow(query, f"{hours} hours", theme_name)
+        row = await self._db.fetchrow(query, timedelta(hours=hours), theme_name)
         return row is not None
 
     async def _save_theme(self, name: str, trend_id: int) -> Theme:
