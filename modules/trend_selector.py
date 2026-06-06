@@ -118,8 +118,7 @@ class TrendSelector:
             return self._parse_realtime_trending(pytrends)
         except Exception:
             logger.warning(
-                "realtime_trending_searches() failed; trying trending_searches().",
-                exc_info=True,
+                "realtime_trending_searches() failed; trying trending_searches()."
             )
 
         # Step 2: Try trending_searches() with proper payload
@@ -129,8 +128,7 @@ class TrendSelector:
             return self._parse_trending_searches(pytrends)
         except Exception:
             logger.warning(
-                "trending_searches() also failed; no API trends available.",
-                exc_info=True,
+                "trending_searches() also failed; no API trends available."
             )
             return []
 
@@ -144,7 +142,7 @@ class TrendSelector:
         try:
             df = pytrends.trending_searches()
         except Exception:
-            logger.warning("trending_searches() raised an exception.", exc_info=True)
+            logger.warning("trending_searches() raised an exception.")
             raise
 
         if df is None or df.empty:
@@ -168,9 +166,7 @@ class TrendSelector:
         try:
             data = pytrends.realtime_trending_searches()
         except Exception:
-            logger.warning(
-                "realtime_trending_searches() raised an exception.", exc_info=True
-            )
+            logger.warning("realtime_trending_searches() raised an exception.")
             raise
 
         if not data:

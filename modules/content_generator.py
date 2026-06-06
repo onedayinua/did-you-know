@@ -198,7 +198,7 @@ class ContentGenerator:
             Number of options with status ``'pending'``.
         """
         query = "SELECT COUNT(*) FROM content_options WHERE status = 'pending'"
-        count = await self._db.fetch_val(query)
+        count = await self._db.fetchval(query)
         return count or 0
 
     async def _expire_old_options(self, days: int) -> int:

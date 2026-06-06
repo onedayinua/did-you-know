@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from logging.handlers import RotatingFileHandler
 
 import click
 
@@ -24,6 +25,22 @@ logging.basicConfig(
     level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper()),
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
+
+# Suppress httpx INFO logging — it prints full HTTP response HTML to stdout
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
+# File-based logging for pipeline debugging
+os.makedirs("logs", exist_ok=True)
+file_handler = RotatingFileHandler(
+    "logs/pipeline.log",
+    maxBytes=5 * 1024 * 1024,  # 5 MB
+    backupCount=3,
+)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+)
+logging.getLogger().addHandler(file_handler)
 logger = logging.getLogger(__name__)
 
 

@@ -30,7 +30,7 @@ def db_pool() -> AsyncMock:
     pool = AsyncMock()
     pool.fetch = AsyncMock()
     pool.fetch_one = AsyncMock()
-    pool.fetch_val = AsyncMock()
+    pool.fetchval = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 

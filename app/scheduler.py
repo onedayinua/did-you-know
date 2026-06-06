@@ -113,8 +113,14 @@ async def run_pipeline(
     logger.info("Enabled platforms: %s", enabled_platforms)
 
     # Step 3: Generate content options for each enabled platform
+    # Merge queue config from backup_trends into content_template config
+    content_template_config = dict(config.get("content_template", {}))
+    backup_config = config.get("backup_trends", {})
+    if "queue" in backup_config:
+        content_template_config["queue"] = backup_config["queue"]
+
     content_generator = ContentGenerator(
-        db_pool, openrouter_client, config.get("content_template", {})
+        db_pool, openrouter_client, content_template_config
     )
     options = await content_generator.run(theme, enabled_platforms)
     if not options:

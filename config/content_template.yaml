@@ -18,7 +18,7 @@ text_prompt: >
   - Fact: engaging, educational, fun tone, 1-2 sentences that expand on the theme
   - Hashtags: relevant to the theme
 
-  Return as JSON: {"fact": "...", "hashtags": ["...", "..."]}
+  Return as JSON: {{"fact": "...", "hashtags": ["...", "..."]}}
 
 # Image prompt — Module 3 uses this to generate image description from fact
 image_prompt: >

@@ -62,7 +62,7 @@ def db_pool() -> AsyncMock:
     pool = AsyncMock()
     pool.fetch = AsyncMock()
     pool.fetchrow = AsyncMock()
-    pool.fetch_val = AsyncMock()
+    pool.fetchval = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 
@@ -101,7 +101,7 @@ class TestCheckQueue:
 
     async def test_returns_count(self, generator: ContentGenerator, db_pool: AsyncMock):
         """Returns the count of pending content options."""
-        db_pool.fetch_val.return_value = 5
+        db_pool.fetchval.return_value = 5
         count = await generator._check_queue()
         assert count == 5
 
@@ -109,7 +109,7 @@ class TestCheckQueue:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Returns 0 when there are no pending options."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         count = await generator._check_queue()
         assert count == 0
 
@@ -117,16 +117,16 @@ class TestCheckQueue:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Returns 0 when database returns None."""
-        db_pool.fetch_val.return_value = None
+        db_pool.fetchval.return_value = None
         count = await generator._check_queue()
         assert count == 0
 
     async def test_correct_query(self, generator: ContentGenerator, db_pool: AsyncMock):
         """Uses COUNT query filtering on pending status."""
-        db_pool.fetch_val.return_value = 3
+        db_pool.fetchval.return_value = 3
         await generator._check_queue()
-        db_pool.fetch_val.assert_called_once()
-        query = db_pool.fetch_val.call_args[0][0]
+        db_pool.fetchval.assert_called_once()
+        query = db_pool.fetchval.call_args[0][0]
         assert "COUNT" in query
         assert "pending" in query
 
@@ -531,7 +531,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Full successful flow: check queue -> expire -> generate -> save -> return."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]'
@@ -564,7 +564,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Returns empty list when queue is at max_pending capacity."""
-        db_pool.fetch_val.return_value = 10  # At max_pending
+        db_pool.fetchval.return_value = 10  # At max_pending
         result = await generator.run(sample_theme, ["pinterest"])
         assert result == []
 
@@ -576,7 +576,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Generates content for multiple platforms successfully."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test fact", "hashtags": ["#test"]}]'
@@ -605,7 +605,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Skips platforms not found in config."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await generator.run(sample_theme, ["unknown_platform"])
         assert result == []
@@ -617,7 +617,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Returns empty list when no platforms specified."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await generator.run(sample_theme, [])
         assert result == []
@@ -641,7 +641,7 @@ class TestRun:
             },
         }
         gen = ContentGenerator(db_pool, openrouter_client, config)
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test", "hashtags": ["#t"]}]'
         )
@@ -678,7 +678,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Skips platform when text generation fails."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.side_effect = Exception("Generation failed")
 
@@ -693,7 +693,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Uses fallback image prompt when generation fails."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         # First call succeeds (text), second fails (image)
         openrouter_client.generate_text.side_effect = [
@@ -753,8 +753,8 @@ class TestEdgeCases:
     async def test_check_queue_handles_db_null(
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
-        """Returns 0 when fetch_val returns None."""
-        db_pool.fetch_val.return_value = None
+        """Returns 0 when fetchval returns None."""
+        db_pool.fetchval.return_value = None
         count = await generator._check_queue()
         assert count == 0
 
@@ -798,7 +798,7 @@ class TestEdgeCases:
             "queue": {"max_pending": 10, "expire_days": 7, "cleanup_on_generate": True},
         }
         gen = ContentGenerator(db_pool, openrouter_client, config)
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await gen.run(sample_theme, ["pinterest"])
         assert result == []
