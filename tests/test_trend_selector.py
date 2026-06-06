@@ -49,7 +49,7 @@ def db_pool() -> AsyncMock:
     """Mock asyncpg connection pool with async helpers."""
     pool = AsyncMock()
     pool.fetch = AsyncMock()
-    pool.fetch_one = AsyncMock()
+    pool.fetchrow = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 
@@ -150,7 +150,7 @@ class TestUseBackup:
     ):
         """First backup trend is used when none have been used recently."""
         db_pool.fetch.return_value = []  # no used keywords
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 99,
             "keyword": "easy dinner recipes",
             "score": 85.0,
@@ -171,7 +171,7 @@ class TestUseBackup:
             {"keyword": "easy dinner recipes"},
         ]
         # Simulate the DB returning the saved trend
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             {
                 "id": 100,
                 "keyword": "healthy snacks",
@@ -212,7 +212,7 @@ class TestUseBackup:
     ):
         """Saved backup trend has source='backup'."""
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 101,
             "keyword": "comfort food",
             "score": 70.0,
@@ -245,6 +245,8 @@ class TestFetchTrends:
         )
 
         instance = mock_trend_req.return_value
+        # Make realtime_trending_searches fail so it falls through to trending_searches
+        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
         instance.trending_searches.return_value = mock_df
 
         results = await selector._fetch_trends()
@@ -348,7 +350,7 @@ class TestSaveTrend:
         self, selector: TrendSelector, db_pool: AsyncMock
     ):
         """Inserts a trend and returns a Trend model with generated id."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 42,
             "keyword": "test trend",
             "score": 88.5,
@@ -368,7 +370,7 @@ class TestSaveTrend:
         self, selector: TrendSelector, db_pool: AsyncMock
     ):
         """Raises RuntimeError if INSERT RETURNING yields no row."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
 
         with pytest.raises(RuntimeError, match="INSERT into trends table returned no row"):
             await selector._save_trend("fail", 50.0, "google_trends")
@@ -377,7 +379,7 @@ class TestSaveTrend:
         self, selector: TrendSelector, db_pool: AsyncMock
     ):
         """Verifies the SQL query and parameters passed to the DB."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "keyword": "test",
             "score": 75.0,
@@ -387,8 +389,8 @@ class TestSaveTrend:
 
         await selector._save_trend("test", 75.0, "google_trends")
 
-        db_pool.fetch_one.assert_called_once()
-        args = db_pool.fetch_one.call_args[0]
+        db_pool.fetchrow.assert_called_once()
+        args = db_pool.fetchrow.call_args[0]
         assert "INSERT INTO trends" in args[0]
         assert "test" in args
         assert 75.0 in args
@@ -418,7 +420,7 @@ class TestRun:
 
         # No recently used keywords
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "keyword": "easy dinner recipes",
             "score": 100.0,
@@ -451,7 +453,7 @@ class TestRun:
             [{"keyword": "easy dinner recipes"}],   # _get_used_keywords for API
             [],                                      # _get_used_keywords for backup
         ]
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 2,
             "keyword": "healthy snacks",
             "score": 80.0,
@@ -477,7 +479,7 @@ class TestRun:
 
         # No used keywords for backup
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 3,
             "keyword": "easy dinner recipes",
             "score": 85.0,
@@ -520,7 +522,7 @@ class TestRun:
     ):
         """When pytrends is not installed, uses backup trends."""
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 4,
             "keyword": "easy dinner recipes",
             "score": 85.0,
@@ -546,7 +548,7 @@ class TestRun:
         instance.trending_searches.return_value = pd.DataFrame()
 
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 5,
             "keyword": "meal prep ideas",
             "score": 75.0,
@@ -631,7 +633,7 @@ class TestEdgeCases:
 
         # No recently used keywords
         db_pool.fetch.return_value = []
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 6,
             "keyword": "python programming",
             "score": 100.0,
@@ -743,13 +745,15 @@ class TestGeoPeriodConfig:
         """build_payload is called with the configured timeframe."""
         import pandas as pd
         instance = mock_trend_req.return_value
+        # Make realtime_trending_searches fail so it falls through to trending_searches
+        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
         instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
 
         await selector._fetch_trends()
 
         # Verify build_payload was called with timeframe
         instance.build_payload.assert_called_once_with(
-            kw_list=[], timeframe="now 1-d"
+            kw_list=["food"], timeframe="now 1-d"
         )
 
     async def test_default_geo_when_missing(self, db_pool: AsyncMock):

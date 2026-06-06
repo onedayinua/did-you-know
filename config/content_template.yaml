@@ -5,7 +5,7 @@ theme_prompt: >
   Given the trend '{keyword}', find associations: related cooking concepts,
   ingredients, cultural angles, or health connections. Based on these
   associations, create a short theme name (up to 3 words) that fits
-  naturally into: 'Did you know that {theme}?'
+  naturally into: 'Did you know that [theme]?'
 
   Return ONLY the theme name, nothing else. Example: "Crispy Cooking"
 

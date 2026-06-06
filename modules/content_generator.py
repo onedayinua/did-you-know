@@ -14,7 +14,7 @@ import json
 import logging
 import re
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from shared.models import ContentOption, ContentStatus, Platform
@@ -216,7 +216,7 @@ class ContentGenerator:
             WHERE status = 'pending'
             AND created_at < CURRENT_TIMESTAMP - $1::interval
         """
-        result = await self._db.execute(query, f"{days} days")
+        result = await self._db.execute(query, timedelta(days=days))
         # Extract count from result string like "UPDATE 5"
         match = re.search(r"UPDATE\s+(\d+)", result)
         return int(match.group(1)) if match else 0

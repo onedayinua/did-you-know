@@ -20,6 +20,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from datetime import timedelta
+
 from modules.content_generator import ContentGenerator
 from shared.models import ContentOption, ContentStatus, Theme
 
@@ -59,7 +61,7 @@ def db_pool() -> AsyncMock:
     """Mock asyncpg connection pool with async helpers."""
     pool = AsyncMock()
     pool.fetch = AsyncMock()
-    pool.fetch_one = AsyncMock()
+    pool.fetchrow = AsyncMock()
     pool.fetch_val = AsyncMock()
     pool.execute = AsyncMock()
     return pool
@@ -174,11 +176,12 @@ class TestExpireOldOptions:
     async def test_passes_days_parameter(
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
-        """Passes the days parameter as interval string to the query."""
+        """Passes the days parameter as timedelta to the query."""
         db_pool.execute.return_value = "UPDATE 1"
         await generator._expire_old_options(3)
         args = db_pool.execute.call_args[0]
-        assert "3 days" in args
+        assert isinstance(args[1], timedelta)
+        assert args[1].days == 3
 
 
 # ===================================================================
@@ -411,7 +414,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Saves a single option and returns a ContentOption model."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_20240101_000000_abc123",
             "platform": "pinterest",
@@ -439,7 +442,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Saves multiple options and returns them all."""
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             {
                 "id": 1,
                 "batch_id": "batch_1",
@@ -480,7 +483,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Raises RuntimeError when INSERT returns no row."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
         options = [{"fact": "Fail", "hashtags": [], "image_prompt": "fail"}]
         with pytest.raises(RuntimeError, match="INSERT into content_options"):
             await generator._save_options("Test", "batch", "pinterest", options)
@@ -489,7 +492,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Hashtags are passed as JSON string to the database."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "b",
             "platform": "pinterest",
@@ -506,7 +509,7 @@ class TestSaveOptions:
             "T", "b", "pinterest",
             [{"fact": "F", "hashtags": ["#a", "#b"], "image_prompt": "img"}],
         )
-        args = db_pool.fetch_one.call_args[0]
+        args = db_pool.fetchrow.call_args[0]
         hashtags_arg = args[5]  # 6th positional arg (0-indexed: query, batch_id, platform, theme, fact, hashtags_json, image_prompt)
         import json
         assert json.loads(hashtags_arg) == ["#a", "#b"]
@@ -533,7 +536,7 @@ class TestRun:
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
@@ -578,7 +581,7 @@ class TestRun:
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test fact", "hashtags": ["#test"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
@@ -642,7 +645,7 @@ class TestRun:
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test", "hashtags": ["#t"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "b",
             "platform": "pinterest",
@@ -697,7 +700,7 @@ class TestRun:
             '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]',
             Exception("Image generation failed"),
         ]
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
