@@ -13,12 +13,13 @@ platforms:
 
 # Visual generation settings
 visual:
-  model: "dall-e-3"
+  model: "black-forest-labs/flux.2-klein-4b"
   style: "food photography, bright, appetizing, clean background"
+  image_size: "0.5K"
   dimensions:
     pinterest:
-      width: 1000
-      height: 1500
+      width: 500
+      height: 1000
     instagram:
       width: 1080
       height: 1080

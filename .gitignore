@@ -63,3 +63,4 @@ did_you_know.egg-info
 board/
 */__pycache__/**
 did_you_know.egg-info
+data/**

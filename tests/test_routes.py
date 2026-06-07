@@ -67,7 +67,7 @@ def _make_row(**overrides) -> dict:
         "fact": "Air fryers use rapid air technology to create crispy food.",
         "hashtags": ["#AirFryer", "#Healthy"],
         "image_prompt": "A warm shot of food.",
-        "image_path": "data/images/test.png",
+        "image_path": "test.png",
         "status": "pending",
         "created_at": None,
         "updated_at": None,

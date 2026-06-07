@@ -47,6 +47,8 @@ class ContentGenerator:
         self._image_prompt_template: str = config.get("image_prompt", "")
         self._platforms_config: dict[str, Any] = config.get("platforms", {})
         self._variations: int = config.get("variations", 3)
+        self._text_model: str = config.get("text_model", "openai/gpt-4o-mini")
+        self._image_model: str = config.get("image_model", "openai/dall-e-3")
 
         queue_config = config.get("queue", {})
         self._max_pending: int = queue_config.get("max_pending", 10)
@@ -265,7 +267,7 @@ class ContentGenerator:
         try:
             response = await self._client.generate_text(
                 prompt=prompt,
-                model="openai/gpt-4o-mini",
+                model=self._text_model,
                 max_tokens=2000,
                 temperature=0.8,
                 response_format={"type": "json_object"},
@@ -382,7 +384,7 @@ class ContentGenerator:
         try:
             response = await self._client.generate_text(
                 prompt=prompt,
-                model="openai/gpt-4o-mini",
+                model=self._text_model,
                 max_tokens=300,
                 temperature=0.7,
             )

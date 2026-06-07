@@ -63,7 +63,7 @@ def sample_config() -> dict:
                 "instagram": {"enabled": False, "api_base": "https://graph.instagram.com"},
             },
             "visual": {
-                "model": "dall-e-3",
+                "model": "openai/dall-e-3",
                 "dimensions": {
                     "pinterest": {"width": 1000, "height": 1500},
                 },

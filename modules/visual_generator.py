@@ -2,10 +2,15 @@
 
 Provides the VisualGenerator class which:
 1. Queries content options with image prompts but no images
-2. For each option, generates an image via OpenRouter (DALL-E)
-3. Saves images to data/images/ with platform-specific dimensions
+2. For each option, generates an image via OpenRouter (black-forest-labs/flux.2-klein-4b)
+3. Saves images to data/images/ with platform-specific aspect ratios
 4. Updates the content_options table with the image path
 5. Returns the updated ContentOption models
+
+The model is configured in ``config/platforms.yaml`` under ``visual.model``.
+Platform-specific dimensions in ``visual.dimensions`` are used to derive the
+aspect ratio passed to the API — the model generates at its native resolution
+with the requested aspect ratio, avoiding wasteful post-generation resizing.
 """
 
 from __future__ import annotations
@@ -18,10 +23,10 @@ from shared.models import ContentOption
 
 logger = logging.getLogger(__name__)
 
-# DALL-E supported size mapping per platform
-DALLE_SIZE_MAP: dict[str, str] = {
-    "pinterest": "1024x1792",   # portrait — closest to 1000x1500
-    "instagram": "1024x1024",   # square — closest to 1080x1080
+# Aspect ratio mapping per platform (for OpenRouter image generation)
+ASPECT_RATIO_MAP: dict[str, str] = {
+    "pinterest": "2:3",   # portrait
+    "instagram": "1:1",   # square
 }
 
 
@@ -37,7 +42,8 @@ class VisualGenerator:
         openrouter_client: An OpenRouterClient instance with ``generate_image()``.
         config: The ``platforms.yaml`` config dict. Expected keys:
             ``visual.dimensions`` (per-platform width/height),
-            ``visual.model`` (default ``"dall-e-3"``).
+            ``visual.model`` (default ``"dall-e-3"``),
+            ``visual.image_size`` (default ``"0.5K"``).
     """
 
     def __init__(self, db_pool: Any, openrouter_client: Any, config: dict[str, Any]) -> None:
@@ -46,7 +52,8 @@ class VisualGenerator:
         self._config = config
 
         visual_config = config.get("visual", {})
-        self._model: str = visual_config.get("model", "dall-e-3")
+        self._model: str = visual_config.get("model", "openai/dall-e-3")
+        self._image_size: str = visual_config.get("image_size", "0.5K")
         self._dimensions: dict[str, dict[str, int]] = visual_config.get("dimensions", {})
         self._images_dir = "data/images"
 
@@ -184,16 +191,25 @@ class VisualGenerator:
             }
         return {"width": 1024, "height": 1024}
 
-    def _get_dalle_size(self, platform: str) -> str:
-        """Get DALL-E supported size string for a platform.
+    def _get_aspect_ratio(self, platform: str) -> str:
+        """Get aspect ratio string for a platform.
+
+        Derives the ratio from the platform dimensions in config.
+        Falls back to the hardcoded ASPECT_RATIO_MAP, then to "1:1".
 
         Args:
             platform: Platform name.
 
         Returns:
-            Size string like ``"1024x1792"`` or ``"1024x1024"``.
+            Aspect ratio string like "2:3" or "1:1".
         """
-        return DALLE_SIZE_MAP.get(platform, "1024x1024")
+        dims = self._dimensions.get(platform)
+        if dims and dims.get("width") and dims.get("height"):
+            from math import gcd
+            w, h = dims["width"], dims["height"]
+            g = gcd(w, h)
+            return f"{w // g}:{h // g}"
+        return ASPECT_RATIO_MAP.get(platform, "1:1")
 
     async def _generate_and_save(
         self,
@@ -204,7 +220,7 @@ class VisualGenerator:
 
         Args:
             option: ContentOption with an ``image_prompt``.
-            dimensions: Dict with ``width`` and ``height``.
+            dimensions: Dict with ``width`` and ``height`` (used to derive aspect ratio only; the model generates at its native resolution).
 
         Returns:
             Relative file path (e.g. ``"data/images/batch_xxx_1.png"``).
@@ -212,21 +228,21 @@ class VisualGenerator:
         Raises:
             RuntimeError: If the image file cannot be written.
         """
-        size = self._get_dalle_size(option.platform)
+        aspect_ratio = self._get_aspect_ratio(option.platform)
 
         logger.info(
-            "Generating image for option id=%d platform=%s size=%s",
+            "Generating image for option id=%d platform=%s aspect_ratio=%s",
             option.id,
             option.platform,
-            size,
+            aspect_ratio,
         )
 
         # Generate image via OpenRouter
         image_bytes = await self._client.generate_image(
             prompt=option.image_prompt or "",
             model=self._model,
-            size=size,
-            quality="standard",
+            aspect_ratio=aspect_ratio,
+            size=self._image_size,
         )
 
         # Build file path
@@ -242,7 +258,7 @@ class VisualGenerator:
             raise RuntimeError(f"Failed to write image file {filepath}: {exc}") from exc
 
         logger.info("Saved image to %s (%d bytes)", filepath, len(image_bytes))
-        return filepath
+        return filename
 
     async def _update_image_path(self, option_id: int, image_path: str) -> None:
         """Update the ``image_path`` column for a content option.

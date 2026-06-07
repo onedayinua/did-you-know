@@ -44,6 +44,7 @@ def sample_config() -> dict:
         "deduplication": {
             "min_hours_between_similar": 12,
         },
+        "text_model": "openai/gpt-4o-mini",
     }
 
 

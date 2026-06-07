@@ -15,7 +15,7 @@ text_prompt: >
   This theme will be used as the topic in: "Did you know that {theme}?"
 
   Generate a supporting fact and hashtags. Requirements:
-  - Fact: engaging, educational, fun tone, 1-2 sentences that expand on the theme
+  - Fact: engaging, educational, fun tone, 3-4 sentences that expand on the theme
   - Hashtags: relevant to the theme
 
   Return as JSON: {{"fact": "...", "hashtags": ["...", "..."]}}
@@ -30,9 +30,10 @@ image_prompt: >
   - Bright natural lighting, shallow depth of field
   - Overhead or 45-degree angle
   - Include relevant food ingredients or dish
-  - No text overlay (text added separately)
+  - add an short text overlay that should be well readable
 
-  Return a single descriptive paragraph (2-3 sentences) suitable for AI image generation.
+
+  
 
 # Platform-specific content limits
 platforms:
@@ -49,3 +50,7 @@ variations: 3
 # Deduplication settings for themes
 deduplication:
   min_hours_between_similar: 12
+
+# AI model selection
+text_model: "openai/gpt-4o-mini"
+image_model: "openai/dall-e-3"

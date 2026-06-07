@@ -188,80 +188,109 @@ class OpenRouterClient:
         self,
         prompt: str,
         model: str = "openai/dall-e-3",
-        size: str = "1024x1024",
-        quality: str = "standard",
+        aspect_ratio: str = "1:1",
+        size: str | None = None,
     ) -> bytes:
-        """Generate an image using OpenRouter image generation API.
+        """Generate an image using OpenRouter chat completions API with modalities.
+
+        OpenRouter does not support the OpenAI ``/images/generations`` endpoint.
+        Instead, image generation is done via ``/chat/completions`` with
+        ``modalities: ["image"]`` and an ``image_config`` block.
 
         Args:
             prompt: Image description (must be a non-empty string).
             model: Image model identifier.
-            size: Image dimensions, e.g. ``"1024x1024"`` or ``"1024x1792"``.
-            quality: ``"standard"`` or ``"hd"``.
+            aspect_ratio: Aspect ratio string, e.g. ``"1:1"`` or ``"2:3"``.
+            size: Optional image size string, e.g. ``"0.5K"`` or ``"1K"``.
+                When provided, included in ``image_config.size``. When ``None``
+                or empty, the size key is omitted and the model uses its default.
 
         Returns:
             Image bytes (typically PNG format).
 
         Raises:
             OpenRouterError: On API errors, malformed responses, or
-                if the image URL is unreachable.
+                if the image data cannot be decoded.
             OpenRouterRateLimitError: On 429 rate-limit responses.
             ValueError: If prompt is empty.
         """
         self._validate_prompt(prompt)
 
+        image_config = {"aspect_ratio": aspect_ratio}
+        if size:
+            image_config["size"] = size
+
         body = {
             "model": model,
-            "prompt": prompt,
-            "size": size,
-            "quality": quality,
-            "n": 1,
+            "messages": [{"role": "user", "content": prompt}],
+            "modalities": ["image"],
+            "image_config": image_config,
         }
 
         logger.info(
-            "Sending image generation request | model=%s | size=%s",
+            "Sending image generation request | model=%s | aspect_ratio=%s",
             model,
-            size,
+            aspect_ratio,
         )
 
         data = await self._request_with_retry(
-            "POST", "images/generations", json=body
+            "POST", "chat/completions", json=body
         )
 
-        image_data = data.get("data", [])
-        if not image_data:
+        choices = data.get("choices", [])
+        if not choices:
             raise OpenRouterError(
-                "Empty data array in image generation response",
+                "Empty choices array in image generation response",
                 status_code=200,
                 response_body=str(data),
             )
 
-        image_url = image_data[0].get("url")
+        message = choices[0].get("message", {})
+        images = message.get("images")
+        if images is None:
+            raise OpenRouterError(
+                "Missing images in chat completion response",
+                status_code=200,
+                response_body=str(data),
+            )
+
+        if not images:
+            raise OpenRouterError(
+                "Empty images array in image generation response",
+                status_code=200,
+                response_body=str(data),
+            )
+
+        image_url = images[0].get("image_url", {}).get("url")
         if not image_url:
             raise OpenRouterError(
-                "Missing url in image generation response data",
+                "Missing image_url.url in image generation response",
                 status_code=200,
                 response_body=str(data),
             )
 
-        # Fetch the image bytes from the returned URL.
-        # Retry once on failure.
-        try:
-            client = await self._ensure_client()
-            img_response = await client.get(image_url)
-            img_response.raise_for_status()
-            return img_response.content
-        except (httpx.HTTPError, httpx.TimeoutException) as exc:
-            logger.warning("Image URL fetch failed, retrying once: %s", exc)
+        # Decode base64 data URL
+        import base64
+
+        if image_url.startswith("data:image/"):
+            try:
+                _, base64_part = image_url.split(",", 1)
+                return base64.b64decode(base64_part)
+            except (ValueError, base64.binascii.Error) as exc:
+                raise OpenRouterError(
+                    f"Failed to decode base64 image data: {exc}",
+                ) from exc
+        else:
+            # Fallback: treat as regular URL
             try:
                 client = await self._ensure_client()
                 img_response = await client.get(image_url)
                 img_response.raise_for_status()
                 return img_response.content
-            except (httpx.HTTPError, httpx.TimeoutException) as retry_exc:
+            except (httpx.HTTPError, httpx.TimeoutException) as exc:
                 raise OpenRouterError(
-                    f"Failed to fetch image from {image_url}: {retry_exc}",
-                ) from retry_exc
+                    f"Failed to fetch image from {image_url}: {exc}",
+                ) from exc
 
     # ------------------------------------------------------------------
     # Internal helpers
