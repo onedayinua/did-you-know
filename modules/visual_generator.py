@@ -2,10 +2,15 @@
 
 Provides the VisualGenerator class which:
 1. Queries content options with image prompts but no images
-2. For each option, generates an image via OpenRouter (DALL-E)
-3. Saves images to data/images/ with platform-specific dimensions
+2. For each option, generates an image via OpenRouter (black-forest-labs/flux.2-klein-4b)
+3. Saves images to data/images/ with platform-specific aspect ratios
 4. Updates the content_options table with the image path
 5. Returns the updated ContentOption models
+
+The model is configured in ``config/platforms.yaml`` under ``visual.model``.
+Platform-specific dimensions in ``visual.dimensions`` are used to derive the
+aspect ratio passed to the API — the model generates at its native resolution
+with the requested aspect ratio, avoiding wasteful post-generation resizing.
 """
 
 from __future__ import annotations
@@ -213,7 +218,7 @@ class VisualGenerator:
 
         Args:
             option: ContentOption with an ``image_prompt``.
-            dimensions: Dict with ``width`` and ``height``.
+            dimensions: Dict with ``width`` and ``height`` (used to derive aspect ratio only; the model generates at its native resolution).
 
         Returns:
             Relative file path (e.g. ``"data/images/batch_xxx_1.png"``).
@@ -236,27 +241,6 @@ class VisualGenerator:
             model=self._model,
             aspect_ratio=aspect_ratio,
         )
-
-        # Resize to exact platform dimensions
-        if dimensions["width"] > 0 and dimensions["height"] > 0:
-            try:
-                from PIL import Image as PILImage
-                import io
-                img = PILImage.open(io.BytesIO(image_bytes))
-                img = img.resize(
-                    (dimensions["width"], dimensions["height"]),
-                    PILImage.LANCZOS,
-                )
-                buf = io.BytesIO()
-                img.save(buf, format="PNG")
-                image_bytes = buf.getvalue()
-                logger.info(
-                    "Resized image to %dx%d for platform",
-                    dimensions["width"],
-                    dimensions["height"],
-                )
-            except Exception as exc:
-                logger.warning("Failed to resize image, using original: %s", exc)
 
         # Build file path
         filename = f"{option.batch_id}_{option.id}.png"
