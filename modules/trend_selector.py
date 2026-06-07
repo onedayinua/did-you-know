@@ -55,7 +55,7 @@ class TrendSelector:
         """Main execution method.
 
         Process:
-        1. Fetch trending searches via pytrends
+        1. Fetch trending searches via Google Trends RSS feed
         2. Filter for food-related keywords
         3. Query DB for recently used keywords (within *trend_history_days*)
         4. Select highest-scoring unused keyword
