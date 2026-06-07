@@ -30,9 +30,10 @@ image_prompt: >
   - Bright natural lighting, shallow depth of field
   - Overhead or 45-degree angle
   - Include relevant food ingredients or dish
-  - No text overlay (text added separately)
+  - add an short text overlay that should be well readable
 
-  Return a single descriptive paragraph (2-3 sentences) suitable for AI image generation.
+
+  
 
 # Platform-specific content limits
 platforms:

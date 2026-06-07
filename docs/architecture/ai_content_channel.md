@@ -240,7 +240,6 @@ image_prompt: >
   - Include relevant food ingredients or dish
   - No text overlay (text added separately)
 
-  Return a single descriptive paragraph (2-3 sentences) suitable for AI image generation.
 
 platforms:
   pinterest:
