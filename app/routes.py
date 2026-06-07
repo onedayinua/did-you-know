@@ -2,6 +2,7 @@
 
 Endpoints:
 - GET  /                          — Dashboard with pending content options
+- GET  /approved                  — Approved content options page
 - GET  /options/{id}              — Option detail page
 - POST /options/{id}/approve      — Approve a content option
 - POST /options/{id}/cancel       — Cancel a content option
@@ -82,6 +83,54 @@ async def dashboard(request: Request, platform: str | None = None):
 
 
 # ===================================================================
+# Approved Page
+# ===================================================================
+
+
+@router.get("/approved", response_class=HTMLResponse)
+async def approved_page(request: Request, platform: str | None = None):
+    """Show all approved content options, optionally filtered by platform.
+
+    Args:
+        request: FastAPI request object.
+        platform: Optional platform filter (``"pinterest"`` or ``"instagram"``).
+
+    Returns:
+        HTML approved page.
+    """
+    if platform:
+        query = """
+            SELECT id, batch_id, platform, theme, fact, hashtags,
+                   image_prompt, image_path, status, created_at, updated_at
+            FROM content_options
+            WHERE status = 'approved'
+            AND platform = $1
+            ORDER BY created_at DESC
+        """
+        rows = await fetch(query, platform)
+    else:
+        query = """
+            SELECT id, batch_id, platform, theme, fact, hashtags,
+                   image_prompt, image_path, status, created_at, updated_at
+            FROM content_options
+            WHERE status = 'approved'
+            ORDER BY created_at DESC
+        """
+        rows = await fetch(query)
+
+    options = [_row_to_dict(r) for r in rows]
+    return templates.TemplateResponse(
+        request,
+        "dashboard.html",
+        {
+            "options": options,
+            "current_platform": platform,
+            "approved_mode": True,
+        },
+    )
+
+
+# ===================================================================
 # Option Detail
 # ===================================================================
 
@@ -157,30 +206,31 @@ async def approve_option(id: int):
 
 
 @router.post("/options/{id}/cancel")
-async def cancel_option(id: int):
+async def cancel_option(id: int, next: str = "/"):
     """Cancel a content option.
 
     Args:
         id: Content option ID.
+        next: URL to redirect to after cancellation (default: "/").
 
     Returns:
-        Redirect to dashboard.
+        Redirect to the specified URL (or dashboard by default).
 
     Raises:
-        HTTPException 409: If option is not in ``pending`` status.
+        HTTPException 409: If option is not in ``pending`` or ``approved`` status.
     """
     result = await execute(
         "UPDATE content_options SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP "
-        "WHERE id = $1 AND status = 'pending'",
+        "WHERE id = $1 AND status IN ('pending', 'approved')",
         id,
     )
     if "UPDATE 0" in result:
         raise HTTPException(
             status_code=409,
-            detail="Option not found or not in pending status",
+            detail="Option not found or not in pending/approved status",
         )
     logger.info("Cancelled content option id=%d", id)
-    return RedirectResponse(url="/", status_code=302)
+    return RedirectResponse(url=next, status_code=302)
 
 
 @router.post("/options/{id}/regenerate-text")
