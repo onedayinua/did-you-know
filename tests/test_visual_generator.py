@@ -11,6 +11,7 @@ Covers:
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -218,6 +219,21 @@ class TestGetDimensions:
         assert dims["width"] == 800
         assert dims["height"] == 1024
 
+    def test_aspect_ratio_derived_from_pinterest(self, generator: VisualGenerator):
+        """Aspect ratio derived from Pinterest dimensions (1000x1500 = 2:3)."""
+        ratio = generator._get_aspect_ratio("pinterest")
+        assert ratio == "2:3"
+
+    def test_aspect_ratio_derived_from_instagram(self, generator: VisualGenerator):
+        """Aspect ratio derived from Instagram dimensions (1080x1080 = 1:1)."""
+        ratio = generator._get_aspect_ratio("instagram")
+        assert ratio == "1:1"
+
+    def test_aspect_ratio_fallback_to_map(self, generator: VisualGenerator):
+        """Unknown platform falls back to ASPECT_RATIO_MAP then 1:1."""
+        ratio = generator._get_aspect_ratio("unknown")
+        assert ratio == "1:1"
+
 
 # ===================================================================
 # _get_aspect_ratio
@@ -316,6 +332,88 @@ class TestGenerateAndSave:
             model="openai/dall-e-3",
             aspect_ratio="2:3",
         )
+
+
+# ===================================================================
+# Image resizing
+# ===================================================================
+
+
+class TestImageResizing:
+    """Image resize behavior in _generate_and_save."""
+
+    async def test_resizes_to_platform_dimensions(
+        self,
+        generator: VisualGenerator,
+        openrouter_client: AsyncMock,
+        sample_option: ContentOption,
+        tmp_path: Path,
+    ):
+        """Generated image is resized to exact platform dimensions."""
+        generator._images_dir = str(tmp_path)
+        # Create a 100x100 test image
+        from PIL import Image as PILImage
+        import io
+        test_img = PILImage.new("RGB", (100, 100), color="red")
+        buf = io.BytesIO()
+        test_img.save(buf, format="PNG")
+        openrouter_client.generate_image.return_value = buf.getvalue()
+
+        result = await generator._generate_and_save(
+            sample_option, {"width": 400, "height": 600}
+        )
+
+        saved_path = os.path.join(str(tmp_path), result)
+        with PILImage.open(saved_path) as img:
+            assert img.width == 400
+            assert img.height == 600
+
+    async def test_skips_resize_on_zero_dimensions(
+        self,
+        generator: VisualGenerator,
+        openrouter_client: AsyncMock,
+        sample_option: ContentOption,
+        tmp_path: Path,
+    ):
+        """No resize when dimensions are zero."""
+        generator._images_dir = str(tmp_path)
+        from PIL import Image as PILImage
+        import io
+        test_img = PILImage.new("RGB", (100, 100), color="red")
+        buf = io.BytesIO()
+        test_img.save(buf, format="PNG")
+        original_bytes = buf.getvalue()
+        openrouter_client.generate_image.return_value = original_bytes
+
+        result = await generator._generate_and_save(
+            sample_option, {"width": 0, "height": 0}
+        )
+
+        saved_path = os.path.join(str(tmp_path), result)
+        with PILImage.open(saved_path) as img:
+            assert img.width == 100
+            assert img.height == 100
+
+    async def test_skips_resize_on_resize_failure(
+        self,
+        generator: VisualGenerator,
+        openrouter_client: AsyncMock,
+        sample_option: ContentOption,
+        tmp_path: Path,
+        caplog,
+    ):
+        """Original bytes saved when resize fails."""
+        generator._images_dir = str(tmp_path)
+        openrouter_client.generate_image.return_value = b"not_a_real_image"
+
+        result = await generator._generate_and_save(
+            sample_option, {"width": 400, "height": 600}
+        )
+
+        saved_path = os.path.join(str(tmp_path), result)
+        with open(saved_path, "rb") as f:
+            assert f.read() == b"not_a_real_image"
+        assert "Failed to resize image" in caplog.text
 
 
 # ===================================================================

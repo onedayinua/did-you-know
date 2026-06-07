@@ -32,6 +32,7 @@ dependencies = [
     "jinja2>=3.1.0",        # Template engine
     "apscheduler>=3.10.0",  # Job scheduling
     "click>=8.0.0",         # CLI framework
+    "Pillow>=10.0.0",       # Image resizing
 ]
 
 [project.optional-dependencies]

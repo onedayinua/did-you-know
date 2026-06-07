@@ -187,12 +187,21 @@ class VisualGenerator:
     def _get_aspect_ratio(self, platform: str) -> str:
         """Get aspect ratio string for a platform.
 
+        Derives the ratio from the platform dimensions in config.
+        Falls back to the hardcoded ASPECT_RATIO_MAP, then to "1:1".
+
         Args:
             platform: Platform name.
 
         Returns:
-            Aspect ratio string like ``"2:3"`` or ``"1:1"``.
+            Aspect ratio string like "2:3" or "1:1".
         """
+        dims = self._dimensions.get(platform)
+        if dims and dims.get("width") and dims.get("height"):
+            from math import gcd
+            w, h = dims["width"], dims["height"]
+            g = gcd(w, h)
+            return f"{w // g}:{h // g}"
         return ASPECT_RATIO_MAP.get(platform, "1:1")
 
     async def _generate_and_save(
@@ -227,6 +236,27 @@ class VisualGenerator:
             model=self._model,
             aspect_ratio=aspect_ratio,
         )
+
+        # Resize to exact platform dimensions
+        if dimensions["width"] > 0 and dimensions["height"] > 0:
+            try:
+                from PIL import Image as PILImage
+                import io
+                img = PILImage.open(io.BytesIO(image_bytes))
+                img = img.resize(
+                    (dimensions["width"], dimensions["height"]),
+                    PILImage.LANCZOS,
+                )
+                buf = io.BytesIO()
+                img.save(buf, format="PNG")
+                image_bytes = buf.getvalue()
+                logger.info(
+                    "Resized image to %dx%d for platform",
+                    dimensions["width"],
+                    dimensions["height"],
+                )
+            except Exception as exc:
+                logger.warning("Failed to resize image, using original: %s", exc)
 
         # Build file path
         filename = f"{option.batch_id}_{option.id}.png"
