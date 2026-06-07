@@ -30,7 +30,7 @@ def db_pool() -> AsyncMock:
     pool = AsyncMock()
     pool.fetch = AsyncMock()
     pool.fetch_one = AsyncMock()
-    pool.fetch_val = AsyncMock()
+    pool.fetchval = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 
@@ -85,10 +85,10 @@ def sample_config() -> dict:
 class TestRunPipeline:
     """Full pipeline orchestration (mocked)."""
 
-    @patch("app.scheduler.TrendSelector")
-    @patch("app.scheduler.ThemeAssociator")
-    @patch("app.scheduler.ContentGenerator")
-    @patch("app.scheduler.VisualGenerator")
+    @patch("modules.trend_selector.TrendSelector")
+    @patch("modules.theme_associator.ThemeAssociator")
+    @patch("modules.content_generator.ContentGenerator")
+    @patch("modules.visual_generator.VisualGenerator")
     async def test_full_successful_flow(
         self,
         mock_vg: MagicMock,
@@ -133,7 +133,7 @@ class TestRunPipeline:
         cg_instance.run.assert_called_once()
         vg_instance.run.assert_called_once()
 
-    @patch("app.scheduler.TrendSelector")
+    @patch("modules.trend_selector.TrendSelector")
     async def test_skips_when_no_trend(
         self,
         mock_ts: MagicMock,
@@ -150,8 +150,8 @@ class TestRunPipeline:
         assert result["status"] == "skipped"
         assert result["reason"] == "no_trend_found"
 
-    @patch("app.scheduler.TrendSelector")
-    @patch("app.scheduler.ThemeAssociator")
+    @patch("modules.trend_selector.TrendSelector")
+    @patch("modules.theme_associator.ThemeAssociator")
     async def test_skips_when_no_platforms_enabled(
         self,
         mock_ta: MagicMock,
@@ -181,9 +181,9 @@ class TestRunPipeline:
         assert result["status"] == "skipped"
         assert result["reason"] == "no_platforms_enabled"
 
-    @patch("app.scheduler.TrendSelector")
-    @patch("app.scheduler.ThemeAssociator")
-    @patch("app.scheduler.ContentGenerator")
+    @patch("modules.trend_selector.TrendSelector")
+    @patch("modules.theme_associator.ThemeAssociator")
+    @patch("modules.content_generator.ContentGenerator")
     async def test_skips_when_queue_full(
         self,
         mock_cg: MagicMock,

@@ -101,8 +101,8 @@ class TrendSelector:
         """Fetch trending searches from Google Trends API.
 
         Fallback chain:
-        1. Try ``pytrends.trending_searches()`` for real-time trending
-        2. If that fails, try ``pytrends.realtime_trending_searches()``
+        1. Try ``pytrends.realtime_trending_searches()`` first (no build_payload needed)
+        2. If that fails, try ``trending_searches()`` with proper payload
         3. If both fail, return an empty list (caller handles backup)
 
         Returns:
@@ -112,24 +112,25 @@ class TrendSelector:
             logger.warning("pytrends is not installed; skipping API fetch.")
             return []
 
+        # Step 1: Try realtime_trending_searches() first — no build_payload needed
         try:
             pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
-            pytrends.build_payload(kw_list=[], timeframe=self._period)
+            return self._parse_realtime_trending(pytrends)
+        except Exception:
+            logger.warning(
+                "realtime_trending_searches() failed; trying trending_searches()."
+            )
+
+        # Step 2: Try trending_searches() with proper payload
+        try:
+            pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
+            pytrends.build_payload(kw_list=["food"], timeframe=self._period)
             return self._parse_trending_searches(pytrends)
         except Exception:
             logger.warning(
-                "trending_searches() failed; trying realtime_trending_searches().",
-                exc_info=True,
+                "trending_searches() also failed; no API trends available."
             )
-            try:
-                pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
-                return self._parse_realtime_trending(pytrends)
-            except Exception:
-                logger.warning(
-                    "realtime_trending_searches() also failed; no API trends available.",
-                    exc_info=True,
-                )
-                return []
+            return []
 
     @staticmethod
     def _parse_trending_searches(pytrends: Any) -> list[dict[str, Any]]:
@@ -139,9 +140,9 @@ class TrendSelector:
         subsequent trend.
         """
         try:
-            df = pytrends.trending_searches()
+            df = pytrends.interest_over_time()
         except Exception:
-            logger.warning("trending_searches() raised an exception.", exc_info=True)
+            logger.warning("interest_over_time() raised an exception.")
             raise
 
         if df is None or df.empty:
@@ -165,9 +166,7 @@ class TrendSelector:
         try:
             data = pytrends.realtime_trending_searches()
         except Exception:
-            logger.warning(
-                "realtime_trending_searches() raised an exception.", exc_info=True
-            )
+            logger.warning("realtime_trending_searches() raised an exception.")
             raise
 
         if not data:

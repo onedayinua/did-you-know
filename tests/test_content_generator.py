@@ -20,6 +20,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from datetime import timedelta
+
 from modules.content_generator import ContentGenerator
 from shared.models import ContentOption, ContentStatus, Theme
 
@@ -59,8 +61,8 @@ def db_pool() -> AsyncMock:
     """Mock asyncpg connection pool with async helpers."""
     pool = AsyncMock()
     pool.fetch = AsyncMock()
-    pool.fetch_one = AsyncMock()
-    pool.fetch_val = AsyncMock()
+    pool.fetchrow = AsyncMock()
+    pool.fetchval = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 
@@ -99,7 +101,7 @@ class TestCheckQueue:
 
     async def test_returns_count(self, generator: ContentGenerator, db_pool: AsyncMock):
         """Returns the count of pending content options."""
-        db_pool.fetch_val.return_value = 5
+        db_pool.fetchval.return_value = 5
         count = await generator._check_queue()
         assert count == 5
 
@@ -107,7 +109,7 @@ class TestCheckQueue:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Returns 0 when there are no pending options."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         count = await generator._check_queue()
         assert count == 0
 
@@ -115,16 +117,16 @@ class TestCheckQueue:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Returns 0 when database returns None."""
-        db_pool.fetch_val.return_value = None
+        db_pool.fetchval.return_value = None
         count = await generator._check_queue()
         assert count == 0
 
     async def test_correct_query(self, generator: ContentGenerator, db_pool: AsyncMock):
         """Uses COUNT query filtering on pending status."""
-        db_pool.fetch_val.return_value = 3
+        db_pool.fetchval.return_value = 3
         await generator._check_queue()
-        db_pool.fetch_val.assert_called_once()
-        query = db_pool.fetch_val.call_args[0][0]
+        db_pool.fetchval.assert_called_once()
+        query = db_pool.fetchval.call_args[0][0]
         assert "COUNT" in query
         assert "pending" in query
 
@@ -174,11 +176,12 @@ class TestExpireOldOptions:
     async def test_passes_days_parameter(
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
-        """Passes the days parameter as interval string to the query."""
+        """Passes the days parameter as timedelta to the query."""
         db_pool.execute.return_value = "UPDATE 1"
         await generator._expire_old_options(3)
         args = db_pool.execute.call_args[0]
-        assert "3 days" in args
+        assert isinstance(args[1], timedelta)
+        assert args[1].days == 3
 
 
 # ===================================================================
@@ -411,7 +414,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Saves a single option and returns a ContentOption model."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_20240101_000000_abc123",
             "platform": "pinterest",
@@ -439,7 +442,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Saves multiple options and returns them all."""
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             {
                 "id": 1,
                 "batch_id": "batch_1",
@@ -480,7 +483,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Raises RuntimeError when INSERT returns no row."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
         options = [{"fact": "Fail", "hashtags": [], "image_prompt": "fail"}]
         with pytest.raises(RuntimeError, match="INSERT into content_options"):
             await generator._save_options("Test", "batch", "pinterest", options)
@@ -489,7 +492,7 @@ class TestSaveOptions:
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
         """Hashtags are passed as JSON string to the database."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "b",
             "platform": "pinterest",
@@ -506,7 +509,7 @@ class TestSaveOptions:
             "T", "b", "pinterest",
             [{"fact": "F", "hashtags": ["#a", "#b"], "image_prompt": "img"}],
         )
-        args = db_pool.fetch_one.call_args[0]
+        args = db_pool.fetchrow.call_args[0]
         hashtags_arg = args[5]  # 6th positional arg (0-indexed: query, batch_id, platform, theme, fact, hashtags_json, image_prompt)
         import json
         assert json.loads(hashtags_arg) == ["#a", "#b"]
@@ -528,12 +531,12 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Full successful flow: check queue -> expire -> generate -> save -> return."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
@@ -561,7 +564,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Returns empty list when queue is at max_pending capacity."""
-        db_pool.fetch_val.return_value = 10  # At max_pending
+        db_pool.fetchval.return_value = 10  # At max_pending
         result = await generator.run(sample_theme, ["pinterest"])
         assert result == []
 
@@ -573,12 +576,12 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Generates content for multiple platforms successfully."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test fact", "hashtags": ["#test"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
@@ -602,7 +605,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Skips platforms not found in config."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await generator.run(sample_theme, ["unknown_platform"])
         assert result == []
@@ -614,7 +617,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Returns empty list when no platforms specified."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await generator.run(sample_theme, [])
         assert result == []
@@ -638,11 +641,11 @@ class TestRun:
             },
         }
         gen = ContentGenerator(db_pool, openrouter_client, config)
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         openrouter_client.generate_text.return_value = (
             '[{"fact": "Test", "hashtags": ["#t"]}]'
         )
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "b",
             "platform": "pinterest",
@@ -675,7 +678,7 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Skips platform when text generation fails."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.side_effect = Exception("Generation failed")
 
@@ -690,14 +693,14 @@ class TestRun:
         sample_theme: Theme,
     ):
         """Uses fallback image prompt when generation fails."""
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         # First call succeeds (text), second fails (image)
         openrouter_client.generate_text.side_effect = [
             '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]',
             Exception("Image generation failed"),
         ]
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "batch_id": "batch_test",
             "platform": "pinterest",
@@ -750,8 +753,8 @@ class TestEdgeCases:
     async def test_check_queue_handles_db_null(
         self, generator: ContentGenerator, db_pool: AsyncMock
     ):
-        """Returns 0 when fetch_val returns None."""
-        db_pool.fetch_val.return_value = None
+        """Returns 0 when fetchval returns None."""
+        db_pool.fetchval.return_value = None
         count = await generator._check_queue()
         assert count == 0
 
@@ -795,7 +798,7 @@ class TestEdgeCases:
             "queue": {"max_pending": 10, "expire_days": 7, "cleanup_on_generate": True},
         }
         gen = ContentGenerator(db_pool, openrouter_client, config)
-        db_pool.fetch_val.return_value = 0
+        db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         result = await gen.run(sample_theme, ["pinterest"])
         assert result == []

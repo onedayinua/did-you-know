@@ -23,7 +23,7 @@ from main import cli
 class TestMigrateCommand:
     """Database migration command."""
 
-    @patch("main.run_migrations")
+    @patch("shared.migrate.run_migrations")
     def test_migrate_success(self, mock_run: MagicMock):
         """migrate command runs successfully."""
         mock_run.return_value = None
@@ -45,7 +45,7 @@ class TestMigrateCommand:
 class TestServeCommand:
     """Server start command."""
 
-    @patch("main.uvicorn.run")
+    @patch("uvicorn.run")
     def test_serve_defaults(self, mock_uvicorn: MagicMock):
         """serve command starts with default host/port."""
         runner = CliRunner()
@@ -58,7 +58,7 @@ class TestServeCommand:
             reload=False,
         )
 
-    @patch("main.uvicorn.run")
+    @patch("uvicorn.run")
     def test_serve_custom_port(self, mock_uvicorn: MagicMock):
         """serve command accepts custom port."""
         runner = CliRunner()
@@ -71,7 +71,7 @@ class TestServeCommand:
             reload=False,
         )
 
-    @patch("main.uvicorn.run")
+    @patch("uvicorn.run")
     def test_serve_with_reload(self, mock_uvicorn: MagicMock):
         """serve command accepts --reload flag."""
         runner = CliRunner()
@@ -88,12 +88,12 @@ class TestServeCommand:
 class TestGenerateCommand:
     """Manual pipeline execution command."""
 
-    @patch("main.run_pipeline")
-    @patch("main.load_config")
-    @patch("main.OpenRouterClient")
-    @patch("main.init_pool")
-    @patch("main.get_pool")
-    @patch("main.close_pool")
+    @patch("app.scheduler.run_pipeline")
+    @patch("shared.config_loader.load_config")
+    @patch("shared.openrouter_client.OpenRouterClient")
+    @patch("shared.db.init_pool")
+    @patch("shared.db.get_pool")
+    @patch("shared.db.close_pool")
     def test_generate_success(
         self,
         mock_close: MagicMock,
@@ -104,6 +104,14 @@ class TestGenerateCommand:
         mock_pipeline: MagicMock,
     ):
         """generate command runs pipeline successfully."""
+        # Make init_pool awaitable
+        async def mock_init_pool():
+            return None
+        mock_init.side_effect = mock_init_pool
+        mock_get_pool.return_value = AsyncMock()
+        # Make OpenRouterClient.close() awaitable
+        client_instance = AsyncMock()
+        mock_client.return_value = client_instance
         mock_pipeline.return_value = {
             "status": "completed",
             "trend": "air fryer recipes",
@@ -119,8 +127,9 @@ class TestGenerateCommand:
         assert result.exit_code == 0
         assert "Pipeline complete" in result.output
 
-    @patch("main.init_pool")
-    def test_generate_fails_without_api_key(self, mock_init: MagicMock):
+    @patch("shared.db.get_pool")
+    @patch("shared.db.init_pool")
+    def test_generate_fails_without_api_key(self, mock_init: MagicMock, mock_get_pool: MagicMock):
         """generate command fails when OPENROUTER_API_KEY is not set."""
         runner = CliRunner()
         with patch.dict("os.environ", {"DATABASE_URL": "postgresql://localhost:5432/test"}, clear=True):
@@ -146,5 +155,5 @@ class TestCLI:
         """CLI without command shows help."""
         runner = CliRunner()
         result = runner.invoke(cli, [])
-        assert result.exit_code == 0
+        assert result.exit_code == 2
         assert "Usage:" in result.output

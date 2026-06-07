@@ -19,6 +19,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from datetime import timedelta
+
 from modules.theme_associator import ThemeAssociator
 from shared.models import Theme, Trend
 
@@ -50,7 +52,7 @@ def db_pool() -> AsyncMock:
     """Mock asyncpg connection pool with async helpers."""
     pool = AsyncMock()
     pool.fetch = AsyncMock()
-    pool.fetch_one = AsyncMock()
+    pool.fetchrow = AsyncMock()
     pool.execute = AsyncMock()
     return pool
 
@@ -214,7 +216,7 @@ class TestIsDuplicate:
 
     async def test_returns_true_on_exact_match(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Exact match returns True."""
-        db_pool.fetch_one.return_value = {"name": "Crispy Cooking"}
+        db_pool.fetchrow.return_value = {"name": "Crispy Cooking"}
 
         result = await associator._is_duplicate("Crispy Cooking", 12)
 
@@ -222,7 +224,7 @@ class TestIsDuplicate:
 
     async def test_returns_true_on_substring_match(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Substring match in DB returns True."""
-        db_pool.fetch_one.return_value = {"name": "Crispy Cooking"}
+        db_pool.fetchrow.return_value = {"name": "Crispy Cooking"}
 
         result = await associator._is_duplicate("Cooking", 12)
 
@@ -230,7 +232,7 @@ class TestIsDuplicate:
 
     async def test_returns_false_when_no_match(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """No matching theme returns False."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
 
         result = await associator._is_duplicate("Unique Theme", 12)
 
@@ -238,25 +240,26 @@ class TestIsDuplicate:
 
     async def test_case_insensitive_matching(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """ILIKE provides case-insensitive matching."""
-        db_pool.fetch_one.return_value = {"name": "crispy cooking"}
+        db_pool.fetchrow.return_value = {"name": "crispy cooking"}
 
         result = await associator._is_duplicate("Crispy Cooking", 12)
 
         assert result is True
 
     async def test_passes_correct_hours_interval(self, associator: ThemeAssociator, db_pool: AsyncMock):
-        """The hours parameter is passed as part of the SQL interval."""
-        db_pool.fetch_one.return_value = None
+        """The hours parameter is passed as timedelta to the query."""
+        db_pool.fetchrow.return_value = None
 
         await associator._is_duplicate("Test Theme", 24)
 
-        db_pool.fetch_one.assert_awaited_once()
-        args = db_pool.fetch_one.call_args[0]
-        assert "24 hours" in args
+        db_pool.fetchrow.assert_awaited_once()
+        args = db_pool.fetchrow.call_args[0]
+        assert isinstance(args[1], timedelta)
+        assert args[1].days == 1
 
     async def test_empty_theme_name(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Empty theme name returns False (no match possible)."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
 
         result = await associator._is_duplicate("", 12)
 
@@ -273,7 +276,7 @@ class TestSaveTheme:
 
     async def test_inserts_and_returns_theme(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Inserts a theme and returns a Theme model with generated id."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 42,
             "name": "Crispy Cooking",
             "trend_id": 1,
@@ -289,14 +292,14 @@ class TestSaveTheme:
 
     async def test_raises_when_insert_returns_none(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Raises RuntimeError if INSERT RETURNING yields no row."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
 
         with pytest.raises(RuntimeError, match="INSERT into themes table returned no row"):
             await associator._save_theme("fail", 1)
 
     async def test_correct_query_parameters(self, associator: ThemeAssociator, db_pool: AsyncMock):
         """Verifies the SQL query and parameters passed to the DB."""
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 1,
             "name": "Test Theme",
             "trend_id": 5,
@@ -305,8 +308,8 @@ class TestSaveTheme:
 
         await associator._save_theme("Test Theme", 5)
 
-        db_pool.fetch_one.assert_called_once()
-        args = db_pool.fetch_one.call_args[0]
+        db_pool.fetchrow.assert_called_once()
+        args = db_pool.fetchrow.call_args[0]
         assert "INSERT INTO themes" in args[0]
         assert "Test Theme" in args
         assert 5 in args
@@ -329,7 +332,7 @@ class TestRun:
     ):
         """Full flow: generate -> dedup (no duplicate) -> save -> return Theme."""
         openrouter_client.generate_text.return_value = "Crispy Cooking"
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             None,  # _is_duplicate returns False (no match)
             {      # _save_theme returns saved record
                 "id": 10,
@@ -358,7 +361,7 @@ class TestRun:
             "Crispy Cooking",     # First attempt — duplicate
             "Healthy Baking",     # Second attempt — not a duplicate
         ]
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             {"name": "Crispy Cooking"},  # _is_duplicate returns True (first attempt)
             None,                         # _is_duplicate returns False (second attempt)
             {                             # _save_theme
@@ -387,7 +390,7 @@ class TestRun:
             "Healthy Baking",     # Attempt 2 — duplicate
             "Spicy Grilling",     # Attempt 3 — duplicate (last attempt)
         ]
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             {"name": "Crispy Cooking"},  # _is_duplicate True
             {"name": "Healthy Baking"},  # _is_duplicate True
             {"name": "Spicy Grilling"},  # _is_duplicate True
@@ -416,7 +419,7 @@ class TestRun:
             "",                   # Attempt 1 — empty response
             "Crispy Cooking",     # Attempt 2 — valid response (not duplicate)
         ]
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             None,  # _is_duplicate returns False
             {      # _save_theme
                 "id": 13,
@@ -452,7 +455,7 @@ class TestRun:
     ):
         """Cleaned theme name (truncated, stripped) is saved to DB."""
         openrouter_client.generate_text.return_value = '"Spicy Crispy Chicken Wings Extra"'
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             None,  # _is_duplicate returns False
             {      # _save_theme
                 "id": 14,
@@ -503,7 +506,7 @@ class TestEdgeCases:
         """Unicode keyword is handled correctly."""
         trend = Trend(id=2, keyword="recette de cuisine", score=90.0, source="google_trends")
         openrouter_client.generate_text.return_value = "French Cooking"
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             None,
             {
                 "id": 20,
@@ -526,7 +529,7 @@ class TestEdgeCases:
         """Special characters in keyword are handled."""
         trend = Trend(id=3, keyword="best-ever BBQ ribs!", score=95.0, source="google_trends")
         openrouter_client.generate_text.return_value = "BBQ Master"
-        db_pool.fetch_one.side_effect = [
+        db_pool.fetchrow.side_effect = [
             None,
             {
                 "id": 21,
@@ -546,12 +549,12 @@ class TestEdgeCases:
         db_pool: AsyncMock,
     ):
         """Special characters in theme name for dedup check are passed correctly."""
-        db_pool.fetch_one.return_value = None
+        db_pool.fetchrow.return_value = None
 
         await associator._is_duplicate("Crispy & Tasty", 12)
 
-        db_pool.fetch_one.assert_awaited_once()
-        args = db_pool.fetch_one.call_args[0]
+        db_pool.fetchrow.assert_awaited_once()
+        args = db_pool.fetchrow.call_args[0]
         assert "Crispy & Tasty" in args
 
     async def test_save_theme_returns_proper_model(
@@ -563,7 +566,7 @@ class TestEdgeCases:
         from datetime import datetime
 
         now = datetime.now()
-        db_pool.fetch_one.return_value = {
+        db_pool.fetchrow.return_value = {
             "id": 100,
             "name": "Test Theme",
             "trend_id": 7,
