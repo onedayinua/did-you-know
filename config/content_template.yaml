@@ -49,3 +49,7 @@ variations: 3
 # Deduplication settings for themes
 deduplication:
   min_hours_between_similar: 12
+
+# AI model selection
+text_model: "openai/gpt-4o-mini"
+image_model: "openai/dall-e-3"

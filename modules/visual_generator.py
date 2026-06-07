@@ -46,7 +46,7 @@ class VisualGenerator:
         self._config = config
 
         visual_config = config.get("visual", {})
-        self._model: str = visual_config.get("model", "dall-e-3")
+        self._model: str = visual_config.get("model", "openai/dall-e-3")
         self._dimensions: dict[str, dict[str, int]] = visual_config.get("dimensions", {})
         self._images_dir = "data/images"
 

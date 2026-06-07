@@ -13,7 +13,7 @@ platforms:
 
 # Visual generation settings
 visual:
-  model: "dall-e-3"
+  model: "openai/dall-e-3"
   style: "food photography, bright, appetizing, clean background"
   dimensions:
     pinterest:

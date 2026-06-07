@@ -39,6 +39,7 @@ class ThemeAssociator:
         self._client = openrouter_client
         self._config = config
         self._prompt_template: str = config.get("theme_prompt", "")
+        self._text_model: str = config.get("text_model", "openai/gpt-4o-mini")
         dedup_config = config.get("deduplication", {})
         self._min_hours: int = dedup_config.get("min_hours_between_similar", 12)
 
@@ -123,7 +124,7 @@ class ThemeAssociator:
         try:
             response = await self._client.generate_text(
                 prompt=prompt,
-                model="openai/gpt-4o-mini",
+                model=self._text_model,
                 max_tokens=50,
                 temperature=0.7,
             )

@@ -33,7 +33,7 @@ def sample_config() -> dict:
     """Full config dict as loaded from platforms.yaml."""
     return {
         "visual": {
-            "model": "dall-e-3",
+            "model": "openai/dall-e-3",
             "dimensions": {
                 "pinterest": {"width": 1000, "height": 1500},
                 "instagram": {"width": 1080, "height": 1080},
@@ -313,7 +313,7 @@ class TestGenerateAndSave:
 
         openrouter_client.generate_image.assert_called_once_with(
             prompt=sample_option.image_prompt,
-            model="dall-e-3",
+            model="openai/dall-e-3",
             aspect_ratio="2:3",
         )
 
@@ -521,7 +521,7 @@ class TestRun:
         # Instagram aspect ratio should be 1:1
         openrouter_client.generate_image.assert_called_once_with(
             prompt="p3",
-            model="dall-e-3",
+            model="openai/dall-e-3",
             aspect_ratio="1:1",
         )
 
@@ -544,7 +544,7 @@ class TestEdgeCases:
     ):
         """Generator works with an empty config using defaults."""
         gen = VisualGenerator(db_pool, openrouter_client, {})
-        assert gen._model == "dall-e-3"
+        assert gen._model == "openai/dall-e-3"
         dims = gen._get_dimensions("pinterest")
         assert dims["width"] == 1024
 
