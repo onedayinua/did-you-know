@@ -175,7 +175,7 @@
             {% for item in history_items %}
                 <div class="card">
                     {% if item.image_path %}
-                    <img class="card-image" src="/{{ item.image_path }}" alt="{{ item.theme }}">
+                    <img class="card-image" src="/images/{{ item.image_path }}" alt="{{ item.theme }}">
                     {% else %}
                     <div class="card-image" style="display:flex;align-items:center;justify-content:center;color:#ccc;">No Image</div>
                     {% endif %}
@@ -199,7 +199,7 @@
             {% for option in options %}
                 <div class="card">
                     {% if option.image_path %}
-                    <img class="card-image" src="/{{ option.image_path }}" alt="{{ option.theme }}">
+                    <img class="card-image" src="/images/{{ option.image_path }}" alt="{{ option.theme }}">
                     {% else %}
                     <div class="card-image" style="display:flex;align-items:center;justify-content:center;color:#ccc;">No Image</div>
                     {% endif %}

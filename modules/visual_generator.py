@@ -241,7 +241,7 @@ class VisualGenerator:
             raise RuntimeError(f"Failed to write image file {filepath}: {exc}") from exc
 
         logger.info("Saved image to %s (%d bytes)", filepath, len(image_bytes))
-        return filepath
+        return filename
 
     async def _update_image_path(self, option_id: int, image_path: str) -> None:
         """Update the ``image_path`` column for a content option.

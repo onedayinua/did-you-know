@@ -264,8 +264,8 @@ class TestGenerateAndSave:
         )
 
         assert "batch_20240101_000000_abc123_1.png" in result
-        # Verify file was written
-        filepath = Path(result)
+        # Verify file was written at the expected location
+        filepath = Path(generator._images_dir) / result
         assert filepath.exists()
         assert filepath.read_bytes() == b"fake_image_bytes"
 
