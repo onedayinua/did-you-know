@@ -164,7 +164,7 @@ class OpenRouterClient:
             max_tokens,
         )
 
-        data = await self._request_with_retry("POST", "/chat/completions", json=body)
+        data = await self._request_with_retry("POST", "chat/completions", json=body)
 
         choices = data.get("choices", [])
         if not choices:
@@ -225,7 +225,7 @@ class OpenRouterClient:
         )
 
         data = await self._request_with_retry(
-            "POST", "/images/generations", json=body
+            "POST", "images/generations", json=body
         )
 
         image_data = data.get("data", [])

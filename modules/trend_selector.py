@@ -140,9 +140,9 @@ class TrendSelector:
         subsequent trend.
         """
         try:
-            df = pytrends.trending_searches()
+            df = pytrends.interest_over_time()
         except Exception:
-            logger.warning("trending_searches() raised an exception.")
+            logger.warning("interest_over_time() raised an exception.")
             raise
 
         if df is None or df.empty:
