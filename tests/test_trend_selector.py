@@ -240,14 +240,16 @@ class TestFetchTrends:
         """Successfully fetches and parses trending searches."""
         import pandas as pd
 
+        dates = pd.date_range("2026-06-07", periods=3, freq="h")
         mock_df = pd.DataFrame(
-            {0: ["chicken recipes", "python programming", "healthy dinner ideas"]}
+            {"chicken recipes": [10, 15, 20], "python programming": [5, 8, 12], "healthy dinner ideas": [3, 6, 9]},
+            index=dates,
         )
 
         instance = mock_trend_req.return_value
         # Make realtime_trending_searches fail so it falls through to trending_searches
         instance.realtime_trending_searches.side_effect = Exception("Realtime error")
-        instance.trending_searches.return_value = mock_df
+        instance.interest_over_time.return_value = mock_df
 
         results = await selector._fetch_trends()
 
@@ -662,10 +664,15 @@ class TestParseTrendingSearches:
         """Scores decrease by 5 from 100 for each trend."""
         import pandas as pd
 
-        mock_df = pd.DataFrame({0: ["chicken recipe", "pasta dinner", "healthy snacks"]})
+        # Create a DataFrame with DatetimeIndex (realistic mock of interest_over_time())
+        dates = pd.date_range("2026-06-07", periods=3, freq="h")
+        mock_df = pd.DataFrame(
+            {"chicken recipe": [10, 15, 20], "pasta dinner": [5, 8, 12], "healthy snacks": [3, 6, 9]},
+            index=dates,
+        )
 
         mock_pytrends = MagicMock()
-        mock_pytrends.trending_searches.return_value = mock_df
+        mock_pytrends.interest_over_time.return_value = mock_df
 
         results = TrendSelector._parse_trending_searches(mock_pytrends)
 
@@ -711,6 +718,55 @@ class TestParseTrendingSearches:
 
         results = TrendSelector._parse_realtime_trending(mock_pytrends)
         assert results == []
+
+
+class TestParseTodaySearches:
+    """Unit tests for _parse_today_searches()."""
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    def test_parse_today_scores_decrease(self):
+        """Scores decrease by 5 from 100 for each trend."""
+        import pandas as pd
+
+        mock_series = pd.Series(["chicken recipe", "pasta dinner", "healthy snacks"])
+
+        mock_pytrends = MagicMock()
+        mock_pytrends.today_searches.return_value = mock_series
+
+        results = TrendSelector._parse_today_searches(mock_pytrends)
+
+        assert len(results) == 3
+        assert results[0]["score"] == 100.0
+        assert results[1]["score"] == 95.0
+        assert results[2]["score"] == 90.0
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    def test_parse_today_empty_series(self):
+        """Empty Series returns empty list."""
+        import pandas as pd
+
+        mock_pytrends = MagicMock()
+        mock_pytrends.today_searches.return_value = pd.Series([], dtype=str)
+
+        results = TrendSelector._parse_today_searches(mock_pytrends)
+        assert results == []
+
+    @patch("modules.trend_selector.HAS_PYTRENDS", True)
+    def test_parse_today_skips_empty_values(self):
+        """Skips empty/NaN values in the Series."""
+        import pandas as pd
+        import numpy as np
+
+        mock_series = pd.Series(["chicken recipe", np.nan, "healthy snacks", ""])
+
+        mock_pytrends = MagicMock()
+        mock_pytrends.today_searches.return_value = mock_series
+
+        results = TrendSelector._parse_today_searches(mock_pytrends)
+
+        assert len(results) == 2
+        assert results[0]["keyword"] == "chicken recipe"
+        assert results[1]["keyword"] == "healthy snacks"
 
 
 # ===================================================================

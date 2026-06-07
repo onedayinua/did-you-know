@@ -15,6 +15,8 @@ import logging
 from datetime import timedelta
 from typing import Any
 
+import pandas as pd
+
 from shared.models import Trend
 
 logger = logging.getLogger(__name__)
@@ -129,7 +131,17 @@ class TrendSelector:
             return self._parse_trending_searches(pytrends)
         except Exception:
             logger.warning(
-                "trending_searches() also failed; no API trends available.",
+                "trending_searches() also failed; trying today_searches().",
+                exc_info=True,
+            )
+
+        # Step 3: Try today_searches() as final fallback
+        try:
+            pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
+            return self._parse_today_searches(pytrends)
+        except Exception:
+            logger.warning(
+                "today_searches() also failed; no API trends available.",
                 exc_info=True,
             )
             return []
@@ -151,9 +163,38 @@ class TrendSelector:
             return []
 
         results: list[dict[str, Any]] = []
-        for idx, row in df.iterrows():
-            keyword = str(row.iloc[0]).strip()
-            score = max(100.0 - idx * 5, 0.0)
+        for i, col in enumerate(df.columns):
+            keyword = str(col).strip()
+            score = max(100.0 - i * 5, 0.0)
+            results.append({"keyword": keyword, "score": score})
+
+        return results
+
+    @staticmethod
+    def _parse_today_searches(pytrends: Any) -> list[dict[str, Any]]:
+        """Parse the Series returned by ``today_searches()``.
+
+        ``today_searches()`` returns a pandas Series of trending search titles.
+        Assigns a score of 100.0 to the top trend, decreasing by 5 for each
+        subsequent trend.
+        """
+        try:
+            series = pytrends.today_searches()
+        except Exception:
+            logger.warning("today_searches() raised an exception.", exc_info=True)
+            raise
+
+        if series is None or series.empty:
+            return []
+
+        results: list[dict[str, Any]] = []
+        for i, value in enumerate(series):
+            if pd.isna(value):
+                continue
+            keyword = str(value).strip()
+            if not keyword:
+                continue
+            score = max(100.0 - i * 5, 0.0)
             results.append({"keyword": keyword, "score": score})
 
         return results
