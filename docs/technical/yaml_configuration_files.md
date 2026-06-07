@@ -61,7 +61,7 @@ platforms:
     hashtag_count: 10-30
 
 # Number of content variations to generate per theme
-variations: 3
+variations: 2
 
 # Deduplication settings for themes
 deduplication:

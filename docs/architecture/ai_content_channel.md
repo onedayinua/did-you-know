@@ -249,7 +249,7 @@ platforms:
     character_limit: 2200
     hashtag_count: 10-30
 
-variations: 3
+variations: 2
 ```
 
 ---
