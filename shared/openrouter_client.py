@@ -16,6 +16,22 @@ import httpx
 logger = logging.getLogger(__name__)
 
 
+def _truncate_body(body: str, max_len: int = 500) -> str:
+    """Truncate a response body for logging, keeping first and last portion.
+    
+    Args:
+        body: The full response body string.
+        max_len: Maximum length before truncation.
+    
+    Returns:
+        Truncated string with \"... [truncated N chars] ...\" in the middle.
+    """
+    if len(body) <= max_len:
+        return body
+    half = max_len // 2
+    return f"{body[:half]}... [truncated {len(body) - max_len} chars] ...{body[-half:]}"
+
+
 class OpenRouterError(Exception):
     """Base error for OpenRouter API failures."""
 
@@ -302,13 +318,14 @@ class OpenRouterClient:
             # ---- Non-retryable 4xx errors (except 429) ----
             if response.status_code in (400, 401, 403, 404):
                 body_text = response.text
+                truncated = _truncate_body(body_text)
                 logger.error(
                     "Non-retryable API error | status=%s | body=%s",
                     response.status_code,
-                    body_text,
+                    truncated,
                 )
                 raise OpenRouterError(
-                    f"OpenRouter API error: {response.status_code} - {body_text}",
+                    f"OpenRouter API error: {response.status_code} - {truncated}",
                     status_code=response.status_code,
                     response_body=body_text,
                 )
@@ -330,14 +347,16 @@ class OpenRouterClient:
             # ---- Server errors (5xx) ----
             if response.status_code >= 500:
                 body_text = response.text
+                truncated = _truncate_body(body_text)
                 logger.warning(
-                    "Server error (attempt %d/%d) | status=%s",
+                    "Server error (attempt %d/%d) | status=%s | body=%s",
                     attempt,
                     max_retries,
                     response.status_code,
+                    truncated,
                 )
                 last_exception = OpenRouterError(
-                    f"Server error: {response.status_code} - {body_text}",
+                    f"Server error: {response.status_code} - {truncated}",
                     status_code=response.status_code,
                     response_body=body_text,
                 )
