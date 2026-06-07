@@ -15,7 +15,7 @@ text_prompt: >
   This theme will be used as the topic in: "Did you know that {theme}?"
 
   Generate a supporting fact and hashtags. Requirements:
-  - Fact: engaging, educational, fun tone, 1-2 sentences that expand on the theme
+  - Fact: engaging, educational, fun tone, 3-4 sentences that expand on the theme
   - Hashtags: relevant to the theme
 
   Return as JSON: {{"fact": "...", "hashtags": ["...", "..."]}}

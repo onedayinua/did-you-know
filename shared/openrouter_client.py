@@ -189,6 +189,7 @@ class OpenRouterClient:
         prompt: str,
         model: str = "openai/dall-e-3",
         aspect_ratio: str = "1:1",
+        size: str | None = None,
     ) -> bytes:
         """Generate an image using OpenRouter chat completions API with modalities.
 
@@ -200,6 +201,9 @@ class OpenRouterClient:
             prompt: Image description (must be a non-empty string).
             model: Image model identifier.
             aspect_ratio: Aspect ratio string, e.g. ``"1:1"`` or ``"2:3"``.
+            size: Optional image size string, e.g. ``"0.5K"`` or ``"1K"``.
+                When provided, included in ``image_config.size``. When ``None``
+                or empty, the size key is omitted and the model uses its default.
 
         Returns:
             Image bytes (typically PNG format).
@@ -212,11 +216,15 @@ class OpenRouterClient:
         """
         self._validate_prompt(prompt)
 
+        image_config = {"aspect_ratio": aspect_ratio}
+        if size:
+            image_config["size"] = size
+
         body = {
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
             "modalities": ["image"],
-            "image_config": {"aspect_ratio": aspect_ratio},
+            "image_config": image_config,
         }
 
         logger.info(

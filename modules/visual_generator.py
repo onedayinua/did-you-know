@@ -42,7 +42,8 @@ class VisualGenerator:
         openrouter_client: An OpenRouterClient instance with ``generate_image()``.
         config: The ``platforms.yaml`` config dict. Expected keys:
             ``visual.dimensions`` (per-platform width/height),
-            ``visual.model`` (default ``"dall-e-3"``).
+            ``visual.model`` (default ``"dall-e-3"``),
+            ``visual.image_size`` (default ``"0.5K"``).
     """
 
     def __init__(self, db_pool: Any, openrouter_client: Any, config: dict[str, Any]) -> None:
@@ -52,6 +53,7 @@ class VisualGenerator:
 
         visual_config = config.get("visual", {})
         self._model: str = visual_config.get("model", "openai/dall-e-3")
+        self._image_size: str = visual_config.get("image_size", "0.5K")
         self._dimensions: dict[str, dict[str, int]] = visual_config.get("dimensions", {})
         self._images_dir = "data/images"
 
@@ -240,6 +242,7 @@ class VisualGenerator:
             prompt=option.image_prompt or "",
             model=self._model,
             aspect_ratio=aspect_ratio,
+            size=self._image_size,
         )
 
         # Build file path

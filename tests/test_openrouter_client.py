@@ -496,6 +496,58 @@ class TestGenerateImage:
         call_body = mock_instance.request.call_args[1]["json"]
         assert call_body["image_config"]["aspect_ratio"] == "2:3"
 
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_generate_image_with_size(self, mock_httpx_client, client):
+        """Size parameter is included in image_config when provided."""
+        import base64
+        b64_data = base64.b64encode(b"fake").decode("ascii")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": f"data:image/png;base64,{b64_data}"}}]
+                }
+            }]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat", size="0.5K")
+        assert result == b"fake"
+        call_kwargs = mock_instance.request.call_args[1]
+        body = call_kwargs["json"]
+        assert body["image_config"]["size"] == "0.5K"
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_generate_image_without_size(self, mock_httpx_client, client):
+        """No size key in image_config when size is None."""
+        import base64
+        b64_data = base64.b64encode(b"fake").decode("ascii")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": f"data:image/png;base64,{b64_data}"}}]
+                }
+            }]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat")
+        assert result == b"fake"
+        call_kwargs = mock_instance.request.call_args[1]
+        body = call_kwargs["json"]
+        assert "size" not in body["image_config"]
+
 
 # ------------------------------------------------------------------
 # Retry timing (exponential backoff with jitter)

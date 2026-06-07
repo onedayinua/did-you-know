@@ -331,6 +331,7 @@ class TestGenerateAndSave:
             prompt=sample_option.image_prompt,
             model="openai/dall-e-3",
             aspect_ratio="2:3",
+            size="0.5K",
         )
 
 
@@ -539,6 +540,7 @@ class TestRun:
             prompt="p3",
             model="openai/dall-e-3",
             aspect_ratio="1:1",
+            size="0.5K",
         )
 
 
