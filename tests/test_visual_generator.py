@@ -19,7 +19,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from modules.visual_generator import VisualGenerator, DALLE_SIZE_MAP
+from modules.visual_generator import VisualGenerator, ASPECT_RATIO_MAP
 from shared.models import ContentOption, ContentStatus
 
 
@@ -220,24 +220,24 @@ class TestGetDimensions:
 
 
 # ===================================================================
-# _get_dalle_size
+# _get_aspect_ratio
 # ===================================================================
 
 
-class TestGetDalleSize:
-    """DALL-E size string mapping."""
+class TestGetAspectRatio:
+    """Aspect ratio string mapping."""
 
-    def test_returns_pinterest_size(self, generator: VisualGenerator):
-        """Pinterest maps to 1024x1792."""
-        assert generator._get_dalle_size("pinterest") == "1024x1792"
+    def test_returns_pinterest_ratio(self, generator: VisualGenerator):
+        """Pinterest maps to 2:3."""
+        assert generator._get_aspect_ratio("pinterest") == "2:3"
 
-    def test_returns_instagram_size(self, generator: VisualGenerator):
-        """Instagram maps to 1024x1024."""
-        assert generator._get_dalle_size("instagram") == "1024x1024"
+    def test_returns_instagram_ratio(self, generator: VisualGenerator):
+        """Instagram maps to 1:1."""
+        assert generator._get_aspect_ratio("instagram") == "1:1"
 
     def test_returns_default_for_unknown(self, generator: VisualGenerator):
-        """Unknown platform defaults to 1024x1024."""
-        assert generator._get_dalle_size("unknown") == "1024x1024"
+        """Unknown platform defaults to 1:1."""
+        assert generator._get_aspect_ratio("unknown") == "1:1"
 
 
 # ===================================================================
@@ -303,7 +303,7 @@ class TestGenerateAndSave:
         sample_option: ContentOption,
         tmp_path: Path,
     ):
-        """generate_image is called with the right prompt, model, size, and quality."""
+        """generate_image is called with the right prompt, model, and aspect_ratio."""
         generator._images_dir = str(tmp_path)
         openrouter_client.generate_image.return_value = b"bytes"
 
@@ -314,8 +314,7 @@ class TestGenerateAndSave:
         openrouter_client.generate_image.assert_called_once_with(
             prompt=sample_option.image_prompt,
             model="dall-e-3",
-            size="1024x1792",
-            quality="standard",
+            aspect_ratio="2:3",
         )
 
 
@@ -519,12 +518,11 @@ class TestRun:
 
         result = await generator.run()
         assert len(result) == 1
-        # Instagram size should be 1024x1024
+        # Instagram aspect ratio should be 1:1
         openrouter_client.generate_image.assert_called_once_with(
             prompt="p3",
             model="dall-e-3",
-            size="1024x1024",
-            quality="standard",
+            aspect_ratio="1:1",
         )
 
 
@@ -536,10 +534,10 @@ class TestRun:
 class TestEdgeCases:
     """Additional edge-case coverage."""
 
-    def test_dalle_size_map_has_all_platforms(self):
-        """DALLE_SIZE_MAP covers all supported platforms."""
-        assert "pinterest" in DALLE_SIZE_MAP
-        assert "instagram" in DALLE_SIZE_MAP
+    def test_aspect_ratio_map_has_all_platforms(self):
+        """ASPECT_RATIO_MAP covers all supported platforms."""
+        assert "pinterest" in ASPECT_RATIO_MAP
+        assert "instagram" in ASPECT_RATIO_MAP
 
     def test_generator_with_empty_config(
         self, db_pool: AsyncMock, openrouter_client: AsyncMock

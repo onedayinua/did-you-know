@@ -18,10 +18,10 @@ from shared.models import ContentOption
 
 logger = logging.getLogger(__name__)
 
-# DALL-E supported size mapping per platform
-DALLE_SIZE_MAP: dict[str, str] = {
-    "pinterest": "1024x1792",   # portrait — closest to 1000x1500
-    "instagram": "1024x1024",   # square — closest to 1080x1080
+# Aspect ratio mapping per platform (for OpenRouter image generation)
+ASPECT_RATIO_MAP: dict[str, str] = {
+    "pinterest": "2:3",   # portrait
+    "instagram": "1:1",   # square
 }
 
 
@@ -184,16 +184,16 @@ class VisualGenerator:
             }
         return {"width": 1024, "height": 1024}
 
-    def _get_dalle_size(self, platform: str) -> str:
-        """Get DALL-E supported size string for a platform.
+    def _get_aspect_ratio(self, platform: str) -> str:
+        """Get aspect ratio string for a platform.
 
         Args:
             platform: Platform name.
 
         Returns:
-            Size string like ``"1024x1792"`` or ``"1024x1024"``.
+            Aspect ratio string like ``"2:3"`` or ``"1:1"``.
         """
-        return DALLE_SIZE_MAP.get(platform, "1024x1024")
+        return ASPECT_RATIO_MAP.get(platform, "1:1")
 
     async def _generate_and_save(
         self,
@@ -212,21 +212,20 @@ class VisualGenerator:
         Raises:
             RuntimeError: If the image file cannot be written.
         """
-        size = self._get_dalle_size(option.platform)
+        aspect_ratio = self._get_aspect_ratio(option.platform)
 
         logger.info(
-            "Generating image for option id=%d platform=%s size=%s",
+            "Generating image for option id=%d platform=%s aspect_ratio=%s",
             option.id,
             option.platform,
-            size,
+            aspect_ratio,
         )
 
         # Generate image via OpenRouter
         image_bytes = await self._client.generate_image(
             prompt=option.image_prompt or "",
             model=self._model,
-            size=size,
-            quality="standard",
+            aspect_ratio=aspect_ratio,
         )
 
         # Build file path

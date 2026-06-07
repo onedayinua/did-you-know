@@ -306,95 +306,160 @@ class TestGenerateImage:
 
     @patch("shared.openrouter_client.httpx.AsyncClient")
     async def test_success(self, mock_httpx_client, client):
-        """Test successful image generation returns image bytes."""
-        # Mock the /images/generations response
-        mock_gen_response = MagicMock()
-        mock_gen_response.status_code = 200
-        mock_gen_response.json.return_value = {
-            "data": [{"url": "https://example.com/image.png"}]
+        """Test successful image generation returns decoded base64 bytes."""
+        # Mock the chat completions response with a base64 data URL
+        import base64
+        expected_bytes = b"fake-image-bytes"
+        b64_data = base64.b64encode(expected_bytes).decode("ascii")
+        data_url = f"data:image/png;base64,{b64_data}"
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": data_url}}]
+                }
+            }]
         }
 
-        # Mock the image URL fetch response
-        mock_img_response = MagicMock()
-        mock_img_response.status_code = 200
-        mock_img_response.content = b"fake-image-bytes"
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat")
+        assert result == expected_bytes
+        # Verify the request was sent to chat/completions
+        call_path = mock_instance.request.call_args[0][1]
+        assert call_path == "chat/completions"
+        # Verify the body contains modalities and image_config
+        call_body = mock_instance.request.call_args[1]["json"]
+        assert call_body["modalities"] == ["image"]
+        assert call_body["image_config"]["aspect_ratio"] == "1:1"
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_empty_choices(self, mock_httpx_client, client):
+        """Test that empty choices array raises OpenRouterError."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"choices": []}
 
         mock_instance = AsyncMock()
-        mock_instance.request.side_effect = [mock_gen_response]
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        with pytest.raises(OpenRouterError, match="Empty choices"):
+            await client.generate_image("test")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_missing_images(self, mock_httpx_client, client):
+        """Test that missing images field raises OpenRouterError."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{"message": {}}]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        with pytest.raises(OpenRouterError, match="Missing images"):
+            await client.generate_image("test")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_empty_images_array(self, mock_httpx_client, client):
+        """Test that empty images array raises OpenRouterError."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{"message": {"images": []}}]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        with pytest.raises(OpenRouterError, match="Empty images"):
+            await client.generate_image("test")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_missing_image_url(self, mock_httpx_client, client):
+        """Test that missing image_url.url raises OpenRouterError."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{"message": {"images": [{"image_url": {}}]}}]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        with pytest.raises(OpenRouterError, match="Missing image_url.url"):
+            await client.generate_image("test")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_malformed_base64(self, mock_httpx_client, client):
+        """Test that malformed base64 data URL raises OpenRouterError."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": "data:image/png;base64,!!!invalid!!!base64"}}]
+                }
+            }]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        with pytest.raises(OpenRouterError, match="Failed to decode base64"):
+            await client.generate_image("test")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_fallback_regular_url(self, mock_httpx_client, client):
+        """Test fallback to regular URL fetch when URL is not a data URL."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": "https://example.com/image.png"}}]
+                }
+            }]
+        }
+
+        mock_img_response = MagicMock()
+        mock_img_response.status_code = 200
+        mock_img_response.content = b"fetched-image-bytes"
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
         mock_instance.get.return_value = mock_img_response
         mock_httpx_client.return_value = mock_instance
 
         result = await client.generate_image("A cat")
-        assert result == b"fake-image-bytes"
-        # Verify the GET was called for the image URL
+        assert result == b"fetched-image-bytes"
         mock_instance.get.assert_awaited_once_with("https://example.com/image.png")
 
     @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_empty_data_array(self, mock_httpx_client, client):
-        """Test that empty data array raises OpenRouterError."""
+    async def test_fallback_url_fetch_failure(self, mock_httpx_client, client):
+        """Test that fallback URL fetch failure raises OpenRouterError."""
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"data": []}
-
-        mock_instance = AsyncMock()
-        mock_instance.request.return_value = mock_response
-        mock_httpx_client.return_value = mock_instance
-
-        with pytest.raises(OpenRouterError, match="Empty data"):
-            await client.generate_image("test")
-
-    @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_missing_url(self, mock_httpx_client, client):
-        """Test that missing url field raises OpenRouterError."""
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"data": [{"url": None}]}
-
-        mock_instance = AsyncMock()
-        mock_instance.request.return_value = mock_response
-        mock_httpx_client.return_value = mock_instance
-
-        with pytest.raises(OpenRouterError, match="Missing url"):
-            await client.generate_image("test")
-
-    @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_image_url_fetch_failure_retry(self, mock_httpx_client, client):
-        """Test that image URL fetch is retried once on failure."""
-        # Mock generation response
-        mock_gen_response = MagicMock()
-        mock_gen_response.status_code = 200
-        mock_gen_response.json.return_value = {
-            "data": [{"url": "https://example.com/image.png"}]
-        }
-
-        # First GET fails, second succeeds
-        mock_img_response_success = MagicMock()
-        mock_img_response_success.status_code = 200
-        mock_img_response_success.content = b"recovered-image"
-
-        mock_instance = AsyncMock()
-        mock_instance.request.return_value = mock_gen_response
-        mock_instance.get.side_effect = [
-            httpx.TimeoutException("timeout"),
-            mock_img_response_success,
-        ]
-        mock_httpx_client.return_value = mock_instance
-
-        result = await client.generate_image("test")
-        assert result == b"recovered-image"
-        assert mock_instance.get.call_count == 2
-
-    @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_image_url_fetch_exhausted(self, mock_httpx_client, client):
-        """Test that image URL fetch raises OpenRouterError after retrying."""
-        mock_gen_response = MagicMock()
-        mock_gen_response.status_code = 200
-        mock_gen_response.json.return_value = {
-            "data": [{"url": "https://example.com/image.png"}]
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": "https://example.com/image.png"}}]
+                }
+            }]
         }
 
         mock_instance = AsyncMock()
-        mock_instance.request.return_value = mock_gen_response
+        mock_instance.request.return_value = mock_response
         mock_instance.get.side_effect = httpx.HTTPError("connection failed")
         mock_httpx_client.return_value = mock_instance
 
@@ -402,30 +467,34 @@ class TestGenerateImage:
             await client.generate_image("test")
 
     @patch("shared.openrouter_client.httpx.AsyncClient")
-    async def test_multiple_images_returns_first(self, mock_httpx_client, client):
-        """Test that if multiple images are returned, only the first one is used."""
-        mock_gen_response = MagicMock()
-        mock_gen_response.status_code = 200
-        mock_gen_response.json.return_value = {
-            "data": [
-                {"url": "https://example.com/image1.png"},
-                {"url": "https://example.com/image2.png"},
-            ]
+    async def test_empty_prompt(self, mock_httpx_client, client):
+        """Test that empty prompt raises ValueError."""
+        with pytest.raises(ValueError, match="non-empty"):
+            await client.generate_image("")
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_custom_aspect_ratio(self, mock_httpx_client, client):
+        """Test that custom aspect_ratio is passed in the request body."""
+        import base64
+        b64_data = base64.b64encode(b"bytes").decode("ascii")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": f"data:image/png;base64,{b64_data}"}}]
+                }
+            }]
         }
 
-        mock_img_response = MagicMock()
-        mock_img_response.status_code = 200
-        mock_img_response.content = b"first-image-bytes"
-
         mock_instance = AsyncMock()
-        mock_instance.request.return_value = mock_gen_response
-        mock_instance.get.return_value = mock_img_response
+        mock_instance.request.return_value = mock_response
         mock_httpx_client.return_value = mock_instance
 
-        result = await client.generate_image("A cat")
-        assert result == b"first-image-bytes"
-        # Verify only the first URL was fetched
-        mock_instance.get.assert_awaited_once_with("https://example.com/image1.png")
+        await client.generate_image("test", aspect_ratio="2:3")
+        call_body = mock_instance.request.call_args[1]["json"]
+        assert call_body["image_config"]["aspect_ratio"] == "2:3"
 
 
 # ------------------------------------------------------------------
