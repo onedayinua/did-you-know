@@ -1,12 +1,12 @@
 """TrendSelector module — selects trending topics from Google Trends.
 
 Provides the TrendSelector class which:
-1. Fetches trending searches from Google Trends (via pytrends)
+1. Fetches trending searches from Google Trends RSS feed
 2. Filters for food-related keywords using Google Trends' Food & Drink category
 3. Deduplicates against recently used keywords in the database
 4. Selects the highest-scoring unused keyword
 5. Saves it to the trends table
-6. Falls back to config-based backup trends when the API is unavailable
+6. Falls back to config-based backup trends when the feed is unavailable
 """
 
 from __future__ import annotations
@@ -15,18 +15,11 @@ import logging
 from datetime import timedelta
 from typing import Any
 
+import httpx
+
 from shared.models import Trend
 
 logger = logging.getLogger(__name__)
-
-# Conditional import — pytrends is an external API dependency that may not be
-# installed in test/CI environments.
-try:
-    from pytrends.request import TrendReq
-
-    HAS_PYTRENDS = True
-except ImportError:  # pragma: no cover
-    HAS_PYTRENDS = False
 
 
 
@@ -62,7 +55,7 @@ class TrendSelector:
         """Main execution method.
 
         Process:
-        1. Fetch trending searches via pytrends
+        1. Fetch trending searches via Google Trends RSS feed
         2. Filter for food-related keywords
         3. Query DB for recently used keywords (within *trend_history_days*)
         4. Select highest-scoring unused keyword
@@ -98,103 +91,63 @@ class TrendSelector:
     # ------------------------------------------------------------------
 
     async def _fetch_trends(self) -> list[dict[str, Any]]:
-        """Fetch trending searches from Google Trends API.
+        """Fetch trending searches from Google Trends RSS feed.
 
-        Fallback chain:
-        1. Try ``pytrends.realtime_trending_searches()`` first (no build_payload needed)
-        2. If that fails, try ``trending_searches()`` with proper payload
-        3. If both fail, return an empty list (caller handles backup)
+        Uses the official Google Trends RSS feed which returns real-time
+        daily trending searches. Falls back to backup trends if the feed
+        is unavailable.
 
         Returns:
             List of dicts with ``{"keyword": str, "score": float}``.
         """
-        if not HAS_PYTRENDS:
-            logger.warning("pytrends is not installed; skipping API fetch.")
-            return []
+        import xml.etree.ElementTree as ET
 
-        # Step 1: Try realtime_trending_searches() first — no build_payload needed
+        url = f"https://trends.google.com/trending/rss?geo={self._geo}"
+
         try:
-            pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
-            return self._parse_realtime_trending(pytrends)
+            async with httpx.AsyncClient(timeout=15) as client:
+                response = await client.get(url)
+                response.raise_for_status()
         except Exception:
             logger.warning(
-                "realtime_trending_searches() failed; trying trending_searches()."
-            )
-
-        # Step 2: Try trending_searches() with proper payload
-        try:
-            pytrends = TrendReq(hl="en-US", tz=360, timeout=30, geo=self._geo)
-            pytrends.build_payload(kw_list=["food"], timeframe=self._period)
-            return self._parse_trending_searches(pytrends)
-        except Exception:
-            logger.warning(
-                "trending_searches() also failed; no API trends available."
+                "Google Trends RSS feed request failed; trying backup trends.",
+                exc_info=True,
             )
             return []
 
-    @staticmethod
-    def _parse_trending_searches(pytrends: Any) -> list[dict[str, Any]]:
-        """Parse the DataFrame returned by ``trending_searches()``.
-
-        Assigns a score of 100.0 to the top trend, decreasing by 5 for each
-        subsequent trend.
-        """
         try:
-            df = pytrends.interest_over_time()
+            root = ET.fromstring(response.text)
         except Exception:
-            logger.warning("interest_over_time() raised an exception.")
-            raise
+            logger.warning(
+                "Failed to parse Google Trends RSS feed.",
+                exc_info=True,
+            )
+            return []
 
-        if df is None or df.empty:
+        ns = {"ht": "https://trends.google.com/trending/rss"}
+        items = root.findall(".//item")
+
+        if not items:
+            logger.warning("Google Trends RSS feed returned no items.")
             return []
 
         results: list[dict[str, Any]] = []
-        for idx, row in df.iterrows():
-            keyword = str(row.iloc[0]).strip()
-            score = max(100.0 - idx * 5, 0.0)
-            results.append({"keyword": keyword, "score": score})
-
-        return results
-
-    @staticmethod
-    def _parse_realtime_trending(pytrends: Any) -> list[dict[str, Any]]:
-        """Parse the data returned by ``realtime_trending_searches()``.
-
-        Extracts keywords from the entries and assigns a score of 90.0
-        (decreasing by 3 per entry).
-        """
-        try:
-            data = pytrends.realtime_trending_searches()
-        except Exception:
-            logger.warning("realtime_trending_searches() raised an exception.")
-            raise
-
-        if not data:
-            return []
-
-        results: list[dict[str, Any]] = []
-        entries = data if isinstance(data, list) else data.get("entries", [])
-
-        for idx, entry in enumerate(entries):
-            title = ""
-            if isinstance(entry, dict):
-                title = (
-                    entry.get("title", "")
-                    or entry.get("name", "")
-                    or ""
-                )
-            elif hasattr(entry, "title"):
-                title = entry.title
-            else:
-                title = str(entry)
-
-            keyword = title.strip()
+        for i, item in enumerate(items):
+            title_el = item.find("title")
+            if title_el is None or not title_el.text:
+                continue
+            keyword = title_el.text.strip()
             if not keyword:
                 continue
 
-            score = max(90.0 - idx * 3, 0.0)
+            # Score: 100.0 for top trend, decreasing by 5 per entry
+            score = max(100.0 - i * 5, 0.0)
             results.append({"keyword": keyword, "score": score})
 
+        logger.info(
+            "Fetched %d trends from Google RSS feed.",
+            len(results),
+        )
         return results
 
     async def _get_used_keywords(self, days: int) -> set[str]:

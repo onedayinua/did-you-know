@@ -3,7 +3,7 @@
 Covers:
 - ``_select_best()`` — core selection algorithm
 - ``_use_backup()`` — backup fallback
-- ``_fetch_trends()`` — pytrends integration (mocked)
+- ``_fetch_trends()`` — RSS feed integration (mocked)
 - ``run()`` — full pipeline (mocked)
 - ``_save_trend()`` — database operations
 """
@@ -58,6 +58,19 @@ def db_pool() -> AsyncMock:
 def selector(db_pool: AsyncMock, sample_config: dict) -> TrendSelector:
     """TrendSelector instance with mocked db pool and sample config."""
     return TrendSelector(db_pool, sample_config)
+
+
+@pytest.fixture
+def mock_rss_response() -> str:
+    """Returns a mock RSS XML response."""
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:ht="https://trends.google.com/trending/rss" version="2.0">
+  <channel>
+    <item><title>flash flood warning</title><ht:approx_traffic>2000+</ht:approx_traffic></item>
+    <item><title>tennis scores today</title><ht:approx_traffic>100000+</ht:approx_traffic></item>
+    <item><title>easy dinner recipes</title><ht:approx_traffic>500+</ht:approx_traffic></item>
+  </channel>
+</rss>"""
 
 
 # ===================================================================
@@ -119,8 +132,6 @@ class TestSelectBest:
             {"keyword": "b", "score": 50.0},
         ]
         result = await selector._select_best(candidates, set())
-        # Both have same score, but after sorting the first is arbitrary;
-        # just verify one is returned.
         assert result is not None
         assert result["keyword"] in ("a", "b")
 
@@ -170,7 +181,6 @@ class TestUseBackup:
         db_pool.fetch.return_value = [
             {"keyword": "easy dinner recipes"},
         ]
-        # Simulate the DB returning the saved trend
         db_pool.fetchrow.side_effect = [
             {
                 "id": 100,
@@ -182,7 +192,6 @@ class TestUseBackup:
         ]
         result = await selector._use_backup()
         assert result is not None
-        # "easy dinner recipes" was used, so it should pick "healthy snacks"
         assert result.keyword == "healthy snacks"
 
     async def test_returns_none_when_all_backups_used(
@@ -230,112 +239,104 @@ class TestUseBackup:
 
 
 class TestFetchTrends:
-    """pytrends integration (mocked)."""
+    """RSS feed integration (mocked)."""
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_fetch_success(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, mock_rss_response: str
     ):
-        """Successfully fetches and parses trending searches."""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {0: ["chicken recipes", "python programming", "healthy dinner ideas"]}
-        )
-
-        instance = mock_trend_req.return_value
-        # Make realtime_trending_searches fail so it falls through to trending_searches
-        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
-        instance.trending_searches.return_value = mock_df
-
-        results = await selector._fetch_trends()
-
-        # No longer filtered — all keywords pass through
-        assert len(results) == 3
-        keywords = [r["keyword"] for r in results]
-        assert "chicken recipes" in keywords
-        assert "healthy dinner ideas" in keywords
-        assert "python programming" in keywords
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
-    async def test_fetch_returns_empty_on_api_failure(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
-    ):
-        """Returns empty list when trending_searches() raises."""
-        instance = mock_trend_req.return_value
-        instance.trending_searches.side_effect = Exception("API error")
-
-        # Also make realtime_trending_searches fail
-        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
-
-        results = await selector._fetch_trends()
-
-        assert results == []
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
-    async def test_fall_through_to_realtime(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
-    ):
-        """Falls through to realtime_trending_searches when trending_searches fails."""
-        instance = mock_trend_req.return_value
-        instance.trending_searches.side_effect = Exception("Trending error")
-
-        # Realtime returns data
-        instance.realtime_trending_searches.return_value = {
-            "entries": [
-                {"title": "easy pasta dinner"},
-                {"title": "latest gadgets"},
-                {"title": "homemade pizza"},
-            ]
-        }
+        """Successfully fetches and parses RSS feed."""
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
         results = await selector._fetch_trends()
 
         assert len(results) == 3
         keywords = [r["keyword"] for r in results]
-        assert "easy pasta dinner" in keywords
-        assert "homemade pizza" in keywords
-        assert "latest gadgets" in keywords
+        assert "flash flood warning" in keywords
+        assert "tennis scores today" in keywords
+        assert "easy dinner recipes" in keywords
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", False)
-    async def test_returns_empty_when_pytrends_not_installed(
-        self, selector: TrendSelector
+    @patch("httpx.AsyncClient.get")
+    async def test_fetch_returns_empty_on_http_error(
+        self, mock_get: MagicMock, selector: TrendSelector
     ):
-        """When pytrends is not installed, returns empty list."""
-        results = await selector._fetch_trends()
-        assert results == []
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
-    async def test_realtime_returns_empty_dict(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
-    ):
-        """Handles realtime returning an empty dict gracefully."""
-        instance = mock_trend_req.return_value
-        instance.trending_searches.side_effect = Exception("Error")
-        instance.realtime_trending_searches.return_value = {}
+        """Returns empty list when HTTP request fails."""
+        mock_get.side_effect = Exception("HTTP error")
 
         results = await selector._fetch_trends()
 
         assert results == []
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
-    async def test_trending_searches_empty_dataframe(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+    @patch("httpx.AsyncClient.get")
+    async def test_fetch_returns_empty_on_bad_xml(
+        self, mock_get: MagicMock, selector: TrendSelector
     ):
-        """Handles empty DataFrame from trending_searches()."""
-        import pandas as pd
-
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = pd.DataFrame()
+        """Returns empty list when RSS XML is malformed."""
+        mock_response = MagicMock()
+        mock_response.text = "not valid xml"
+        mock_get.return_value = mock_response
 
         results = await selector._fetch_trends()
 
         assert results == []
+
+    @patch("httpx.AsyncClient.get")
+    async def test_fetch_returns_empty_on_empty_feed(
+        self, mock_get: MagicMock, selector: TrendSelector
+    ):
+        """Returns empty list when RSS feed has no items."""
+        empty_rss = """<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:ht="https://trends.google.com/trending/rss" version="2.0">
+  <channel>
+  </channel>
+</rss>"""
+        mock_response = MagicMock()
+        mock_response.text = empty_rss
+        mock_get.return_value = mock_response
+
+        results = await selector._fetch_trends()
+
+        assert results == []
+
+    @patch("httpx.AsyncClient.get")
+    async def test_scores_decrease_by_5(
+        self, mock_get: MagicMock, selector: TrendSelector, mock_rss_response: str
+    ):
+        """Scores decrease by 5 from 100 for each trend."""
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
+
+        results = await selector._fetch_trends()
+
+        assert len(results) == 3
+        assert results[0]["score"] == 100.0
+        assert results[1]["score"] == 95.0
+        assert results[2]["score"] == 90.0
+
+    @patch("httpx.AsyncClient.get")
+    async def test_skips_items_without_title(
+        self, mock_get: MagicMock, selector: TrendSelector
+    ):
+        """Items without a title element are skipped."""
+        rss = """<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:ht="https://trends.google.com/trending/rss" version="2.0">
+  <channel>
+    <item><title>valid trend</title><ht:approx_traffic>500+</ht:approx_traffic></item>
+    <item><ht:approx_traffic>200+</ht:approx_traffic></item>
+    <item><title></title><ht:approx_traffic>100+</ht:approx_traffic></item>
+  </channel>
+</rss>"""
+        mock_response = MagicMock()
+        mock_response.text = rss
+        mock_get.return_value = mock_response
+
+        results = await selector._fetch_trends()
+
+        assert len(results) == 1
+        assert results[0]["keyword"] == "valid trend"
 
 
 # ===================================================================
@@ -405,24 +406,19 @@ class TestSaveTrend:
 class TestRun:
     """Full pipeline integration tests (mocked)."""
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_full_successful_flow(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock, mock_rss_response: str
     ):
         """Full flow: fetch -> dedup -> save -> return Trend."""
-        import pandas as pd
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
-        mock_df = pd.DataFrame({0: ["easy dinner recipes", "tech news"]})
-
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = mock_df
-
-        # No recently used keywords
         db_pool.fetch.return_value = []
         db_pool.fetchrow.return_value = {
             "id": 1,
-            "keyword": "easy dinner recipes",
+            "keyword": "flash flood warning",
             "score": 100.0,
             "source": "google_trends",
             "created_at": None,
@@ -431,27 +427,22 @@ class TestRun:
         result = await selector.run()
 
         assert result is not None
-        assert result.keyword == "easy dinner recipes"
+        assert result.keyword == "flash flood warning"
         assert result.score == 100.0
         assert result.source == "google_trends"
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_all_api_trends_used_falls_back_to_backup(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock, mock_rss_response: str
     ):
         """When all API trends have been used, falls back to backup trends."""
-        import pandas as pd
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
-        mock_df = pd.DataFrame({0: ["easy dinner recipes"]})
-
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = mock_df
-
-        # "easy dinner recipes" was used recently
         db_pool.fetch.side_effect = [
-            [{"keyword": "easy dinner recipes"}],   # _get_used_keywords for API
-            [],                                      # _get_used_keywords for backup
+            [{"keyword": "flash flood warning"}, {"keyword": "tennis scores today"}, {"keyword": "easy dinner recipes"}],
+            [],
         ]
         db_pool.fetchrow.return_value = {
             "id": 2,
@@ -467,17 +458,13 @@ class TestRun:
         assert result.keyword == "healthy snacks"
         assert result.source == "backup"
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_api_failure_uses_backup(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock
     ):
         """When the API fails, uses backup trends."""
-        instance = mock_trend_req.return_value
-        instance.trending_searches.side_effect = Exception("Network error")
-        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
+        mock_get.side_effect = Exception("Network error")
 
-        # No used keywords for backup
         db_pool.fetch.return_value = []
         db_pool.fetchrow.return_value = {
             "id": 3,
@@ -493,17 +480,13 @@ class TestRun:
         assert result.keyword == "easy dinner recipes"
         assert result.source == "backup"
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_complete_failure_returns_none(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock
     ):
         """When API fails and all backups are used, returns None."""
-        instance = mock_trend_req.return_value
-        instance.trending_searches.side_effect = Exception("Network error")
-        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
+        mock_get.side_effect = Exception("Network error")
 
-        # All backup trends have been used
         db_pool.fetch.return_value = [
             {"keyword": "easy dinner recipes"},
             {"keyword": "healthy snacks"},
@@ -516,36 +499,19 @@ class TestRun:
 
         assert result is None
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", False)
-    async def test_pytrends_not_installed_uses_backup(
-        self, selector: TrendSelector, db_pool: AsyncMock
-    ):
-        """When pytrends is not installed, uses backup trends."""
-        db_pool.fetch.return_value = []
-        db_pool.fetchrow.return_value = {
-            "id": 4,
-            "keyword": "easy dinner recipes",
-            "score": 85.0,
-            "source": "backup",
-            "created_at": None,
-        }
-
-        result = await selector.run()
-
-        assert result is not None
-        assert result.keyword == "easy dinner recipes"
-        assert result.source == "backup"
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_api_trends_empty_uses_backup(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock
     ):
         """When API returns empty list, uses backup trends."""
-        import pandas as pd
-
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = pd.DataFrame()
+        empty_rss = """<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:ht="https://trends.google.com/trending/rss" version="2.0">
+  <channel>
+  </channel>
+</rss>"""
+        mock_response = MagicMock()
+        mock_response.text = empty_rss
+        mock_get.return_value = mock_response
 
         db_pool.fetch.return_value = []
         db_pool.fetchrow.return_value = {
@@ -599,7 +565,7 @@ class TestEdgeCases:
         db_pool.fetch.return_value = [
             {"keyword": "a"},
             {"keyword": "b"},
-            {"keyword": "a"},  # duplicate in DB
+            {"keyword": "a"},
         ]
         result = await selector._get_used_keywords(30)
         assert result == {"a", "b"}
@@ -618,24 +584,19 @@ class TestEdgeCases:
         sel = TrendSelector(db_pool, {"backup_trends": []})
         assert sel._history_days == 30
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_non_food_only_api_results(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, db_pool: AsyncMock, mock_rss_response: str
     ):
         """When API returns only non-food results, they pass through (no filter)."""
-        import pandas as pd
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
-        mock_df = pd.DataFrame({0: ["python programming", "gaming", "technology"]})
-
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = mock_df
-
-        # No recently used keywords
         db_pool.fetch.return_value = []
         db_pool.fetchrow.return_value = {
             "id": 6,
-            "keyword": "python programming",
+            "keyword": "flash flood warning",
             "score": 100.0,
             "source": "google_trends",
             "created_at": None,
@@ -644,73 +605,8 @@ class TestEdgeCases:
         result = await selector.run()
 
         assert result is not None
-        # "python programming" has the highest score (100.0), so it's selected
-        assert result.keyword == "python programming"
+        assert result.keyword == "flash flood warning"
         assert result.source == "google_trends"
-
-
-# ===================================================================
-# _parse_trending_searches / _parse_realtime_trending
-# ===================================================================
-
-
-class TestParseTrendingSearches:
-    """Unit tests for the parsing methods."""
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    def test_parse_trending_scores_decrease(self):
-        """Scores decrease by 5 from 100 for each trend."""
-        import pandas as pd
-
-        mock_df = pd.DataFrame({0: ["chicken recipe", "pasta dinner", "healthy snacks"]})
-
-        mock_pytrends = MagicMock()
-        mock_pytrends.trending_searches.return_value = mock_df
-
-        results = TrendSelector._parse_trending_searches(mock_pytrends)
-
-        assert len(results) == 3
-        assert results[0]["score"] == 100.0
-        assert results[1]["score"] == 95.0
-        assert results[2]["score"] == 90.0
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    def test_parse_realtime_extracts_keywords(self):
-        """Extracts keywords from realtime trending entries."""
-        mock_pytrends = MagicMock()
-        mock_pytrends.realtime_trending_searches.return_value = {
-            "entries": [
-                {"title": "easy chicken dinner"},
-                {"title": "world news update"},
-                {"title": "homemade pizza recipe"},
-            ]
-        }
-
-        results = TrendSelector._parse_realtime_trending(mock_pytrends)
-
-        assert len(results) == 3
-        keywords = [r["keyword"] for r in results]
-        assert "easy chicken dinner" in keywords
-        assert "homemade pizza recipe" in keywords
-        assert "world news update" in keywords
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    def test_parse_realtime_empty_entries(self):
-        """Empty entries list returns empty list."""
-        mock_pytrends = MagicMock()
-        mock_pytrends.realtime_trending_searches.return_value = {"entries": []}
-
-        results = TrendSelector._parse_realtime_trending(mock_pytrends)
-        assert results == []
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    def test_parse_realtime_empty_dict(self):
-        """Empty dict returns empty list."""
-        mock_pytrends = MagicMock()
-        mock_pytrends.realtime_trending_searches.return_value = {}
-
-        results = TrendSelector._parse_realtime_trending(mock_pytrends)
-        assert results == []
 
 
 # ===================================================================
@@ -719,42 +615,21 @@ class TestParseTrendingSearches:
 
 
 class TestGeoPeriodConfig:
-    """Configurable geo and period for Google Trends API calls."""
+    """Configurable geo for Google Trends RSS feed."""
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_uses_configured_geo(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
+        self, mock_get: MagicMock, selector: TrendSelector, mock_rss_response: str
     ):
-        """TrendReq is called with the configured geo value."""
-        import pandas as pd
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
+        """RSS feed URL uses the configured geo value."""
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
         await selector._fetch_trends()
 
-        # Verify geo was passed to TrendReq constructor
-        _, kwargs = mock_trend_req.call_args
-        assert kwargs.get("geo") == "US"
-
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
-    async def test_uses_configured_period(
-        self, mock_trend_req: MagicMock, selector: TrendSelector, db_pool: AsyncMock
-    ):
-        """build_payload is called with the configured timeframe."""
-        import pandas as pd
-        instance = mock_trend_req.return_value
-        # Make realtime_trending_searches fail so it falls through to trending_searches
-        instance.realtime_trending_searches.side_effect = Exception("Realtime error")
-        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
-
-        await selector._fetch_trends()
-
-        # Verify build_payload was called with timeframe
-        instance.build_payload.assert_called_once_with(
-            kw_list=["food"], timeframe="now 1-d"
-        )
+        args, kwargs = mock_get.call_args
+        assert "geo=US" in args[0]
 
     async def test_default_geo_when_missing(self, db_pool: AsyncMock):
         """Defaults to 'US' when geo not in config."""
@@ -794,23 +669,22 @@ class TestGeoPeriodConfig:
         assert sel._geo == "GB"
         assert sel._period == "now 4-H"
 
-    @patch("modules.trend_selector.HAS_PYTRENDS", True)
-    @patch("modules.trend_selector.TrendReq")
+    @patch("httpx.AsyncClient.get")
     async def test_empty_geo_passed_through(
-        self, mock_trend_req: MagicMock, db_pool: AsyncMock
+        self, mock_get: MagicMock, db_pool: AsyncMock, mock_rss_response: str
     ):
         """Empty string geo is passed through (worldwide)."""
-        import pandas as pd
         sel = TrendSelector(db_pool, {
             "backup_trends": [],
             "trend_history_days": 30,
             "geo": "",
             "period": "now 1-d",
         })
-        instance = mock_trend_req.return_value
-        instance.trending_searches.return_value = pd.DataFrame({0: ["test"]})
+        mock_response = MagicMock()
+        mock_response.text = mock_rss_response
+        mock_get.return_value = mock_response
 
         await sel._fetch_trends()
 
-        _, kwargs = mock_trend_req.call_args
-        assert kwargs.get("geo") == ""
+        args, kwargs = mock_get.call_args
+        assert "geo=" in args[0]

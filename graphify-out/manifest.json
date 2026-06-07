@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/content_template.yaml": {
-    "mtime": 1780243248.952922,
-    "ast_hash": "7c00e1aac0a909d0b708ea436efff10a",
+    "mtime": 1780818336.003834,
+    "ast_hash": "06c3e264df86441321ad030d1e51452f",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/done/TKT-002_shared_config_and_db_pool.md": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/openrouter_client.py": {
-    "mtime": 1780241778.7551653,
-    "ast_hash": "342081dbf45633b12ec4bc1d99b4b78c",
+    "mtime": 1780818336.1617725,
+    "ast_hash": "7224ee92a0fa57dc56861a82ddcb4eea",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_openrouter_client.py": {
@@ -315,13 +315,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/trend_selector.py": {
-    "mtime": 1780342285.5454051,
-    "ast_hash": "df7af1db1bdec08233144b09f06f86fb",
+    "mtime": 1780818336.159497,
+    "ast_hash": "37769ea3ad57dfeb4ee07749f3297174",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_trend_selector.py": {
-    "mtime": 1780255674.3352678,
-    "ast_hash": "f5801fba342a0b5299eee8e6fdd1fa7d",
+    "mtime": 1780818336.173803,
+    "ast_hash": "8f97ad890875756e9a216d4b33058e2a",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/theme_associator.py": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_theme_associator.py": {
-    "mtime": 1780255674.3315737,
-    "ast_hash": "8876af73bc5c6f3fefedb588ea3cc789",
+    "mtime": 1780818336.1713269,
+    "ast_hash": "41230fb7bcc95951fdbb9a720ff2f1eb",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_trend_selector_geo_period_config.md": {
@@ -340,8 +340,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/main.py": {
-    "mtime": 1780341364.591246,
-    "ast_hash": "4eec745637cbf86981e023e828625e88",
+    "mtime": 1780818336.1547985,
+    "ast_hash": "0feb150184ceb084fc9286b03512a70b",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/__init__.py": {
@@ -360,13 +360,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/scheduler.py": {
-    "mtime": 1780341364.4127052,
-    "ast_hash": "465cffef73641888e54b74dce26f442a",
+    "mtime": 1780818336.0014741,
+    "ast_hash": "5fd3e19f5aedc6cd53024452b30b54bf",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/content_generator.py": {
-    "mtime": 1780342285.5306535,
-    "ast_hash": "3d52d3502935581dd400e78b7905e247",
+    "mtime": 1780818336.1575022,
+    "ast_hash": "dfbbeac07c63e01b1f9e96835dc6def0",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/visual_generator.py": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_cli.py": {
-    "mtime": 1780341364.6015656,
-    "ast_hash": "3276a743973b2e87e43d5994f5bc1154",
+    "mtime": 1780818336.1641483,
+    "ast_hash": "82b6bf7de95dc3093ddd4559b13a5555",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_content_generator.py": {
-    "mtime": 1780341364.6038408,
-    "ast_hash": "b6d904c57fa6dbb29c2d201bf8f46817",
+    "mtime": 1780818336.1667178,
+    "ast_hash": "1e8eca837386eb8aa59664d823f2e5ad",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_routes.py": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_scheduler.py": {
-    "mtime": 1780341364.6077056,
-    "ast_hash": "fd44dec1a3e961b4810e4ee638051400",
+    "mtime": 1780818336.168783,
+    "ast_hash": "11a52635fc06a6e1011e09fdd2e4a819",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_visual_generator.py": {
@@ -432,6 +432,11 @@
   "/workspaces/did-you-know/docs/technical/trend_selector_asyncpg_interval_type_fix.md": {
     "mtime": 1780342285.525542,
     "ast_hash": "4865c96afea677732942d9c8f41f8d8b",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/logging_and_cleanup_fixes.md": {
+    "mtime": 1780818336.0066144,
+    "ast_hash": "9bf5253c1dd0d17acf752adc73bc8f11",
     "semantic_hash": ""
   }
 }
