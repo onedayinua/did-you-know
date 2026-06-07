@@ -153,6 +153,7 @@
         <h1>🍳 Did You Know?</h1>
         <nav>
             <a href="/">Dashboard</a>
+            <a href="/approved">Approved</a>
             <a href="/history">History</a>
             <a href="/health">Health</a>
         </nav>
@@ -160,14 +161,16 @@
     <div class="container">
         {% if history_mode %}
             <h2>Content History</h2>
+        {% elif approved_mode %}
+            <h2>Approved Content</h2>
         {% else %}
             <h2>Pending Content</h2>
         {% endif %}
 
         <div class="tabs">
-            <a href="/" class="{% if not current_platform %}active{% endif %}">All</a>
-            <a href="/?platform=pinterest" class="{% if current_platform == 'pinterest' %}active{% endif %}">Pinterest</a>
-            <a href="/?platform=instagram" class="{% if current_platform == 'instagram' %}active{% endif %}">Instagram</a>
+            <a href="{% if approved_mode %}/approved{% else %}/{% endif %}" class="{% if not current_platform %}active{% endif %}">All</a>
+            <a href="{% if approved_mode %}/approved?platform=pinterest{% else %}/?platform=pinterest{% endif %}" class="{% if current_platform == 'pinterest' %}active{% endif %}">Pinterest</a>
+            <a href="{% if approved_mode %}/approved?platform=instagram{% else %}/?platform=instagram{% endif %}" class="{% if current_platform == 'instagram' %}active{% endif %}">Instagram</a>
         </div>
 
         {% if history_mode and history_items %}
@@ -193,6 +196,42 @@
                 </div>
             {% endfor %}
             </div>
+{% elif approved_mode %}
+            {% if options %}
+            <div class="grid">
+            {% for option in options %}
+                <div class="card">
+                    {% if option.image_path %}
+                    <img class="card-image" src="/images/{{ option.image_path }}" alt="{{ option.theme }}">
+                    {% else %}
+                    <div class="card-image" style="display:flex;align-items:center;justify-content:center;color:#ccc;">No Image</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="platform-badge {{ option.platform }}">{{ option.platform }}</span>
+                        <span class="status-badge approved">approved</span>
+                        <h3>{{ option.theme }}</h3>
+                        <p>{{ option.fact[:200] }}{% if option.fact|length > 200 %}...{% endif %}</p>
+                        <div class="hashtags">{{ option.hashtags[:5]|join(' ') }}{% if option.hashtags|length > 5 %}...{% endif %}</div>
+                        <div class="meta">
+                            {% if option.created_at %}{{ option.created_at.strftime('%Y-%m-%d %H:%M') }}{% endif %}
+                            &middot; {{ option.fact_length }} chars &middot; {{ option.hashtag_count }} hashtags
+                        </div>
+                        <div class="actions">
+                            <a href="/preview/{{ option.id }}" class="btn btn-outline" target="_blank">Preview</a>
+                            <form action="/options/{{ option.id }}/cancel?next=/approved" method="post">
+                                <button type="submit" class="btn btn-danger">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <h2>No approved content</h2>
+                <p>Approved content options will appear here.</p>
+            </div>
+            {% endif %}
         {% elif not history_mode %}
             {% if options %}
             <div class="grid">
@@ -217,7 +256,7 @@
                             <form action="/options/{{ option.id }}/approve" method="post">
                                 <button type="submit" class="btn btn-primary">Approve</button>
                             </form>
-                            <form action="/options/{{ option.id }}/cancel" method="post">
+                            <form action="/options/{{ option.id }}/cancel?next=/" method="post">
                                 <button type="submit" class="btn btn-danger">Cancel</button>
                             </form>
                         </div>
