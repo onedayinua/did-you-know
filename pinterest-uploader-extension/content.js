@@ -80,7 +80,7 @@ async function prefillPinData(data) {
 
   // 1. Set Title
   try {
-    const titleInput = await waitForElement('[data-testid="pin-builder-draft-title"]');
+    const titleInput = await waitForElement('#storyboard-selector-title');
     simulateInput(titleInput, data.title);
     results.title = "ok";
     console.log("[ContentScript] Title set successfully");
@@ -91,13 +91,21 @@ async function prefillPinData(data) {
 
   // 2. Set Description (Draft.js editor)
   try {
-    const descInput = await waitForElement(
-      '[data-testid="pin-builder-draft-description"] .public-DraftEditor-content'
-    );
-    descInput.focus();
-    document.execCommand("insertText", false, data.description);
-    results.description = "ok";
-    console.log("[ContentScript] Description set successfully");
+    // Pinterest uses Draft.js — find the contenteditable div inside the editor container
+    const descContainer = await waitForElement('#dweb-comment-editor-container');
+    // Look for the contenteditable div inside the DraftEditor
+    const descInput = descContainer.querySelector('[contenteditable="true"]') ||
+                     descContainer.querySelector('.DraftEditor-editorContainer [contenteditable="true"]') ||
+                     descContainer.querySelector('div[role="textbox"]');
+    if (descInput) {
+      descInput.focus();
+      // Use execCommand as fallback, but also try data-text="true" approach
+      document.execCommand('insertText', false, data.description);
+      results.description = "ok";
+      console.log("[ContentScript] Description set successfully");
+    } else {
+      throw new Error("Could not find contenteditable element inside description container");
+    }
   } catch (err) {
     results.description = "error: " + err.message;
     console.warn("[ContentScript] Failed to set description:", err.message);
@@ -105,7 +113,18 @@ async function prefillPinData(data) {
 
   // 3. Set Destination URL
   try {
-    const urlInput = await waitForElement('[data-testid="pin-builder-draft-link"]');
+    // Try multiple selectors for the URL/link input
+    const urlInput = await waitForElement(
+      'input[placeholder*="link" i], ' +
+      'input[placeholder*="url" i], ' +
+      'input[placeholder*="website" i], ' +
+      'input[aria-label*="link" i], ' +
+      'input[aria-label*="url" i], ' +
+      'input[name*="link" i], ' +
+      'input[name*="url" i], ' +
+      '[data-testid*="link" i] input, ' +
+      '[data-testid*="url" i] input'
+    );
     simulateInput(urlInput, data.url);
     results.url = "ok";
     console.log("[ContentScript] URL set successfully");
