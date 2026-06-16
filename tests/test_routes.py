@@ -183,12 +183,19 @@ class TestMarkPosted:
     """Mark as Posted endpoint tests."""
 
     def test_mark_posted_success(self, client: TestClient):
-        """Valid approved option → returns 200, creates post record, updates status."""
-        client.mock_fetch_one.return_value = {
-            "id": 1,
-            "platform": "pinterest",
-            "image_path": "test.png",
-        }
+        """Valid approved option → returns 200, creates post record, updates status.
+
+        Two fetch_one calls are made: first checks existence, second checks approved status.
+        """
+        # First call (existence check) returns a row; second call (approved status) returns full data
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            {            # approved + data
+                "id": 1,
+                "platform": "pinterest",
+                "image_path": "test.png",
+            },
+        ]
         response = client.post("/options/1/mark-posted")
         assert response.status_code == 200
         data = response.json()
@@ -211,37 +218,52 @@ class TestMarkPosted:
         assert call_args[0][1] == 1
 
     def test_mark_posted_not_found(self, client: TestClient):
-        """Non-existent id → returns 404."""
+        """Non-existent id → first fetch_one returns None → returns 404."""
         client.mock_fetch_one.return_value = None
         response = client.post("/options/999/mark-posted")
         assert response.status_code == 404
         assert response.json()["detail"] == "Content option not found"
 
     def test_mark_posted_not_approved(self, client: TestClient):
-        """Option in 'pending' status → returns 404 (not found with approved filter)."""
-        client.mock_fetch_one.return_value = None  # status filter excludes pending
+        """Option in 'pending' status → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
         response = client.post("/options/1/mark-posted")
-        assert response.status_code == 404
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
 
     def test_mark_posted_already_posted(self, client: TestClient):
-        """Option already 'posted' → returns 404 (not found with approved filter)."""
-        client.mock_fetch_one.return_value = None
+        """Option already 'posted' → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
         response = client.post("/options/1/mark-posted")
-        assert response.status_code == 404
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
 
     def test_mark_posted_cancelled(self, client: TestClient):
-        """Cancelled option → returns 404 (not found with approved filter)."""
-        client.mock_fetch_one.return_value = None
+        """Cancelled option → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
         response = client.post("/options/1/mark-posted")
-        assert response.status_code == 404
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
 
     def test_mark_posted_transaction_failure(self, client: TestClient):
-        """DB transaction fails → returns 500."""
-        client.mock_fetch_one.return_value = {
-            "id": 1,
-            "platform": "pinterest",
-            "image_path": "test.png",
-        }
+        """DB transaction fails → both fetch_ones succeed → returns 500."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            {            # approved + data
+                "id": 1,
+                "platform": "pinterest",
+                "image_path": "test.png",
+            },
+        ]
         client.mock_conn.fetchrow.side_effect = Exception("DB connection lost")
         response = client.post("/options/1/mark-posted")
         assert response.status_code == 500

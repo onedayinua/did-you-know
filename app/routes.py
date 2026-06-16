@@ -250,13 +250,25 @@ async def mark_option_as_posted(id: int):
         HTTPException 409: If option is not in 'approved' status.
         HTTPException 500: If DB transaction fails.
     """
+    # First check if the option exists at all
+    exists = await fetch_one(
+        "SELECT id FROM content_options WHERE id = $1",
+        id,
+    )
+    if exists is None:
+        raise HTTPException(status_code=404, detail="Content option not found")
+
+    # Then check status
     row = await fetch_one(
         "SELECT id, platform, image_path FROM content_options "
         "WHERE id = $1 AND status = 'approved'",
         id,
     )
     if row is None:
-        raise HTTPException(status_code=404, detail="Content option not found")
+        raise HTTPException(
+            status_code=409,
+            detail="Option not found or not in approved status",
+        )
 
     try:
         async with transaction() as conn:

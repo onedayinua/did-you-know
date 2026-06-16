@@ -152,7 +152,7 @@
                     const imageBase64 = await fetchImageAsBase64(imageUrl);
                     const title = '{{ option.theme|e }}';
                     const description = '{{ option.fact|e }}\n\n{{ option.hashtags|join(" ") }}';
-                    const destinationUrl = 'https://example.com';
+                    const destinationUrl = '{{ config.get("SITE_URL", "https://example.com") }}';
                     sendPinToExtension(title, description, destinationUrl, imageBase64);
                 } catch (err) {
                     statusEl.innerText = 'Failed to load image: ' + err.message;
