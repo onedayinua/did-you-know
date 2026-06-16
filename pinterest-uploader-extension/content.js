@@ -419,8 +419,15 @@ async function prefillPinData(data) {
     // 2. The actual .public-DraftEditor-content which gets contenteditable="true" after activation
     // We need to click the overlay button to activate the editor.
     
-    // Find the overlay button — it's a div[role="button"] inside the description container
-    const overlayButton = descContainer.querySelector('div[role="button"]');
+    // Find the overlay button — it's a div[role="button"] in the PARENT container
+    // (div[data-test-id="storyboard-description-field-container"]), NOT inside
+    // #dweb-comment-editor-container. We search the whole page for the right one.
+    const storyboardContainer = document.querySelector(
+      'div[data-test-id="storyboard-description-field-container"]'
+    );
+    const overlayButton = storyboardContainer 
+      ? storyboardContainer.querySelector('div[aria-disabled="false"][role="button"]')
+      : null;
     
     if (overlayButton) {
       console.log("[ContentScript] Found overlay button, clicking to activate editor");
