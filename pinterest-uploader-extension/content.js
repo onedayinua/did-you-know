@@ -150,17 +150,72 @@ async function setDraftJsText(contentEditable, text) {
   // ── [DEBUG] Check for React fiber keys on the element and ancestors ──────────
   const allKeys = Object.keys(contentEditable).filter(k => k.startsWith('__react'));
   console.log("[DEBUG] React keys on contentEditable:", allKeys.length > 0 ? allKeys : 'NONE');
-  let parent = contentEditable.parentElement;
+
+  // Check for React properties on the contentEditable element itself
+  const ceOwnKeys = Object.getOwnPropertyNames(contentEditable);
+  const ceReactFiber = ceOwnKeys.find(k => k.startsWith('__reactFiber$'));
+  const ceReactProps = ceOwnKeys.find(k => k.startsWith('__reactProps$'));
+  const ceReactInternal = ceOwnKeys.find(k => k.startsWith('__reactInternalInstance$'));
+  if (ceReactFiber || ceReactProps || ceReactInternal) {
+    console.log("[DEBUG] React props directly on contentEditable:",
+      "fiber:", ceReactFiber ? "yes" : "no",
+      "props:", ceReactProps ? Object.keys(contentEditable[ceReactProps]).filter(k => k.startsWith('on') || k === 'contentEditable').join(',') : "no",
+      "internal:", ceReactInternal ? "yes" : "no");
+  } else {
+    console.log("[DEBUG] No React props directly on contentEditable");
+  }
+
+  // Scan up to 10 ancestors for React fiber keys
+  let ancestor = contentEditable.parentElement;
   let depth = 0;
-  while (parent && depth < 5) {
-    const parentKeys = Object.keys(parent).filter(k => k.startsWith('__react'));
-    if (parentKeys.length > 0) {
-      console.log("[DEBUG] React keys on ancestor depth=" + depth + " tag=" + parent.tagName + ":", parentKeys);
+  let foundReact = false;
+  while (ancestor && depth < 10) {
+    const fiberKey = ancestor.hasAttribute('data-reactroot') ? 'data-reactroot' :
+      (ancestor.hasAttribute('data-reactid') ? 'data-reactid' : null);
+    if (fiberKey) {
+      console.log("[DEBUG] React key found at depth", depth, ":", fiberKey,
+        "on tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40));
+      foundReact = true;
     }
-    parent = parent.parentElement;
+    // Also check for __reactFiber$ properties (React 16+)
+    const ownKeys = Object.getOwnPropertyNames(ancestor);
+    const reactFiberKey = ownKeys.find(k => k.startsWith('__reactFiber$'));
+    const reactPropsKey = ownKeys.find(k => k.startsWith('__reactProps$'));
+    if (reactFiberKey) {
+      const fiber = ancestor[reactFiberKey];
+      if (fiber && fiber.memoizedState) {
+        console.log("[DEBUG] React fiber found at depth", depth, ":",
+          "tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40));
+        // Try to find EditorState in the fiber tree
+        let stateNode = fiber;
+        let searchDepth = 0;
+        while (stateNode && searchDepth < 20) {
+          if (stateNode.memoizedState) {
+            const ms = stateNode.memoizedState;
+            // Check if this looks like Draft.js EditorState (has _immutable or currentContent)
+            const stateKeys = Object.keys(ms).filter(k => typeof k === 'string').join(',');
+            if (stateKeys.includes('currentContent') || stateKeys.includes('_immutable')) {
+              console.log("[DEBUG] Found Draft.js EditorState candidate at depth", depth,
+                "fiber depth", searchDepth, "keys:", stateKeys.substring(0, 100));
+            }
+          }
+          stateNode = stateNode.child;
+          searchDepth++;
+        }
+      }
+      foundReact = true;
+    }
+    if (reactPropsKey) {
+      console.log("[DEBUG] React props found at depth", depth, ":",
+        "tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40),
+        "props keys:", Object.keys(ancestor[reactPropsKey]).filter(k => k.startsWith('on') || k === 'contentEditable').join(','));
+    }
+    ancestor = ancestor.parentElement;
     depth++;
   }
-  if (depth === 5) console.log("[DEBUG] No React fiber keys found up to 5 ancestors");
+  if (!foundReact) {
+    console.log("[DEBUG] No React fiber keys found up to 10 ancestors");
+  }
 
   // ── Method 1: selectAllChildren (scoped) + execCommand('insertText') ──────────
   // focus() and selection must be set synchronously — no await in between —
@@ -172,6 +227,14 @@ async function setDraftJsText(contentEditable, text) {
   console.log("[DEBUG] AFTER FOCUS — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') + (document.activeElement.className ? '.' + document.activeElement.className.substring(0, 40) : '') : null);
   console.log("[DEBUG] AFTER FOCUS — activeElement === contentEditable:", document.activeElement === contentEditable);
   console.log("[DEBUG] AFTER FOCUS — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+
+  // If focus didn't land on the contentEditable, try focusing again
+  if (document.activeElement !== contentEditable) {
+    console.log("[DEBUG] Focus didn't land on contentEditable, trying element.focus() again");
+    contentEditable.focus();
+    console.log("[DEBUG] AFTER RE-FOCUS — document.activeElement:", document.activeElement?.tagName,
+      document.activeElement === contentEditable ? "(same)" : "DIFFERENT");
+  }
 
   window.getSelection().selectAllChildren(contentEditable);
 
@@ -351,39 +414,30 @@ async function prefillPinData(data) {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
     console.log("[ContentScript] Found description container");
 
-    // The Draft.js editor starts with contenteditable="false".
-    // We need to activate it by clicking the right element.
-    // Try multiple activation strategies:
+    // The Draft.js editor has a two-layer structure:
+    // 1. An overlay div[role="button"] that captures clicks before activation
+    // 2. The actual .public-DraftEditor-content which gets contenteditable="true" after activation
+    // We need to click the overlay button to activate the editor.
     
-    // Strategy 1: Click the container with full mouse events
-    descContainer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-    descContainer.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-    descContainer.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    descContainer.dispatchEvent(new Event('focusin', { bubbles: true }));
-    descContainer.dispatchEvent(new Event('focus', { bubbles: true }));
-    await new Promise(r => setTimeout(r, 300));
+    // Find the overlay button — it's a div[role="button"] inside the description container
+    const overlayButton = descContainer.querySelector('div[role="button"]');
     
-    // Strategy 2: Also try clicking the .DraftEditor-root inside
-    const draftRoot = descContainer.querySelector('.DraftEditor-root');
-    if (draftRoot) {
-      draftRoot.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-      draftRoot.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-      draftRoot.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    if (overlayButton) {
+      console.log("[ContentScript] Found overlay button, clicking to activate editor");
+      // Use real browser click with all proper event properties
+      overlayButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+      overlayButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+      overlayButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+      await new Promise(r => setTimeout(r, 500));
+    } else {
+      console.log("[ContentScript] No overlay button found, trying direct click on container");
+      descContainer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+      descContainer.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+      descContainer.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      await new Promise(r => setTimeout(r, 500));
     }
-    await new Promise(r => setTimeout(r, 300));
     
-    // Strategy 3: Also try clicking the .public-DraftEditor-content directly
-    const draftContent = descContainer.querySelector('.public-DraftEditor-content');
-    if (draftContent) {
-      draftContent.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-      draftContent.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-      draftContent.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-      draftContent.dispatchEvent(new Event('focusin', { bubbles: true }));
-      draftContent.dispatchEvent(new Event('focus', { bubbles: true }));
-    }
-    await new Promise(r => setTimeout(r, 1000));
-
-    // Now try to find the contenteditable element (should now be contenteditable="true")
+    // Now find the contentEditable element (should now be contenteditable="true" if Draft.js activated)
     let contentEditable = descContainer.querySelector(
       '[contenteditable="true"], ' +
       '.public-DraftEditor-content, ' +
@@ -406,7 +460,17 @@ async function prefillPinData(data) {
       "class:", contentEditable.className?.substring(0, 60),
       "contentEditable attr:", contentEditable.getAttribute('contenteditable'));
 
-    console.log("[ContentScript] contentEditable attr after activation attempt:", contentEditable.getAttribute('contenteditable'));
+    // If still contenteditable="false", try focusing directly
+    if (contentEditable.getAttribute('contenteditable') !== 'true') {
+      console.log("[ContentScript] contentEditable is not 'true', trying direct focus");
+      contentEditable.focus();
+      await new Promise(r => setTimeout(r, 300));
+      // If still not true, force it
+      if (contentEditable.getAttribute('contenteditable') !== 'true') {
+        console.log("[ContentScript] Still not 'true', forcing via setAttribute");
+        contentEditable.setAttribute('contenteditable', 'true');
+      }
+    }
 
     const ok = await setDraftJsText(contentEditable, data.description);
 
