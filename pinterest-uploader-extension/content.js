@@ -75,6 +75,40 @@ function uploadBase64Image(base64String) {
 }
 
 /**
+ * Watches for contenteditable attribute changes on Draft.js editor elements.
+ * Helps identify what real user interaction activates the editor.
+ */
+function watchContentEditableChanges() {
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'contenteditable') {
+        const el = mutation.target;
+        const oldVal = mutation.oldValue;
+        const newVal = el.getAttribute('contenteditable');
+        const activeEl = document.activeElement;
+        console.log("[ContentScript] [CE_WATCH] contenteditable changed on:", el.tagName,
+          "class:", el.className?.substring(0, 40),
+          "old:", oldVal, "-> new:", newVal,
+          "activeElement:", activeEl?.tagName,
+          "activeElement class:", activeEl?.className?.substring(0, 40));
+        console.log("[ContentScript] [CE_WATCH] activeElement === changed element:", activeEl === el);
+      }
+    }
+  });
+  
+  // Watch the entire body for contenteditable attribute changes
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['contenteditable'],
+    attributeOldValue: true,
+  });
+  
+  console.log("[ContentScript] ContentEditable change watcher installed");
+  return observer;
+}
+
+/**
  * Injects text into a Draft.js contenteditable editor using three strategies.
  *
  * BUG NOTES (do not reintroduce):
@@ -96,6 +130,7 @@ async function setDraftJsText(contentEditable, text) {
   console.log("[DEBUG] BEFORE — className:", contentEditable.className);
   console.log("[DEBUG] BEFORE — isContentEditable:", contentEditable.isContentEditable);
   console.log("[DEBUG] BEFORE — contentEditable attr:", contentEditable.getAttribute('contenteditable'));
+  console.log("[DEBUG] BEFORE — contentEditable attr value:", contentEditable.getAttribute('contenteditable'));
   console.log("[DEBUG] BEFORE — offsetParent:", contentEditable.offsetParent ? contentEditable.offsetParent.tagName : null);
   const bcr = contentEditable.getBoundingClientRect();
   console.log("[DEBUG] BEFORE — boundingClientRect:", JSON.stringify({ x: bcr.x, y: bcr.y, w: bcr.width, h: bcr.height }));
@@ -316,11 +351,39 @@ async function prefillPinData(data) {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
     console.log("[ContentScript] Found description container");
 
-    // Click to ensure the Draft.js editor is initialised
-    descContainer.click();
-    await new Promise(r => setTimeout(r, 500));
+    // The Draft.js editor starts with contenteditable="false".
+    // We need to activate it by clicking the right element.
+    // Try multiple activation strategies:
+    
+    // Strategy 1: Click the container with full mouse events
+    descContainer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+    descContainer.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+    descContainer.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    descContainer.dispatchEvent(new Event('focusin', { bubbles: true }));
+    descContainer.dispatchEvent(new Event('focus', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 300));
+    
+    // Strategy 2: Also try clicking the .DraftEditor-root inside
+    const draftRoot = descContainer.querySelector('.DraftEditor-root');
+    if (draftRoot) {
+      draftRoot.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+      draftRoot.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+      draftRoot.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    }
+    await new Promise(r => setTimeout(r, 300));
+    
+    // Strategy 3: Also try clicking the .public-DraftEditor-content directly
+    const draftContent = descContainer.querySelector('.public-DraftEditor-content');
+    if (draftContent) {
+      draftContent.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+      draftContent.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+      draftContent.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      draftContent.dispatchEvent(new Event('focusin', { bubbles: true }));
+      draftContent.dispatchEvent(new Event('focus', { bubbles: true }));
+    }
+    await new Promise(r => setTimeout(r, 1000));
 
-    // Locate the contenteditable Draft.js manages
+    // Now try to find the contenteditable element (should now be contenteditable="true")
     let contentEditable = descContainer.querySelector(
       '[contenteditable="true"], ' +
       '.public-DraftEditor-content, ' +
@@ -340,7 +403,10 @@ async function prefillPinData(data) {
     if (!contentEditable) throw new Error("Could not find contentEditable element");
 
     console.log("[ContentScript] contentEditable found — tag:", contentEditable.tagName,
-      "class:", contentEditable.className?.substring(0, 60));
+      "class:", contentEditable.className?.substring(0, 60),
+      "contentEditable attr:", contentEditable.getAttribute('contenteditable'));
+
+    console.log("[ContentScript] contentEditable attr after activation attempt:", contentEditable.getAttribute('contenteditable'));
 
     const ok = await setDraftJsText(contentEditable, data.description);
 
@@ -441,5 +507,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ status: "success" });
   }
 });
+
+// Start watching for contenteditable changes to diagnose activation
+watchContentEditableChanges();
+
+// Log what element was clicked
+document.addEventListener('click', (e) => {
+  const target = e.target;
+  console.log("[ContentScript] [CLICK] clicked on:", target.tagName,
+    "id:", target.id,
+    "class:", target.className?.substring(0, 40));
+}, true); // useCapture = true to catch all clicks
 
 console.log("[ContentScript] Pinterest Pre-filler content script loaded.");
