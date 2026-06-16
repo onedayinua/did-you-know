@@ -28,6 +28,12 @@ function waitForElement(selector, timeout = 30000) {
   });
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function simulateInput(element, value) {
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
     window.HTMLInputElement.prototype,
@@ -68,6 +74,83 @@ function uploadBase64Image(base64String) {
   fileInput.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
+/**
+ * Injects text into a Draft.js contenteditable editor using three strategies.
+ *
+ * BUG NOTES (do not reintroduce):
+ *  - NEVER use document.execCommand('selectAll') — it selects the entire page when
+ *    the contenteditable doesn't hold keyboard focus. Use window.getSelection()
+ *    .selectAllChildren(element) instead; that is scoped to the element.
+ *  - NEVER use new DataTransfer() for clipboardData on synthetic ClipboardEvents.
+ *    In Chrome extension content scripts, DataTransfer.getData() returns "" when
+ *    read back. Use Object.defineProperty to inject a plain-object mock instead.
+ *  - Do NOT await between focus() and execCommand() — Pinterest can steal focus
+ *    asynchronously before a setTimeout fires.
+ */
+async function setDraftJsText(contentEditable, text) {
+  contentEditable.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+  await new Promise(r => setTimeout(r, 100));
+
+  // ── Method 1: selectAllChildren (scoped) + execCommand('insertText') ──────────
+  // focus() and selection must be set synchronously — no await in between —
+  // so Pinterest's React code cannot steal focus before execCommand fires.
+  contentEditable.focus();
+  window.getSelection().selectAllChildren(contentEditable);
+  const m1Result = document.execCommand('insertText', false, text);
+  console.log("[ContentScript] Method 1 execCommand('insertText') returned:", m1Result);
+  await new Promise(r => setTimeout(r, 400));
+
+  if (contentEditable.textContent.trim().length > 0) {
+    console.log("[ContentScript] Method 1 (selectAllChildren + insertText) succeeded");
+    return true;
+  }
+  console.log("[ContentScript] Method 1 failed. textContent:", JSON.stringify(contentEditable.textContent.substring(0, 80)));
+
+  // ── Method 2: Paste event with mocked clipboardData ──────────────────────────
+  // Draft.js paste handler calls event.clipboardData.getData('text/plain').
+  // We mock clipboardData via Object.defineProperty because DataTransfer.getData()
+  // always returns "" in Chrome extension content scripts.
+  contentEditable.focus();
+  const pasteEvent = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
+  Object.defineProperty(pasteEvent, 'clipboardData', {
+    value: {
+      getData(type) {
+        return (type === 'text/plain' || type === 'text') ? text : '';
+      },
+      types: ['text/plain'],
+      files: [],
+      items: [],
+    },
+  });
+  contentEditable.dispatchEvent(pasteEvent);
+  await new Promise(r => setTimeout(r, 400));
+
+  if (contentEditable.textContent.trim().length > 0) {
+    console.log("[ContentScript] Method 2 (paste mock) succeeded");
+    return true;
+  }
+  console.log("[ContentScript] Method 2 failed. textContent:", JSON.stringify(contentEditable.textContent.substring(0, 80)));
+
+  // ── Method 3: InputEvent('beforeinput') ──────────────────────────────────────
+  // Newer Draft.js / React 17+ handles beforeinput via the native event bridge.
+  contentEditable.focus();
+  contentEditable.dispatchEvent(new InputEvent('beforeinput', {
+    inputType: 'insertText',
+    data: text,
+    bubbles: true,
+    cancelable: true,
+  }));
+  await new Promise(r => setTimeout(r, 400));
+
+  if (contentEditable.textContent.trim().length > 0) {
+    console.log("[ContentScript] Method 3 (beforeinput) succeeded");
+    return true;
+  }
+  console.log("[ContentScript] Method 3 failed. textContent:", JSON.stringify(contentEditable.textContent.substring(0, 80)));
+
+  return false;
+}
+
 async function prefillPinData(data) {
   console.log("[ContentScript] Starting prefill with data:", {
     title: data.title?.substring(0, 50),
@@ -94,14 +177,11 @@ async function prefillPinData(data) {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
     console.log("[ContentScript] Found description container");
 
-    // Click the container to activate the editor
+    // Click to ensure the Draft.js editor is initialised
     descContainer.click();
-    descContainer.dispatchEvent(new Event('focusin', { bubbles: true }));
-    descContainer.dispatchEvent(new Event('focus', { bubbles: true }));
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 500));
 
-    // Find the contenteditable element — Draft.js creates it lazily,
-    // so first try multiple selectors synchronously, then fall back to waitForElement.
+    // Locate the contenteditable Draft.js manages
     let contentEditable = descContainer.querySelector(
       '[contenteditable="true"], ' +
       '.public-DraftEditor-content, ' +
@@ -110,118 +190,27 @@ async function prefillPinData(data) {
     );
 
     if (!contentEditable) {
-      // Draft.js may not have rendered the contenteditable yet.
-      // Wait for it using the known aria-label from the DOM dump.
-      try {
-        contentEditable = await waitForElement(
-          '#dweb-comment-editor-container [contenteditable="true"], ' +
-          '#dweb-comment-editor-container .public-DraftEditor-content, ' +
-          '#dweb-comment-editor-container [aria-label*="опис" i], ' +
-          '#dweb-comment-editor-container [aria-label*="description" i]',
-          10000
-        );
-      } catch (e) {
-        console.log("[ContentScript] contenteditable not found via waitForElement either");
-      }
+      console.log("[ContentScript] contentEditable not immediately available, waiting…");
+      contentEditable = await waitForElement(
+        '#dweb-comment-editor-container [contenteditable="true"], ' +
+        '#dweb-comment-editor-container .public-DraftEditor-content',
+        10000
+      );
     }
 
-    console.log("[ContentScript] contentEditable found:", !!contentEditable);
+    if (!contentEditable) throw new Error("Could not find contentEditable element");
 
-    if (contentEditable) {
-      // Focus the editor
-      contentEditable.focus();
-      contentEditable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-      contentEditable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 200));
+    console.log("[ContentScript] contentEditable found — tag:", contentEditable.tagName,
+      "class:", contentEditable.className?.substring(0, 60));
 
-      // Draft.js renders text inside <span data-text="true"> elements
-      // inside a structure: div[data-contents="true"] > div[data-block="true"] > div > span > span[data-text="true"]
-      //
-      // Approach: Find or create the data-text span and set its textContent,
-      // then dispatch events on the contentEditable element.
+    const ok = await setDraftJsText(contentEditable, data.description);
 
-      // Get or create the data-contents container
-      let dataContents = contentEditable.querySelector('div[data-contents="true"]');
-      if (!dataContents) {
-        dataContents = document.createElement('div');
-        dataContents.setAttribute('data-contents', 'true');
-        contentEditable.appendChild(dataContents);
-      }
-
-      // Get or create the data-block div
-      let dataBlock = dataContents.querySelector('div[data-block="true"]');
-      if (!dataBlock) {
-        dataBlock = document.createElement('div');
-        dataBlock.setAttribute('data-block', 'true');
-        dataBlock.setAttribute('data-editor', Math.random().toString(36).substring(2, 7));
-        dataBlock.setAttribute('data-offset-key', Math.random().toString(36).substring(2, 10) + '-0-0');
-        dataContents.appendChild(dataBlock);
-      }
-
-      // Get or create the block style div
-      let blockStyleDiv = dataBlock.querySelector('.public-DraftStyleDefault-block');
-      if (!blockStyleDiv) {
-        blockStyleDiv = document.createElement('div');
-        blockStyleDiv.className = 'public-DraftStyleDefault-block public-DraftStyleDefault-ltr';
-        dataBlock.appendChild(blockStyleDiv);
-      }
-
-      // Get or create the offset-key span
-      let offsetSpan = blockStyleDiv.querySelector('span[data-offset-key]');
-      if (!offsetSpan) {
-        offsetSpan = document.createElement('span');
-        offsetSpan.setAttribute('data-offset-key', Math.random().toString(36).substring(2, 10) + '-0-0');
-        blockStyleDiv.appendChild(offsetSpan);
-      }
-
-      // Get or create the data-text span — THIS is where Draft.js reads text from
-      let dataTextSpan = offsetSpan.querySelector('span[data-text="true"]');
-      if (!dataTextSpan) {
-        dataTextSpan = document.createElement('span');
-        dataTextSpan.setAttribute('data-text', 'true');
-        offsetSpan.appendChild(dataTextSpan);
-      }
-
-      // Set the text content on the data-text span
-      dataTextSpan.textContent = data.description;
-      console.log("[ContentScript] Set data-text span content to:", data.description.substring(0, 50));
-
-      // Now dispatch events on the contentEditable to trigger Draft.js onChange
-      // Draft.js listens for 'input' events on the contentEditable element
-      
-      // Dispatch input event with inputType
-      const inputEvent = new InputEvent('input', {
-        bubbles: true,
-        cancelable: true,
-        inputType: 'insertText',
-        data: data.description,
-      });
-      contentEditable.dispatchEvent(inputEvent);
-      console.log("[ContentScript] Input event dispatched on contentEditable");
-
-      // Also dispatch a change event
-      contentEditable.dispatchEvent(new Event('change', { bubbles: true }));
-
-      // Force React to re-render by dispatching a custom DOM event
-      // Some Draft.js versions also check for 'compositionend' or 'paste'
-      const pasteEvent = new ClipboardEvent('paste', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(pasteEvent, 'clipboardData', {
-        value: {
-          getData: () => data.description,
-          types: ['text/plain'],
-        },
-      });
-      contentEditable.dispatchEvent(pasteEvent);
-      console.log("[ContentScript] Paste event dispatched");
-
-      results.description = "ok";
-      console.log("[ContentScript] Description set successfully via data-text span manipulation");
-    } else {
-      throw new Error("Could not find public-DraftEditor-content element");
+    if (!ok) {
+      throw new Error("All three injection methods failed to produce text in the editor");
     }
+
+    results.description = "ok";
+    console.log("[ContentScript] Description set. Preview:", contentEditable.textContent.substring(0, 60));
   } catch (err) {
     results.description = "error: " + err.message;
     console.warn("[ContentScript] Failed to set description:", err.message);
@@ -229,10 +218,8 @@ async function prefillPinData(data) {
 
   // 3. Set Destination URL
   try {
-    // Try multiple selectors for the URL/link input
     let urlInput = null;
 
-    // Strategy 1: Try all the specific selectors
     const urlSelector = (
       'input[placeholder*="link" i], ' +
       'input[placeholder*="url" i], ' +
@@ -257,20 +244,17 @@ async function prefillPinData(data) {
       console.log("[ContentScript] URL not found via specific selectors, trying broader search");
     }
 
-    // Strategy 2: Broader search — find any visible input/textarea that isn't the title or search
     if (!urlInput) {
       const allInputs = document.querySelectorAll('input, textarea');
       for (const el of allInputs) {
-        if (el.id === 'storyboard-selector-title') continue; // skip title
+        if (el.id === 'storyboard-selector-title') continue;
         if (el.type === 'hidden') continue;
         if (el.type === 'file') continue;
         if (el.type === 'checkbox') continue;
         if (el.type === 'radio') continue;
-        // Skip search inputs
         if (el.id.toLowerCase().includes('search')) continue;
         if ((el.placeholder || '').toLowerCase().includes('search')) continue;
         if ((el.name || '').toLowerCase().includes('search')) continue;
-        // Check if it's visible
         const rect = el.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           urlInput = el;
@@ -295,7 +279,6 @@ async function prefillPinData(data) {
   // 4. Upload Image
   if (data.imageBase64) {
     try {
-      // Wait a bit for the file input to be ready
       await new Promise((r) => setTimeout(r, 2000));
       uploadBase64Image(data.imageBase64);
       results.image = "ok";
@@ -313,7 +296,6 @@ async function prefillPinData(data) {
 // --- Message Listener ---
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "prefill") {
-    // Execute asynchronously but respond immediately
     prefillPinData(request.data).then((results) => {
       console.log("[ContentScript] Prefill completed:", results);
     });
