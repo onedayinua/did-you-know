@@ -88,17 +88,90 @@ function uploadBase64Image(base64String) {
  *    asynchronously before a setTimeout fires.
  */
 async function setDraftJsText(contentEditable, text) {
+  // ── [DEBUG] Step 0: Full element dump BEFORE any manipulation ────────────────
+  console.log("[DEBUG] ===== setDraftJsText() invoked =====");
+  console.log("[DEBUG] text.length:", text.length, "text:", JSON.stringify(text.substring(0, 120)));
+  console.log("[DEBUG] BEFORE — tagName:", contentEditable.tagName);
+  console.log("[DEBUG] BEFORE — id:", contentEditable.id);
+  console.log("[DEBUG] BEFORE — className:", contentEditable.className);
+  console.log("[DEBUG] BEFORE — isContentEditable:", contentEditable.isContentEditable);
+  console.log("[DEBUG] BEFORE — contentEditable attr:", contentEditable.getAttribute('contenteditable'));
+  console.log("[DEBUG] BEFORE — offsetParent:", contentEditable.offsetParent ? contentEditable.offsetParent.tagName : null);
+  const bcr = contentEditable.getBoundingClientRect();
+  console.log("[DEBUG] BEFORE — boundingClientRect:", JSON.stringify({ x: bcr.x, y: bcr.y, w: bcr.width, h: bcr.height }));
+  console.log("[DEBUG] BEFORE — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  console.log("[DEBUG] BEFORE — document.activeElement is contentEditable:", document.activeElement === contentEditable);
+  console.log("[DEBUG] BEFORE — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] BEFORE — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+  console.log("[DEBUG] BEFORE — childNodes.length:", contentEditable.childNodes.length);
+  for (let i = 0; i < contentEditable.childNodes.length; i++) {
+    const cn = contentEditable.childNodes[i];
+    console.log("[DEBUG] BEFORE — child[" + i + "]: nodeName=" + cn.nodeName + " nodeType=" + cn.nodeType + " textContent=" + JSON.stringify((cn.textContent || '').substring(0, 60)));
+  }
+
   contentEditable.scrollIntoView({ behavior: 'instant', block: 'nearest' });
   await new Promise(r => setTimeout(r, 100));
+
+  // ── [DEBUG] Check for React fiber keys on the element and ancestors ──────────
+  const allKeys = Object.keys(contentEditable).filter(k => k.startsWith('__react'));
+  console.log("[DEBUG] React keys on contentEditable:", allKeys.length > 0 ? allKeys : 'NONE');
+  let parent = contentEditable.parentElement;
+  let depth = 0;
+  while (parent && depth < 5) {
+    const parentKeys = Object.keys(parent).filter(k => k.startsWith('__react'));
+    if (parentKeys.length > 0) {
+      console.log("[DEBUG] React keys on ancestor depth=" + depth + " tag=" + parent.tagName + ":", parentKeys);
+    }
+    parent = parent.parentElement;
+    depth++;
+  }
+  if (depth === 5) console.log("[DEBUG] No React fiber keys found up to 5 ancestors");
 
   // ── Method 1: selectAllChildren (scoped) + execCommand('insertText') ──────────
   // focus() and selection must be set synchronously — no await in between —
   // so Pinterest's React code cannot steal focus before execCommand fires.
   contentEditable.focus();
+
+  // [DEBUG] After focus()
+  await new Promise(r => setTimeout(r, 0)); // yield once to let React process focus
+  console.log("[DEBUG] AFTER FOCUS — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') + (document.activeElement.className ? '.' + document.activeElement.className.substring(0, 40) : '') : null);
+  console.log("[DEBUG] AFTER FOCUS — activeElement === contentEditable:", document.activeElement === contentEditable);
+  console.log("[DEBUG] AFTER FOCUS — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+
   window.getSelection().selectAllChildren(contentEditable);
+
+  // [DEBUG] After selectAllChildren()
+  const sel = window.getSelection();
+  console.log("[DEBUG] AFTER SELECTALL — selection.toString():", JSON.stringify(sel.toString().substring(0, 80)));
+  console.log("[DEBUG] AFTER SELECTALL — rangeCount:", sel.rangeCount);
+  if (sel.rangeCount > 0) {
+    const range = sel.getRangeAt(0);
+    console.log("[DEBUG] AFTER SELECTALL — commonAncestor:", range.commonAncestorContainer ? range.commonAncestorContainer.nodeName : null);
+    console.log("[DEBUG] AFTER SELECTALL — collapsed:", range.collapsed);
+    console.log("[DEBUG] AFTER SELECTALL — startOffset:", range.startOffset, "endOffset:", range.endOffset);
+    console.log("[DEBUG] AFTER SELECTALL — startContainer:", range.startContainer ? range.startContainer.nodeName + (range.startContainer.textContent ? ' "' + range.startContainer.textContent.substring(0, 40) + '"' : '') : null);
+  }
+
   const m1Result = document.execCommand('insertText', false, text);
-  console.log("[ContentScript] Method 1 execCommand('insertText') returned:", m1Result);
+
+  // [DEBUG] After execCommand
+  console.log("[DEBUG] METHOD 1 — execCommand('insertText') returned:", m1Result);
+  console.log("[DEBUG] METHOD 1 — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] METHOD 1 — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  const selAfter = window.getSelection();
+  console.log("[DEBUG] METHOD 1 — selection toString:", JSON.stringify(selAfter.toString().substring(0, 80)));
+  console.log("[DEBUG] METHOD 1 — rangeCount:", selAfter.rangeCount);
+  if (selAfter.rangeCount > 0) {
+    console.log("[DEBUG] METHOD 1 — selection collapsed:", selAfter.getRangeAt(0).collapsed);
+  }
+  console.log("[DEBUG] METHOD 1 — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+
   await new Promise(r => setTimeout(r, 400));
+
+  // [DEBUG] After Method 1 wait
+  console.log("[DEBUG] AFTER M1 WAIT — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] AFTER M1 WAIT — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+  console.log("[DEBUG] AFTER M1 WAIT — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
 
   if (contentEditable.textContent.trim().length > 0) {
     console.log("[ContentScript] Method 1 (selectAllChildren + insertText) succeeded");
@@ -111,10 +184,17 @@ async function setDraftJsText(contentEditable, text) {
   // We mock clipboardData via Object.defineProperty because DataTransfer.getData()
   // always returns "" in Chrome extension content scripts.
   contentEditable.focus();
+
+  // [DEBUG] Before paste
+  console.log("[DEBUG] M2 BEFORE PASTE — activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  console.log("[DEBUG] M2 BEFORE PASTE — activeElement === contentEditable:", document.activeElement === contentEditable);
+  console.log("[DEBUG] M2 BEFORE PASTE — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+
   const pasteEvent = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
   Object.defineProperty(pasteEvent, 'clipboardData', {
     value: {
       getData(type) {
+        console.log("[DEBUG] M2 PASTE — getData called with type:", type, "returning:", (type === 'text/plain' || type === 'text') ? text.substring(0, 40) : '');
         return (type === 'text/plain' || type === 'text') ? text : '';
       },
       types: ['text/plain'],
@@ -122,8 +202,21 @@ async function setDraftJsText(contentEditable, text) {
       items: [],
     },
   });
-  contentEditable.dispatchEvent(pasteEvent);
+  const dispatchResult2 = contentEditable.dispatchEvent(pasteEvent);
+
+  // [DEBUG] After paste
+  console.log("[DEBUG] M2 AFTER PASTE — activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  console.log("[DEBUG] M2 AFTER PASTE — dispatchEvent returned:", dispatchResult2);
+  console.log("[DEBUG] M2 AFTER PASTE — clipboardData.getData result:", pasteEvent.clipboardData ? pasteEvent.clipboardData.getData('text/plain') : 'NO clipboardData');
+  console.log("[DEBUG] M2 AFTER PASTE — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] M2 AFTER PASTE — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+
   await new Promise(r => setTimeout(r, 400));
+
+  // [DEBUG] After Method 2 wait
+  console.log("[DEBUG] AFTER M2 WAIT — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] AFTER M2 WAIT — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+  console.log("[DEBUG] AFTER M2 WAIT — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
 
   if (contentEditable.textContent.trim().length > 0) {
     console.log("[ContentScript] Method 2 (paste mock) succeeded");
@@ -134,19 +227,65 @@ async function setDraftJsText(contentEditable, text) {
   // ── Method 3: InputEvent('beforeinput') ──────────────────────────────────────
   // Newer Draft.js / React 17+ handles beforeinput via the native event bridge.
   contentEditable.focus();
-  contentEditable.dispatchEvent(new InputEvent('beforeinput', {
+
+  // [DEBUG] Before beforeinput
+  console.log("[DEBUG] M3 BEFORE BEFOREINPUT — activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  console.log("[DEBUG] M3 BEFORE BEFOREINPUT — activeElement === contentEditable:", document.activeElement === contentEditable);
+  console.log("[DEBUG] M3 BEFORE BEFOREINPUT — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+
+  const biEvent = new InputEvent('beforeinput', {
     inputType: 'insertText',
     data: text,
     bubbles: true,
     cancelable: true,
-  }));
+  });
+  const dispatchResult3 = contentEditable.dispatchEvent(biEvent);
+
+  // [DEBUG] After beforeinput
+  console.log("[DEBUG] M3 AFTER BEFOREINPUT — activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
+  console.log("[DEBUG] M3 AFTER BEFOREINPUT — dispatchEvent returned:", dispatchResult3);
+  console.log("[DEBUG] M3 AFTER BEFOREINPUT — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] M3 AFTER BEFOREINPUT — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+
   await new Promise(r => setTimeout(r, 400));
+
+  // [DEBUG] After Method 3 wait
+  console.log("[DEBUG] AFTER M3 WAIT — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] AFTER M3 WAIT — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+  console.log("[DEBUG] AFTER M3 WAIT — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') : null);
 
   if (contentEditable.textContent.trim().length > 0) {
     console.log("[ContentScript] Method 3 (beforeinput) succeeded");
     return true;
   }
   console.log("[ContentScript] Method 3 failed. textContent:", JSON.stringify(contentEditable.textContent.substring(0, 80)));
+
+  // ── [DEBUG] Final state dump ────────────────────────────────────────────────
+  console.log("[DEBUG] ===== FINAL STATE DUMP =====");
+  console.log("[DEBUG] FINAL — tagName:", contentEditable.tagName);
+  console.log("[DEBUG] FINAL — id:", contentEditable.id);
+  console.log("[DEBUG] FINAL — className:", contentEditable.className);
+  console.log("[DEBUG] FINAL — isContentEditable:", contentEditable.isContentEditable);
+  console.log("[DEBUG] FINAL — contentEditable attr:", contentEditable.getAttribute('contenteditable'));
+  console.log("[DEBUG] FINAL — innerHTML (first 500):", JSON.stringify(contentEditable.innerHTML.substring(0, 500)));
+  console.log("[DEBUG] FINAL — textContent:", JSON.stringify(contentEditable.textContent.substring(0, 120)));
+  console.log("[DEBUG] FINAL — childNodes.length:", contentEditable.childNodes.length);
+  for (let i = 0; i < contentEditable.childNodes.length; i++) {
+    const cn = contentEditable.childNodes[i];
+    console.log("[DEBUG] FINAL — child[" + i + "]: nodeName=" + cn.nodeName + " nodeType=" + cn.nodeType + " textContent=" + JSON.stringify((cn.textContent || '').substring(0, 60)));
+  }
+  console.log("[DEBUG] FINAL — document.activeElement:", document.activeElement ? document.activeElement.tagName + (document.activeElement.id ? '#' + document.activeElement.id : '') + (document.activeElement.className ? '.' + document.activeElement.className.substring(0, 40) : '') : null);
+  console.log("[DEBUG] FINAL — activeElement === contentEditable:", document.activeElement === contentEditable);
+
+  // Check React keys on contentEditable one more time at the end
+  const finalKeys = Object.keys(contentEditable).filter(k => k.startsWith('__react'));
+  console.log("[DEBUG] FINAL — React keys on contentEditable:", finalKeys.length > 0 ? finalKeys : 'NONE');
+  // Check all data-* and aria-* attributes
+  const allAttrs = [];
+  for (let i = 0; i < contentEditable.attributes.length; i++) {
+    allAttrs.push(contentEditable.attributes[i].name + '="' + contentEditable.attributes[i].value + '"');
+  }
+  console.log("[DEBUG] FINAL — all attributes:", allAttrs.join(', '));
 
   return false;
 }
