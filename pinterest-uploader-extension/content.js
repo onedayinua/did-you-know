@@ -92,44 +92,55 @@ async function prefillPinData(data) {
   // 2. Set Description (Draft.js editor)
   try {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
+    console.log("[ContentScript] Found description container");
 
     // Try clicking the container first to activate the editor
     descContainer.click();
     await new Promise(r => setTimeout(r, 500));
 
-    // Try multiple selectors for the editable element
-    const descInput = descContainer.querySelector(
-      '[contenteditable="true"], ' +
-      '[contenteditable], ' +
-      'div[role="textbox"], ' +
-      'div[data-text="true"], ' +
-      '.public-DraftEditor-content, ' +
-      '.DraftEditor-editorContainer > div'
-    );
+    // Search for ANY element with contenteditable attribute (span, div, etc.)
+    let descInput = descContainer.querySelector('[contenteditable]');
+    console.log("[ContentScript] contenteditable element found:", !!descInput);
+
+    if (!descInput) {
+      // Try the DraftEditor-editorContainer approach
+      const editorContainer = descContainer.querySelector('.DraftEditor-editorContainer');
+      console.log("[ContentScript] DraftEditor-editorContainer found:", !!editorContainer);
+      
+      if (editorContainer) {
+        // Find the deepest child element (the actual text span)
+        const allElements = editorContainer.querySelectorAll('*');
+        console.log("[ContentScript] Elements inside editorContainer:", allElements.length);
+        
+        let deepest = null;
+        let maxDepth = 0;
+        for (const el of allElements) {
+          let depth = 0;
+          let parent = el.parentElement;
+          while (parent && parent !== editorContainer) {
+            depth++;
+            parent = parent.parentElement;
+          }
+          if (depth > maxDepth) {
+            maxDepth = depth;
+            deepest = el;
+          }
+        }
+        console.log("[ContentScript] Deepest element:", deepest?.tagName, deepest?.className);
+        descInput = deepest;
+      }
+    }
 
     if (descInput) {
       descInput.focus();
-      // Try execCommand first
+      // Clear existing content first
+      descInput.textContent = '';
+      // Use execCommand to insert text (works with Draft.js)
       document.execCommand('insertText', false, data.description);
       results.description = "ok";
       console.log("[ContentScript] Description set successfully");
     } else {
-      // Last resort: try to find any div that might be editable
-      const allDivs = descContainer.querySelectorAll('div');
-      let found = false;
-      for (const div of allDivs) {
-        if (div.children.length === 0 && div.textContent === '') {
-          div.focus();
-          document.execCommand('insertText', false, data.description);
-          results.description = "ok";
-          console.log("[ContentScript] Description set via empty div fallback");
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        throw new Error("Could not find editable element inside description container");
-      }
+      throw new Error("Could not find any editable element inside description container");
     }
   } catch (err) {
     results.description = "error: " + err.message;
