@@ -66,6 +66,16 @@
             font-size: 0.85rem;
         }
         .back-link:hover { color: #e63946; }
+        .btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #2ecc71; color: #fff; }
         {% block extra_styles %}{% endblock %}
     </style>
 </head>
@@ -84,6 +94,91 @@
             <div class="fact-text">{{ option.fact }}</div>
             <div class="hashtags">{{ option.hashtags|join(' ') }}</div>
             {% endblock %}
+            {% if option.status == 'approved' and option.platform == 'pinterest' %}
+            <div class="preview-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <button class="btn btn-primary" onclick="postToPinterest()">Post to Pinterest</button>
+                    <form id="mark-posted-form" action="/options/{{ option.id }}/mark-posted" method="post" style="display:inline;">
+                        <button type="submit" class="btn" style="background:#3498db;color:#fff;padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">Mark as Posted</button>
+                    </form>
+                </div>
+                <div id="post-status" style="font-size:0.85rem;color:#666;"></div>
+            </div>
+
+            <script>
+            const EXTENSION_ID = "{{ config.get('PINTEREST_EXTENSION_ID', 'PASTE_YOUR_EXTENSION_ID_HERE') }}";
+
+            // sendPinToExtension function (from inject.js)
+            function sendPinToExtension(title, description, destinationUrl, imageBase64) {
+                const payload = {
+                    title: title,
+                    description: description,
+                    url: destinationUrl,
+                    imageBase64: imageBase64
+                };
+                chrome.runtime.sendMessage(EXTENSION_ID, { 
+                    action: "openAndPrefill", 
+                    data: payload 
+                }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.error("Error connecting to extension:", chrome.runtime.lastError.message);
+                        document.getElementById("post-status").innerText = 
+                            "Error: Ensure the Chrome extension is installed and the Extension ID is correct in your .env file.";
+                    } else {
+                        console.log("Extension response:", response);
+                        document.getElementById("post-status").innerText = 
+                            "Extension opened. Complete the pin in the Pinterest tab.";
+                    }
+                });
+            }
+
+            async function fetchImageAsBase64(imageUrl) {
+                const response = await fetch(imageUrl);
+                if (!response.ok) throw new Error(`Failed to fetch image (HTTP ${response.status})`);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
+
+            async function postToPinterest() {
+                const statusEl = document.getElementById("post-status");
+                statusEl.innerText = "Loading image...";
+                try {
+                    const imageUrl = '/images/{{ option.image_path }}';
+                    const imageBase64 = await fetchImageAsBase64(imageUrl);
+                    const title = '{{ option.theme|e }}';
+                    const description = '{{ option.fact|e }}\n\n{{ option.hashtags|join(" ") }}';
+                    const destinationUrl = 'https://example.com';
+                    sendPinToExtension(title, description, destinationUrl, imageBase64);
+                } catch (err) {
+                    statusEl.innerText = 'Failed to load image: ' + err.message;
+                }
+            }
+
+            // Intercept mark-posted form to show status
+            document.getElementById("mark-posted-form").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const statusEl = document.getElementById("post-status");
+                statusEl.innerText = "Marking as posted...";
+                try {
+                    const resp = await fetch(this.action, { method: "POST" });
+                    const data = await resp.json();
+                    if (resp.ok) {
+                        statusEl.innerText = "Marked as posted! Reloading...";
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        statusEl.innerText = "Error: " + (data.detail || "Unknown error");
+                    }
+                } catch (err) {
+                    statusEl.innerText = "Error: " + err.message;
+                }
+            });
+            </script>
+            {% endif %}
             <a href="/" class="back-link">&larr; Back to Dashboard</a>
         </div>
     </div>
