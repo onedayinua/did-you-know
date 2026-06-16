@@ -1,54 +1,58 @@
 // content.js
+//
+// Pre-fills Pinterest pin creation form with data from the dashboard.
+// Uses polling with MutationObserver fallback to wait for React SPA elements to mount.
 
-function prefillPinData(data) {
-  console.log("Extension received data:", data);
+function waitForElement(selector, timeout = 30000) {
+  return new Promise((resolve, reject) => {
+    const element = document.querySelector(selector);
+    if (element) return resolve(element);
 
-  // --- 1. SET TITLE ---
-  // Look for the element with data-testid="pin-builder-draft-title"
-  const titleInput = document.querySelector('[data-testid="pin-builder-draft-title"]');
-  if (titleInput) {
-    titleInput.value = data.title;
-    // Trigger input event so Pinterest reacts to the change
-    titleInput.dispatchEvent(new Event('input', { bubbles: true }));
-  }
+    const observer = new MutationObserver(() => {
+      const el = document.querySelector(selector);
+      if (el) {
+        observer.disconnect();
+        resolve(el);
+      }
+    });
 
-  // --- 2. SET DESCRIPTION ---
-  // Look for the editor element
-  const descInput = document.querySelector('[data-testid="pin-builder-draft-description"] .public-DraftEditor-content');
-  if (descInput) {
-    // Draft.js is tricky. Simulating typing is best.
-    descInput.focus();
-    document.execCommand('insertText', false, data.description);
-  }
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
 
-  // --- 3. SET DESTINATION URL ---
-  const urlInput = document.querySelector('[data-testid="pin-builder-draft-link"]');
-  if (urlInput) {
-    urlInput.value = data.url;
-    urlInput.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-
-  // --- 4. HANDLE LOCAL IMAGE (The complex part) ---
-  if (data.imageBase64) {
-    uploadBase64Image(data.imageBase64);
-  }
+    setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
+    }, timeout);
+  });
 }
 
-// Helper: Converts Base64 to a File object and simulates drag-and-drop
+function simulateInput(element, value) {
+  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+    window.HTMLInputElement.prototype,
+    "value"
+  )?.set;
+  if (nativeInputValueSetter) {
+    nativeInputValueSetter.call(element, value);
+  } else {
+    element.value = value;
+  }
+  element.dispatchEvent(new Event("input", { bubbles: true }));
+  element.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
 function uploadBase64Image(base64String) {
-  const fileInput = document.querySelector('input[type="file"][id="media-upload-input"]');
-  
+  const fileInput = document.querySelector('input[type="file"]');
   if (!fileInput) {
     console.error("Could not find Pinterest's image upload input.");
     return;
   }
 
-  // Extract content type (e.g., image/jpeg) and raw base64 data
-  const parts = base64String.split(';base64,');
-  const contentType = parts[0].split(':')[1];
+  const parts = base64String.split(";base64,");
+  const contentType = parts[0].split(":")[1];
   const rawBase64 = parts[1];
 
-  // Convert raw base64 to a Blob
   const byteCharacters = atob(rawBase64);
   const byteNumbers = new Array(byteCharacters.length);
   for (let i = 0; i < byteCharacters.length; i++) {
@@ -56,31 +60,87 @@ function uploadBase64Image(base64String) {
   }
   const byteArray = new Uint8Array(byteNumbers);
   const blob = new Blob([byteArray], { type: contentType });
-
-  // Create a File object from the Blob
   const file = new File([blob], "local_pin_image.jpg", { type: contentType });
 
-  // Simulate a file drop event
   const dataTransfer = new DataTransfer();
   dataTransfer.items.add(file);
-  
   fileInput.files = dataTransfer.files;
-  
-  // Trigger 'change' event to notify Pinterest's React handlers
-  fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+  fileInput.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
+async function prefillPinData(data) {
+  console.log("[ContentScript] Starting prefill with data:", {
+    title: data.title?.substring(0, 50),
+    description: data.description?.substring(0, 50),
+    url: data.url,
+    hasImage: !!data.imageBase64,
+  });
+
+  const results = {};
+
+  // 1. Set Title
+  try {
+    const titleInput = await waitForElement('[data-testid="pin-builder-draft-title"]');
+    simulateInput(titleInput, data.title);
+    results.title = "ok";
+    console.log("[ContentScript] Title set successfully");
+  } catch (err) {
+    results.title = "error: " + err.message;
+    console.warn("[ContentScript] Failed to set title:", err.message);
+  }
+
+  // 2. Set Description (Draft.js editor)
+  try {
+    const descInput = await waitForElement(
+      '[data-testid="pin-builder-draft-description"] .public-DraftEditor-content'
+    );
+    descInput.focus();
+    document.execCommand("insertText", false, data.description);
+    results.description = "ok";
+    console.log("[ContentScript] Description set successfully");
+  } catch (err) {
+    results.description = "error: " + err.message;
+    console.warn("[ContentScript] Failed to set description:", err.message);
+  }
+
+  // 3. Set Destination URL
+  try {
+    const urlInput = await waitForElement('[data-testid="pin-builder-draft-link"]');
+    simulateInput(urlInput, data.url);
+    results.url = "ok";
+    console.log("[ContentScript] URL set successfully");
+  } catch (err) {
+    results.url = "error: " + err.message;
+    console.warn("[ContentScript] Failed to set URL:", err.message);
+  }
+
+  // 4. Upload Image
+  if (data.imageBase64) {
+    try {
+      // Wait a bit for the file input to be ready
+      await new Promise((r) => setTimeout(r, 2000));
+      uploadBase64Image(data.imageBase64);
+      results.image = "ok";
+      console.log("[ContentScript] Image uploaded successfully");
+    } catch (err) {
+      results.image = "error: " + err.message;
+      console.warn("[ContentScript] Failed to upload image:", err.message);
+    }
+  }
+
+  console.log("[ContentScript] Prefill results:", results);
+  return results;
+}
 
 // --- Message Listener ---
-// Wait for the dashboard to send a message to this tab
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "prefill") {
-    // Wait slightly to ensure the DOM is actually fully interactive
-    setTimeout(() => {
-        prefillPinData(request.data);
-    }, 1500);
-    sendResponse({status: "success"});
+    // Execute asynchronously but respond immediately
+    prefillPinData(request.data).then((results) => {
+      console.log("[ContentScript] Prefill completed:", results);
+    });
+    sendResponse({ status: "success" });
   }
 });
 
-console.log("Pinterest Pre-filler content script loaded.");
+console.log("[ContentScript] Pinterest Pre-filler content script loaded.");

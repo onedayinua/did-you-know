@@ -106,56 +106,69 @@
             </div>
 
             <script>
-            const EXTENSION_ID = "{{ config.get('PINTEREST_EXTENSION_ID', 'PASTE_YOUR_EXTENSION_ID_HERE') }}";
-
-            // sendPinToExtension function (from inject.js)
-            function sendPinToExtension(title, description, destinationUrl, imageBase64) {
-                const payload = {
-                    title: title,
-                    description: description,
-                    url: destinationUrl,
-                    imageBase64: imageBase64
-                };
-                chrome.runtime.sendMessage(EXTENSION_ID, { 
-                    action: "openAndPrefill", 
-                    data: payload 
-                }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        console.error("Error connecting to extension:", chrome.runtime.lastError.message);
-                        document.getElementById("post-status").innerText = 
-                            "Error: Cannot reach extension. Is it installed, loaded in chrome://extensions, and the Extension ID in .env matches?";
-                    } else {
-                        console.log("Extension response:", response);
-                        document.getElementById("post-status").innerText = 
-                            "Opening Pinterest... Check the new/opened Pinterest tab.";
-                    }
-                });
-            }
+            console.log("[TKT-029] Preview page loaded, using postMessage bridge pattern");
 
             async function fetchImageAsBase64(imageUrl) {
+                console.log("[TKT-029] fetchImageAsBase64 called with URL:", imageUrl);
                 const response = await fetch(imageUrl);
+                console.log("[TKT-029] Image fetch response status:", response.status);
                 if (!response.ok) throw new Error(`Failed to fetch image (HTTP ${response.status})`);
                 const blob = await response.blob();
+                console.log("[TKT-029] Image blob size:", blob.size, "bytes, type:", blob.type);
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
+                    reader.onloadend = () => {
+                        console.log("[TKT-029] FileReader complete, base64 length:", reader.result?.length);
+                        resolve(reader.result);
+                    };
+                    reader.onerror = (err) => {
+                        console.error("[TKT-029] FileReader error:", err);
+                        reject(err);
+                    };
                     reader.readAsDataURL(blob);
                 });
             }
 
             async function postToPinterest() {
+                console.log("[TKT-029] postToPinterest button clicked");
                 const statusEl = document.getElementById("post-status");
                 statusEl.innerText = "Loading image...";
                 try {
                     const imageUrl = '/images/{{ option.image_path }}';
+                    console.log("[TKT-029] Fetching image from:", imageUrl);
                     const imageBase64 = await fetchImageAsBase64(imageUrl);
+                    console.log("[TKT-029] Image loaded successfully as base64, length:", imageBase64.length);
                     const title = '{{ option.theme|e }}';
                     const description = '{{ option.fact|e }}\n\n{{ option.hashtags|join(" ") }}';
                     const destinationUrl = '{{ config.get("SITE_URL", "https://example.com") }}';
-                    sendPinToExtension(title, description, destinationUrl, imageBase64);
+                    
+                    // Use postMessage instead of chrome.runtime.sendMessage
+                    // The extension's dashboard-bridge.js content script will pick this up
+                    const requestId = Date.now().toString();
+                    console.log("[TKT-029] Sending postMessage with requestId:", requestId);
+                    
+                    window.postMessage(
+                        {
+                            source: "did-you-know-dashboard",
+                            action: "openAndPrefill",
+                            requestId: requestId,
+                            data: {
+                                title: title,
+                                description: description,
+                                url: destinationUrl,
+                                imageBase64: imageBase64
+                            }
+                        },
+                        window.location.origin
+                    );
+                    
+                    statusEl.innerText = "Sent to extension... Check the Pinterest tab.";
                 } catch (err) {
-                    statusEl.innerText = 'Failed to load image: ' + err.message;
+                    console.error("[TKT-029] Error in postToPinterest:", err);
+                    console.error("[TKT-029] Error name:", err.name);
+                    console.error("[TKT-029] Error message:", err.message);
+                    console.error("[TKT-029] Error stack:", err.stack);
+                    statusEl.innerText = 'Error: ' + err.message;
                 }
             }
 

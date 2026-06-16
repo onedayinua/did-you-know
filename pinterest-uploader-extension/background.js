@@ -1,17 +1,17 @@
 // background.js — Service Worker
 //
-// Handles external messages from the dashboard (via inject.js / chrome.runtime.sendMessage)
+// Handles internal messages from the content script (dashboard-bridge.js)
 // and forwards them to the content script on a Pinterest pin-creation-tool tab.
 //
 // Flow:
-//   1. Dashboard calls chrome.runtime.sendMessage(EXTENSION_ID, { action: "openAndPrefill", data: {...} })
-//   2. This service worker receives it via chrome.runtime.onMessageExternal
+//   1. Dashboard content script calls chrome.runtime.sendMessage({ action: "openAndPrefill", data: {...} })
+//   2. This service worker receives it via chrome.runtime.onMessage
 //   3. Opens (or reuses) a Pinterest pin-creation-tool tab
 //   4. Waits for the page to load, then sends a "prefill" message to that tab's content script
 
 const PINTEREST_CREATION_URL = "https://www.pinterest.com/pin-creation-tool/";
 
-chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "openAndPrefill") {
     handleOpenAndPrefill(request.data)
       .then((result) => sendResponse(result))

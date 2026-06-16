@@ -19,6 +19,14 @@
   "content_scripts": [
     {
       "matches": [
+        "http://localhost:8000/*",
+        "http://127.0.0.1:5500/*"
+      ],
+      "js": ["dashboard-bridge.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
         "https://*.pinterest.com/pin-creation-tool/*"
       ],
       "js": ["content.js"],

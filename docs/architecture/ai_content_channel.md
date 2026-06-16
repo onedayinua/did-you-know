@@ -269,6 +269,7 @@ POST /options/{id}/approve              → Approve option, trigger posting (Mod
 POST /options/{id}/cancel               → Cancel option (status → 'cancelled')
 POST /options/{id}/regenerate-text      → Regenerate fact + hashtags (keep theme + image)
 POST /options/{id}/regenerate-image     → Regenerate image only (keep text), triggers Module 4
+POST /options/{id}/mark-posted          → Mark approved option as posted (creates posts record, sets content_options.status = 'posted')
 GET  /preview/{id}                      → Preview single post across all platforms
 GET  /preview/{id}/{platform}           → Preview single post for specific platform
 GET  /history                           → List posted content history
@@ -290,6 +291,12 @@ GET  /health                            → Health check
   - **Regenerate Image** → calls Module 4 with same text, generates new image
   - **Cancel** → marks as cancelled
 - Preview section showing how post looks on each platform
+
+**Preview Page** (`GET /preview/{id}` and `GET /preview/{id}/{platform}`):
+- For approved Pinterest content, two additional buttons are shown:
+  - **Post to Pinterest** → fetches image as base64 client-side, calls `sendPinToExtension()` to trigger Chrome extension for manual pin creation
+  - **Mark as Posted** → calls `POST /options/{id}/mark-posted` to record the post in the `posts` table directly
+- Buttons are only rendered when `option.status == 'approved'` and the platform is `pinterest`
 
 **Preview Templates** (`GET /preview/{id}`):
 - Renders content using platform-specific Jinja2 templates
@@ -330,6 +337,17 @@ Regenerate Image:
 Cancel:
   → API marks option as 'cancelled'
   → Removed from pending queue
+
+Mark as Posted:
+  → API creates posts record with status='success'
+  → Updates content_options.status to 'posted'
+  → Returns post_id to UI, page reloads
+
+Post to Pinterest:
+  → Client-side: fetches image as base64
+  → Client-side: calls sendPinToExtension() to trigger Chrome extension
+  → User completes pin in Pinterest tab manually
+  → User clicks "Mark as Posted" to record the post
 ```
 
 **Run**: `uvicorn app.main:app --reload` (dev) or `python main.py serve` (prod)
@@ -445,5 +463,6 @@ The FastAPI server handles both the web dashboard (http://localhost:8000) and th
 DATABASE_URL=postgresql://user:pass@localhost:5432/did_you_know
 OPENROUTER_API_KEY=sk-or-...
 PINTEREST_ACCESS_TOKEN=...
+PINTEREST_EXTENSION_ID=... (optional, for Chrome extension posting)
 INSTAGRAM_ACCESS_TOKEN=...
 ```

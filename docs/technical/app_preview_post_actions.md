@@ -86,13 +86,44 @@ The buttons should appear as a row with two buttons:
 
 ### 3.4 JS: sendPinToExtension Integration
 
-The `inject.js` file exposes `sendPinToExtension(title, description, destinationUrl, imageBase64)`. We need to:
+The `inject.js` file exposes `sendPinToExtension(title, description, destinationUrl, imageBase64)`. The extension uses **external messaging** — the web page calls `chrome.runtime.sendMessage(EXTENSION_ID, ...)` which is a Chrome API available to regular web pages for communicating with extensions. This is NOT the same as `chrome.runtime.sendMessage` used within extension contexts — it's the cross-extension messaging API.
 
-1. **Include the `inject.js` code** in the preview page. Since `inject.js` is in the Chrome extension folder (not served by FastAPI), we have two options:
-   - **Option A (Recommended)**: Inline the `sendPinToExtension` function directly into the Jinja2 template as a `<script>` block. This avoids cross-origin issues since the extension code is simple and fully self-contained.
-   - **Option B**: Serve `inject.js` as a static file from FastAPI by mounting its directory.
+#### Architecture: Extension Message Flow
 
-   **We will use Option A** — copy the `sendPinToExtension` function body into an inline `<script>` tag in `preview/base.html`. The function is small (31 lines) and has no external dependencies. The `EXTENSION_ID` placeholder will be configurable via an environment variable `PINTEREST_EXTENSION_ID` with a sensible default (the current placeholder).
+```
+Dashboard (localhost:8000)           Chrome Extension                    Pinterest Tab
+┌──────────────────────┐          ┌──────────────────┐              ┌──────────────────────┐
+│                      │          │                  │              │                      │
+│  postToPinterest()   │          │  background.js   │              │  content.js          │
+│    │                 │          │  (service worker) │              │  (content script)    │
+│    ▼                 │          │                  │              │                      │
+│  sendPinToExtension()│────────►│  onMessageExternal│─────────────►│  onMessage            │
+│  (chrome.runtime.    │          │  │               │  tabs.send   │  │                    │
+│   sendMessage)       │          │  ▼               │  Message     │  ▼                    │
+│                      │          │  findOrCreate    │              │  prefillPinData()     │
+│                      │          │  PinterestTab()  │              │  │                    │
+│                      │          │                  │              │  ▼                    │
+│                      │          │                  │              │  Pinterest creation   │
+│                      │          │                  │              │  page pre-filled      │
+└──────────────────────┘          └──────────────────┘              └──────────────────────┘
+```
+
+**Components involved:**
+
+1. **`background.js`** (service worker, new file): Listens for external messages via `chrome.runtime.onMessageExternal`. When it receives `{ action: "openAndPrefill", data: {...} }`, it:
+   - Finds or opens a Pinterest pin-creation-tool tab
+   - Waits for the tab to fully load
+   - Sends the data to the content script via `chrome.tabs.sendMessage(tabId, { action: "prefill", data })`
+
+2. **`content.js`** (existing): Listens for `chrome.runtime.onMessage` with action `"prefill"` and calls `prefillPinData()` to fill in the Pinterest form fields.
+
+3. **`inject.js`** (existing, inlined into template): Calls `chrome.runtime.sendMessage(EXTENSION_ID, { action: "openAndPrefill", data })` from the dashboard page. The `EXTENSION_ID` must match the extension's ID shown on `chrome://extensions`.
+
+**Key insight**: The web page (`localhost:8000`) cannot directly message the content script on a Pinterest tab. It must go through the extension's background service worker, which has the permissions to interact with both the dashboard's origin (via `host_permissions`) and Pinterest tabs (via `content_scripts` + `tabs` permission).
+
+#### Implementation in the Template
+
+We inline the `sendPinToExtension` function directly into the Jinja2 template as a `<script>` block. This avoids cross-origin issues since the extension code is simple and fully self-contained.
 
 2. **Fetch the image as base64** before calling the function. Use a helper JS function:
 
@@ -219,8 +250,10 @@ The preview template context already provides `{"option": option}`. No additiona
 
 ### External Services
 - Chrome Extension (user-side, not server): `pinterest-uploader-extension/`
-  - Files: `inject.js` (for `sendPinToExtension`)
-  - Files: `content.js` (handles `prefill` action in the extension)
+  - Files: `background.js` (service worker, receives external messages from dashboard)
+  - Files: `inject.js` (reference for `sendPinToExtension` function, inlined into template)
+  - Files: `content.js` (handles `prefill` action in the Pinterest tab)
+  - Files: `manifest.json` (registers background service worker + content script)
 
 ### Internal Services
 - `shared/db.py` — `fetch_one` and `execute` for DB operations
