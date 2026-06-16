@@ -94,211 +94,133 @@ async function prefillPinData(data) {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
     console.log("[ContentScript] Found description container");
 
-    // Try clicking the container first to activate the editor
+    // Click the container to activate the editor
     descContainer.click();
     descContainer.dispatchEvent(new Event('focusin', { bubbles: true }));
     descContainer.dispatchEvent(new Event('focus', { bubbles: true }));
     await new Promise(r => setTimeout(r, 1500));
 
-    // Strategy 1: Use the exact known path
-    let descInput = descContainer.querySelector(
-      'div.DraftEditor-root > div > div, ' +
-      '.DraftEditor-root > div > div'
+    // Find the contenteditable element — Draft.js creates it lazily,
+    // so first try multiple selectors synchronously, then fall back to waitForElement.
+    let contentEditable = descContainer.querySelector(
+      '[contenteditable="true"], ' +
+      '.public-DraftEditor-content, ' +
+      '[aria-label*="опис" i], ' +
+      '[aria-label*="description" i]'
     );
-    console.log("[ContentScript] Path-based selector found:", !!descInput);
 
-    // Strategy 2: Search for ANY element with contenteditable attribute
-    if (!descInput) {
-      descInput = descContainer.querySelector('[contenteditable]');
-      console.log("[ContentScript] contenteditable attr found:", !!descInput);
-    }
-
-    // Strategy 3: Try contenteditable as a property (not attribute)
-    if (!descInput) {
-      const allElements = descContainer.querySelectorAll('*');
-      for (const el of allElements) {
-        if (el.isContentEditable) {
-          descInput = el;
-          console.log("[ContentScript] isContentEditable property found on:", el.tagName);
-          break;
-        }
+    if (!contentEditable) {
+      // Draft.js may not have rendered the contenteditable yet.
+      // Wait for it using the known aria-label from the DOM dump.
+      try {
+        contentEditable = await waitForElement(
+          '#dweb-comment-editor-container [contenteditable="true"], ' +
+          '#dweb-comment-editor-container .public-DraftEditor-content, ' +
+          '#dweb-comment-editor-container [aria-label*="опис" i], ' +
+          '#dweb-comment-editor-container [aria-label*="description" i]',
+          10000
+        );
+      } catch (e) {
+        console.log("[ContentScript] contenteditable not found via waitForElement either");
       }
     }
 
-    // Strategy 4: Find the deepest child in DraftEditor-editorContainer
-    if (!descInput) {
-      const editorContainer = descContainer.querySelector('.DraftEditor-editorContainer');
-      console.log("[ContentScript] DraftEditor-editorContainer found:", !!editorContainer);
-      
-      if (editorContainer) {
-        const allElements = editorContainer.querySelectorAll('*');
-        console.log("[ContentScript] Elements inside editorContainer:", allElements.length);
-        
-        let deepest = null;
-        let maxDepth = 0;
-        for (const el of allElements) {
-          let depth = 0;
-          let parent = el.parentElement;
-          while (parent && parent !== editorContainer) {
-            depth++;
-            parent = parent.parentElement;
-          }
-          if (depth > maxDepth) {
-            maxDepth = depth;
-            deepest = el;
-          }
-        }
-        console.log("[ContentScript] Deepest element:", deepest?.tagName, deepest?.className);
-        descInput = deepest;
-      }
-    }
+    console.log("[ContentScript] contentEditable found:", !!contentEditable);
 
-    if (descInput) {
-      console.log("[ContentScript] Editable element found:", {
-        tagName: descInput.tagName,
-        id: descInput.id,
-        className: descInput.className,
-        contenteditableAttr: descInput.getAttribute('contenteditable'),
-        isContentEditable: descInput.isContentEditable,
-      });
-
-      descInput.focus();
-      descInput.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-      descInput.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    if (contentEditable) {
+      // Focus the editor
+      contentEditable.focus();
+      contentEditable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      contentEditable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
       await new Promise(r => setTimeout(r, 200));
 
-      // Draft.js ignores textContent, execCommand, paste events, etc.
-      // because it manages its own React state internally.
-      // 
-      // Approach: Use React fiber to find the DraftEditor component
-      // and call its onChange with a new ContentState.
+      // Draft.js renders text inside <span data-text="true"> elements
+      // inside a structure: div[data-contents="true"] > div[data-block="true"] > div > span > span[data-text="true"]
       //
-      // First, try to find the React fiber key on the container or its parent.
-      
-      // Method 1: Try to find React __reactFiber$ on the DraftEditor-root
-      const draftRoot = descContainer.querySelector('.DraftEditor-root');
-      let fiberKey = null;
-      if (draftRoot) {
-        for (const key in draftRoot) {
-          if (key.startsWith('__reactFiber$') || key.startsWith('__reactInternalInstance$')) {
-            fiberKey = key;
-            break;
-          }
-        }
+      // Approach: Find or create the data-text span and set its textContent,
+      // then dispatch events on the contentEditable element.
+
+      // Get or create the data-contents container
+      let dataContents = contentEditable.querySelector('div[data-contents="true"]');
+      if (!dataContents) {
+        dataContents = document.createElement('div');
+        dataContents.setAttribute('data-contents', 'true');
+        contentEditable.appendChild(dataContents);
       }
-      
-      if (fiberKey && draftRoot) {
-        console.log("[ContentScript] Found React fiber key:", fiberKey);
-        let fiber = draftRoot[fiberKey];
-        
-        // Walk up the fiber tree to find the Editor component
-        let editorFiber = null;
-        let depth = 0;
-        while (fiber && depth < 20) {
-          // Look for DraftEditor component
-          if (fiber.stateNode && fiber.stateNode.props && fiber.stateNode.props.editorState) {
-            editorFiber = fiber;
-            console.log("[ContentScript] Found DraftEditor component at depth", depth);
-            break;
-          }
-          // Also check if this is a function component with hooks
-          if (fiber.memoizedState && fiber.memoizedState.queue) {
-            // Could be a function component with useState
-          }
-          fiber = fiber.return;
-          depth++;
-        }
-        
-        if (editorFiber) {
-          const editor = editorFiber.stateNode;
-          const { EditorState, ContentState, convertFromRaw, convertToRaw } = window.Draft || {};
-          
-          if (editor.props.onChange && typeof editor.props.onChange === 'function') {
-            // Try to create a new EditorState with our content
-            const currentState = editor.props.editorState;
-            if (currentState && typeof currentState.getCurrentContent === 'function') {
-              const contentState = currentState.getCurrentContent();
-              if (contentState && typeof contentState.createEntity === 'function') {
-                // Use Draft.js API if available
-                console.log("[ContentScript] Using Draft.js API");
-              }
-            }
-            
-            // Fallback: directly set text via React's setState
-            // Find the EditorState setter
-            console.log("[ContentScript] Editor component found, trying onChange");
-          }
-        }
+
+      // Get or create the data-block div
+      let dataBlock = dataContents.querySelector('div[data-block="true"]');
+      if (!dataBlock) {
+        dataBlock = document.createElement('div');
+        dataBlock.setAttribute('data-block', 'true');
+        dataBlock.setAttribute('data-editor', Math.random().toString(36).substring(2, 7));
+        dataBlock.setAttribute('data-offset-key', Math.random().toString(36).substring(2, 10) + '-0-0');
+        dataContents.appendChild(dataBlock);
       }
-      
-      // Method 2: Simulate typing character by character via dispatchEvent
-      // This is the most reliable way to trigger Draft.js's onChange
-      console.log("[ContentScript] Trying character-by-character simulation");
-      
-      // Clear existing content
-      descInput.textContent = '';
-      
-      // Insert text character by character with proper events
-      for (let i = 0; i < data.description.length; i++) {
-        const char = data.description[i];
-        
-        // keydown
-        descInput.dispatchEvent(new KeyboardEvent('keydown', {
-          key: char,
-          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
-          keyCode: char.charCodeAt(0),
-          which: char.charCodeAt(0),
-          bubbles: true,
-          cancelable: true,
-        }));
-        
-        // keypress
-        descInput.dispatchEvent(new KeyboardEvent('keypress', {
-          key: char,
-          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
-          keyCode: char.charCodeAt(0),
-          which: char.charCodeAt(0),
-          bubbles: true,
-          cancelable: true,
-        }));
-        
-        // beforeinput
-        descInput.dispatchEvent(new InputEvent('beforeinput', {
-          inputType: 'insertText',
-          data: char,
-          bubbles: true,
-          cancelable: true,
-        }));
-        
-        // input
-        descInput.dispatchEvent(new InputEvent('input', {
-          inputType: 'insertText',
-          data: char,
-          bubbles: true,
-          cancelable: true,
-        }));
-        
-        // keyup
-        descInput.dispatchEvent(new KeyboardEvent('keyup', {
-          key: char,
-          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
-          keyCode: char.charCodeAt(0),
-          which: char.charCodeAt(0),
-          bubbles: true,
-          cancelable: true,
-        }));
-        
-        // Small delay every 10 characters to not overwhelm React
-        if (i % 10 === 0) {
-          await new Promise(r => setTimeout(r, 5));
-        }
+
+      // Get or create the block style div
+      let blockStyleDiv = dataBlock.querySelector('.public-DraftStyleDefault-block');
+      if (!blockStyleDiv) {
+        blockStyleDiv = document.createElement('div');
+        blockStyleDiv.className = 'public-DraftStyleDefault-block public-DraftStyleDefault-ltr';
+        dataBlock.appendChild(blockStyleDiv);
       }
+
+      // Get or create the offset-key span
+      let offsetSpan = blockStyleDiv.querySelector('span[data-offset-key]');
+      if (!offsetSpan) {
+        offsetSpan = document.createElement('span');
+        offsetSpan.setAttribute('data-offset-key', Math.random().toString(36).substring(2, 10) + '-0-0');
+        blockStyleDiv.appendChild(offsetSpan);
+      }
+
+      // Get or create the data-text span — THIS is where Draft.js reads text from
+      let dataTextSpan = offsetSpan.querySelector('span[data-text="true"]');
+      if (!dataTextSpan) {
+        dataTextSpan = document.createElement('span');
+        dataTextSpan.setAttribute('data-text', 'true');
+        offsetSpan.appendChild(dataTextSpan);
+      }
+
+      // Set the text content on the data-text span
+      dataTextSpan.textContent = data.description;
+      console.log("[ContentScript] Set data-text span content to:", data.description.substring(0, 50));
+
+      // Now dispatch events on the contentEditable to trigger Draft.js onChange
+      // Draft.js listens for 'input' events on the contentEditable element
       
-      console.log("[ContentScript] Character-by-character simulation complete");
+      // Dispatch input event with inputType
+      const inputEvent = new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertText',
+        data: data.description,
+      });
+      contentEditable.dispatchEvent(inputEvent);
+      console.log("[ContentScript] Input event dispatched on contentEditable");
+
+      // Also dispatch a change event
+      contentEditable.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // Force React to re-render by dispatching a custom DOM event
+      // Some Draft.js versions also check for 'compositionend' or 'paste'
+      const pasteEvent = new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+      });
+      Object.defineProperty(pasteEvent, 'clipboardData', {
+        value: {
+          getData: () => data.description,
+          types: ['text/plain'],
+        },
+      });
+      contentEditable.dispatchEvent(pasteEvent);
+      console.log("[ContentScript] Paste event dispatched");
+
       results.description = "ok";
-      console.log("[ContentScript] Description set successfully");
+      console.log("[ContentScript] Description set successfully via data-text span manipulation");
     } else {
-      throw new Error("Could not find any editable element inside description container");
+      throw new Error("Could not find public-DraftEditor-content element");
     }
   } catch (err) {
     results.description = "error: " + err.message;
