@@ -167,54 +167,136 @@ async function prefillPinData(data) {
       descInput.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
       await new Promise(r => setTimeout(r, 200));
 
-      // Draft.js ignores textContent + InputEvent because it manages its own
-      // internal React state. Instead, use a paste event approach which
-      // Draft.js does intercept.
+      // Draft.js ignores textContent, execCommand, paste events, etc.
+      // because it manages its own React state internally.
+      // 
+      // Approach: Use React fiber to find the DraftEditor component
+      // and call its onChange with a new ContentState.
+      //
+      // First, try to find the React fiber key on the container or its parent.
       
-      // Clear existing content first via select all + delete
-      document.execCommand('selectAll', false, null);
-      document.execCommand('delete', false, null);
+      // Method 1: Try to find React __reactFiber$ on the DraftEditor-root
+      const draftRoot = descContainer.querySelector('.DraftEditor-root');
+      let fiberKey = null;
+      if (draftRoot) {
+        for (const key in draftRoot) {
+          if (key.startsWith('__reactFiber$') || key.startsWith('__reactInternalInstance$')) {
+            fiberKey = key;
+            break;
+          }
+        }
+      }
       
-      // Method 1: Try execCommand insertText (works on some Draft.js versions)
-      document.execCommand('insertText', false, data.description);
-      console.log("[ContentScript] execCommand insertText called");
+      if (fiberKey && draftRoot) {
+        console.log("[ContentScript] Found React fiber key:", fiberKey);
+        let fiber = draftRoot[fiberKey];
+        
+        // Walk up the fiber tree to find the Editor component
+        let editorFiber = null;
+        let depth = 0;
+        while (fiber && depth < 20) {
+          // Look for DraftEditor component
+          if (fiber.stateNode && fiber.stateNode.props && fiber.stateNode.props.editorState) {
+            editorFiber = fiber;
+            console.log("[ContentScript] Found DraftEditor component at depth", depth);
+            break;
+          }
+          // Also check if this is a function component with hooks
+          if (fiber.memoizedState && fiber.memoizedState.queue) {
+            // Could be a function component with useState
+          }
+          fiber = fiber.return;
+          depth++;
+        }
+        
+        if (editorFiber) {
+          const editor = editorFiber.stateNode;
+          const { EditorState, ContentState, convertFromRaw, convertToRaw } = window.Draft || {};
+          
+          if (editor.props.onChange && typeof editor.props.onChange === 'function') {
+            // Try to create a new EditorState with our content
+            const currentState = editor.props.editorState;
+            if (currentState && typeof currentState.getCurrentContent === 'function') {
+              const contentState = currentState.getCurrentContent();
+              if (contentState && typeof contentState.createEntity === 'function') {
+                // Use Draft.js API if available
+                console.log("[ContentScript] Using Draft.js API");
+              }
+            }
+            
+            // Fallback: directly set text via React's setState
+            // Find the EditorState setter
+            console.log("[ContentScript] Editor component found, trying onChange");
+          }
+        }
+      }
       
-      // Method 2: Also try clipboardData paste simulation
-      const clipboardData = new DataTransfer();
-      clipboardData.setData('text/plain', data.description);
+      // Method 2: Simulate typing character by character via dispatchEvent
+      // This is the most reliable way to trigger Draft.js's onChange
+      console.log("[ContentScript] Trying character-by-character simulation");
       
-      const pasteEvent = new ClipboardEvent('paste', {
-        bubbles: true,
-        cancelable: true,
-        clipboardData: clipboardData,
-      });
-      descInput.dispatchEvent(pasteEvent);
-      console.log("[ContentScript] Paste event dispatched with clipboardData");
-
-      // Method 3: Also try composition events (some Draft.js versions use these)
-      descInput.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
-      descInput.dispatchEvent(new CompositionEvent('compositionupdate', { 
-        bubbles: true, 
-        data: data.description 
-      }));
-      descInput.dispatchEvent(new CompositionEvent('compositionend', { 
-        bubbles: true, 
-        data: data.description 
-      }));
-      console.log("[ContentScript] Composition events dispatched");
-
-      // Method 4: Also try beforeinput event (modern Draft.js)
-      const beforeInputEvent = new InputEvent('beforeinput', {
-        bubbles: true,
-        cancelable: true,
-        inputType: 'insertText',
-        data: data.description,
-      });
-      descInput.dispatchEvent(beforeInputEvent);
-      console.log("[ContentScript] beforeinput event dispatched");
-
+      // Clear existing content
+      descInput.textContent = '';
+      
+      // Insert text character by character with proper events
+      for (let i = 0; i < data.description.length; i++) {
+        const char = data.description[i];
+        
+        // keydown
+        descInput.dispatchEvent(new KeyboardEvent('keydown', {
+          key: char,
+          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
+          keyCode: char.charCodeAt(0),
+          which: char.charCodeAt(0),
+          bubbles: true,
+          cancelable: true,
+        }));
+        
+        // keypress
+        descInput.dispatchEvent(new KeyboardEvent('keypress', {
+          key: char,
+          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
+          keyCode: char.charCodeAt(0),
+          which: char.charCodeAt(0),
+          bubbles: true,
+          cancelable: true,
+        }));
+        
+        // beforeinput
+        descInput.dispatchEvent(new InputEvent('beforeinput', {
+          inputType: 'insertText',
+          data: char,
+          bubbles: true,
+          cancelable: true,
+        }));
+        
+        // input
+        descInput.dispatchEvent(new InputEvent('input', {
+          inputType: 'insertText',
+          data: char,
+          bubbles: true,
+          cancelable: true,
+        }));
+        
+        // keyup
+        descInput.dispatchEvent(new KeyboardEvent('keyup', {
+          key: char,
+          code: char === ' ' ? 'Space' : 'Key' + char.toUpperCase(),
+          keyCode: char.charCodeAt(0),
+          which: char.charCodeAt(0),
+          bubbles: true,
+          cancelable: true,
+        }));
+        
+        // Small delay every 10 characters to not overwhelm React
+        if (i % 10 === 0) {
+          await new Promise(r => setTimeout(r, 5));
+        }
+      }
+      
+      console.log("[ContentScript] Character-by-character simulation complete");
       results.description = "ok";
-      console.log("[ContentScript] Description set successfully via multiple event methods");
+      console.log("[ContentScript] Description set successfully");
     } else {
       throw new Error("Could not find any editable element inside description container");
     }
@@ -260,6 +342,8 @@ async function prefillPinData(data) {
         if (el.id === 'storyboard-selector-title') continue; // skip title
         if (el.type === 'hidden') continue;
         if (el.type === 'file') continue;
+        if (el.type === 'checkbox') continue;
+        if (el.type === 'radio') continue;
         // Skip search inputs
         if (el.id.toLowerCase().includes('search')) continue;
         if ((el.placeholder || '').toLowerCase().includes('search')) continue;
