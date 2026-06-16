@@ -96,19 +96,41 @@ async function prefillPinData(data) {
 
     // Try clicking the container first to activate the editor
     descContainer.click();
-    await new Promise(r => setTimeout(r, 500));
+    descContainer.dispatchEvent(new Event('focusin', { bubbles: true }));
+    descContainer.dispatchEvent(new Event('focus', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 1500));
 
-    // Search for ANY element with contenteditable attribute (span, div, etc.)
-    let descInput = descContainer.querySelector('[contenteditable]');
-    console.log("[ContentScript] contenteditable element found:", !!descInput);
+    // Strategy 1: Use the exact known path
+    let descInput = descContainer.querySelector(
+      'div.DraftEditor-root > div > div, ' +
+      '.DraftEditor-root > div > div'
+    );
+    console.log("[ContentScript] Path-based selector found:", !!descInput);
 
+    // Strategy 2: Search for ANY element with contenteditable attribute
     if (!descInput) {
-      // Try the DraftEditor-editorContainer approach
+      descInput = descContainer.querySelector('[contenteditable]');
+      console.log("[ContentScript] contenteditable attr found:", !!descInput);
+    }
+
+    // Strategy 3: Try contenteditable as a property (not attribute)
+    if (!descInput) {
+      const allElements = descContainer.querySelectorAll('*');
+      for (const el of allElements) {
+        if (el.isContentEditable) {
+          descInput = el;
+          console.log("[ContentScript] isContentEditable property found on:", el.tagName);
+          break;
+        }
+      }
+    }
+
+    // Strategy 4: Find the deepest child in DraftEditor-editorContainer
+    if (!descInput) {
       const editorContainer = descContainer.querySelector('.DraftEditor-editorContainer');
       console.log("[ContentScript] DraftEditor-editorContainer found:", !!editorContainer);
       
       if (editorContainer) {
-        // Find the deepest child element (the actual text span)
         const allElements = editorContainer.querySelectorAll('*');
         console.log("[ContentScript] Elements inside editorContainer:", allElements.length);
         
@@ -133,12 +155,28 @@ async function prefillPinData(data) {
 
     if (descInput) {
       descInput.focus();
-      // Clear existing content first
-      descInput.textContent = '';
-      // Use execCommand to insert text (works with Draft.js)
-      document.execCommand('insertText', false, data.description);
+      descInput.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      descInput.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 200));
+
+      // Draft.js ignores execCommand. Instead, set textContent directly
+      // and dispatch a synthetic InputEvent that Draft.js can pick up.
+      descInput.textContent = data.description;
+
+      // Dispatch a proper InputEvent with inputType and data
+      const inputEvent = new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertText',
+        data: data.description,
+      });
+      descInput.dispatchEvent(inputEvent);
+
+      // Also dispatch a change event for good measure
+      descInput.dispatchEvent(new Event('change', { bubbles: true }));
+
       results.description = "ok";
-      console.log("[ContentScript] Description set successfully");
+      console.log("[ContentScript] Description set successfully via textContent + InputEvent");
     } else {
       throw new Error("Could not find any editable element inside description container");
     }
@@ -150,7 +188,10 @@ async function prefillPinData(data) {
   // 3. Set Destination URL
   try {
     // Try multiple selectors for the URL/link input
-    const urlInput = await waitForElement(
+    let urlInput = null;
+
+    // Strategy 1: Try all the specific selectors
+    const urlSelector = (
       'input[placeholder*="link" i], ' +
       'input[placeholder*="url" i], ' +
       'input[placeholder*="website" i], ' +
@@ -167,9 +208,37 @@ async function prefillPinData(data) {
       '[data-testid*="link" i] textarea, ' +
       '[data-testid*="url" i] textarea'
     );
-    simulateInput(urlInput, data.url);
-    results.url = "ok";
-    console.log("[ContentScript] URL set successfully");
+
+    try {
+      urlInput = await waitForElement(urlSelector, 10000);
+    } catch (e) {
+      console.log("[ContentScript] URL not found via specific selectors, trying broader search");
+    }
+
+    // Strategy 2: Broader search — find any visible input/textarea that isn't the title
+    if (!urlInput) {
+      const allInputs = document.querySelectorAll('input, textarea');
+      for (const el of allInputs) {
+        if (el.id === 'storyboard-selector-title') continue; // skip title
+        if (el.type === 'hidden') continue;
+        if (el.type === 'file') continue;
+        // Check if it's visible
+        const rect = el.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          urlInput = el;
+          console.log("[ContentScript] Found URL input via broad search:", el.id, el.placeholder, el.name);
+          break;
+        }
+      }
+    }
+
+    if (urlInput) {
+      simulateInput(urlInput, data.url);
+      results.url = "ok";
+      console.log("[ContentScript] URL set successfully");
+    } else {
+      throw new Error("Could not find any URL/link input field on the page");
+    }
   } catch (err) {
     results.url = "error: " + err.message;
     console.warn("[ContentScript] Failed to set URL:", err.message);
