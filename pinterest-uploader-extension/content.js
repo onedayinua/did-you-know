@@ -154,29 +154,67 @@ async function prefillPinData(data) {
     }
 
     if (descInput) {
+      console.log("[ContentScript] Editable element found:", {
+        tagName: descInput.tagName,
+        id: descInput.id,
+        className: descInput.className,
+        contenteditableAttr: descInput.getAttribute('contenteditable'),
+        isContentEditable: descInput.isContentEditable,
+      });
+
       descInput.focus();
       descInput.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
       descInput.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
       await new Promise(r => setTimeout(r, 200));
 
-      // Draft.js ignores execCommand. Instead, set textContent directly
-      // and dispatch a synthetic InputEvent that Draft.js can pick up.
-      descInput.textContent = data.description;
+      // Draft.js ignores textContent + InputEvent because it manages its own
+      // internal React state. Instead, use a paste event approach which
+      // Draft.js does intercept.
+      
+      // Clear existing content first via select all + delete
+      document.execCommand('selectAll', false, null);
+      document.execCommand('delete', false, null);
+      
+      // Method 1: Try execCommand insertText (works on some Draft.js versions)
+      document.execCommand('insertText', false, data.description);
+      console.log("[ContentScript] execCommand insertText called");
+      
+      // Method 2: Also try clipboardData paste simulation
+      const clipboardData = new DataTransfer();
+      clipboardData.setData('text/plain', data.description);
+      
+      const pasteEvent = new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: clipboardData,
+      });
+      descInput.dispatchEvent(pasteEvent);
+      console.log("[ContentScript] Paste event dispatched with clipboardData");
 
-      // Dispatch a proper InputEvent with inputType and data
-      const inputEvent = new InputEvent('input', {
+      // Method 3: Also try composition events (some Draft.js versions use these)
+      descInput.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
+      descInput.dispatchEvent(new CompositionEvent('compositionupdate', { 
+        bubbles: true, 
+        data: data.description 
+      }));
+      descInput.dispatchEvent(new CompositionEvent('compositionend', { 
+        bubbles: true, 
+        data: data.description 
+      }));
+      console.log("[ContentScript] Composition events dispatched");
+
+      // Method 4: Also try beforeinput event (modern Draft.js)
+      const beforeInputEvent = new InputEvent('beforeinput', {
         bubbles: true,
         cancelable: true,
         inputType: 'insertText',
         data: data.description,
       });
-      descInput.dispatchEvent(inputEvent);
-
-      // Also dispatch a change event for good measure
-      descInput.dispatchEvent(new Event('change', { bubbles: true }));
+      descInput.dispatchEvent(beforeInputEvent);
+      console.log("[ContentScript] beforeinput event dispatched");
 
       results.description = "ok";
-      console.log("[ContentScript] Description set successfully via textContent + InputEvent");
+      console.log("[ContentScript] Description set successfully via multiple event methods");
     } else {
       throw new Error("Could not find any editable element inside description container");
     }
@@ -215,18 +253,22 @@ async function prefillPinData(data) {
       console.log("[ContentScript] URL not found via specific selectors, trying broader search");
     }
 
-    // Strategy 2: Broader search — find any visible input/textarea that isn't the title
+    // Strategy 2: Broader search — find any visible input/textarea that isn't the title or search
     if (!urlInput) {
       const allInputs = document.querySelectorAll('input, textarea');
       for (const el of allInputs) {
         if (el.id === 'storyboard-selector-title') continue; // skip title
         if (el.type === 'hidden') continue;
         if (el.type === 'file') continue;
+        // Skip search inputs
+        if (el.id.toLowerCase().includes('search')) continue;
+        if ((el.placeholder || '').toLowerCase().includes('search')) continue;
+        if ((el.name || '').toLowerCase().includes('search')) continue;
         // Check if it's visible
         const rect = el.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           urlInput = el;
-          console.log("[ContentScript] Found URL input via broad search:", el.id, el.placeholder, el.name);
+          console.log("[ContentScript] Found URL input via broad search:", el.id, el.placeholder, el.name, el.type);
           break;
         }
       }
