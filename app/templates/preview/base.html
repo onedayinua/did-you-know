@@ -123,11 +123,11 @@
                     if (chrome.runtime.lastError) {
                         console.error("Error connecting to extension:", chrome.runtime.lastError.message);
                         document.getElementById("post-status").innerText = 
-                            "Error: Ensure the Chrome extension is installed and the Extension ID is correct in your .env file.";
+                            "Error: Cannot reach extension. Is it installed, loaded in chrome://extensions, and the Extension ID in .env matches?";
                     } else {
                         console.log("Extension response:", response);
                         document.getElementById("post-status").innerText = 
-                            "Extension opened. Complete the pin in the Pinterest tab.";
+                            "Opening Pinterest... Check the new/opened Pinterest tab.";
                     }
                 });
             }
