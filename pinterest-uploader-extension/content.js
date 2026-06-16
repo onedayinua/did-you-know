@@ -91,20 +91,45 @@ async function prefillPinData(data) {
 
   // 2. Set Description (Draft.js editor)
   try {
-    // Pinterest uses Draft.js — find the contenteditable div inside the editor container
     const descContainer = await waitForElement('#dweb-comment-editor-container');
-    // Look for the contenteditable div inside the DraftEditor
-    const descInput = descContainer.querySelector('[contenteditable="true"]') ||
-                     descContainer.querySelector('.DraftEditor-editorContainer [contenteditable="true"]') ||
-                     descContainer.querySelector('div[role="textbox"]');
+
+    // Try clicking the container first to activate the editor
+    descContainer.click();
+    await new Promise(r => setTimeout(r, 500));
+
+    // Try multiple selectors for the editable element
+    const descInput = descContainer.querySelector(
+      '[contenteditable="true"], ' +
+      '[contenteditable], ' +
+      'div[role="textbox"], ' +
+      'div[data-text="true"], ' +
+      '.public-DraftEditor-content, ' +
+      '.DraftEditor-editorContainer > div'
+    );
+
     if (descInput) {
       descInput.focus();
-      // Use execCommand as fallback, but also try data-text="true" approach
+      // Try execCommand first
       document.execCommand('insertText', false, data.description);
       results.description = "ok";
       console.log("[ContentScript] Description set successfully");
     } else {
-      throw new Error("Could not find contenteditable element inside description container");
+      // Last resort: try to find any div that might be editable
+      const allDivs = descContainer.querySelectorAll('div');
+      let found = false;
+      for (const div of allDivs) {
+        if (div.children.length === 0 && div.textContent === '') {
+          div.focus();
+          document.execCommand('insertText', false, data.description);
+          results.description = "ok";
+          console.log("[ContentScript] Description set via empty div fallback");
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new Error("Could not find editable element inside description container");
+      }
     }
   } catch (err) {
     results.description = "error: " + err.message;
@@ -122,8 +147,14 @@ async function prefillPinData(data) {
       'input[aria-label*="url" i], ' +
       'input[name*="link" i], ' +
       'input[name*="url" i], ' +
+      'textarea[placeholder*="link" i], ' +
+      'textarea[placeholder*="url" i], ' +
+      'textarea[aria-label*="link" i], ' +
+      'textarea[aria-label*="url" i], ' +
       '[data-testid*="link" i] input, ' +
-      '[data-testid*="url" i] input'
+      '[data-testid*="url" i] input, ' +
+      '[data-testid*="link" i] textarea, ' +
+      '[data-testid*="url" i] textarea'
     );
     simulateInput(urlInput, data.url);
     results.url = "ok";
