@@ -236,114 +236,116 @@ function watchContentEditableChanges() {
 async function setDraftJsText(element, text) {
   console.log("[ContentScript] setDraftJsText() — text length:", text.length);
   console.log("[ContentScript] contentEditable attr:", element.getAttribute('contenteditable'));
-  
-  // ===== METHOD 1: Clear existing content via beforeinput =====
-  // Note: We cannot use beforeinput with insertFromPaste for full-text injection
-  // because Draft.js crashes on the internal getEntityMap call. Instead we use
-  // a small deleteContent beforeinput to clear the editor, then Method 2
-  // writes the actual text to the DOM with correct Draft.js structure.
+
+  // ===== METHOD 1: document.execCommand('insertText') =====
+  // This is the native contentEditable API. Draft.js 0.11+ builds on top of
+  // beforeinput/input events, and execCommand dispatches those events natively.
+  // This keeps Draft.js's internal EditorState in sync with the DOM.
   try {
     element.focus();
-    
-    // Clear existing content by selecting all and dispatching delete
+
+    // Clear existing content: select all, then delete
     const range = document.createRange();
     range.selectNodeContents(element);
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-    
-    const deleteInput = new InputEvent('beforeinput', {
+
+    // Delete existing content
+    document.execCommand('delete', false, null);
+    await new Promise(r => setTimeout(r, 100));
+
+    console.log("[ContentScript] M1 execCommand clear — textContent:", element.textContent.substring(0, 60));
+
+    // Now insert the text
+    document.execCommand('insertText', false, text);
+    await new Promise(r => setTimeout(r, 200));
+
+    console.log("[ContentScript] M1 execCommand insertText — textContent:", element.textContent.substring(0, 60));
+
+    if (element.textContent.trim().length > 0) {
+      console.log("[ContentScript] Method 1 (execCommand) succeeded");
+      return true;
+    }
+
+    console.log("[ContentScript] Method 1 (execCommand) produced no text, trying method 2");
+  } catch(e) {
+    console.log("[ContentScript] Method 1 (execCommand) error:", e.message);
+  }
+
+  // ===== METHOD 2: Character-by-character beforeinput events =====
+  // If execCommand didn't work (e.g. contenteditable="false"), try injecting
+  // one character at a time. Single-character insertText beforeinput events
+  // are simpler for Draft.js to process than large paste events.
+  try {
+    element.focus();
+
+    // Clear existing content first
+    const range2 = document.createRange();
+    range2.selectNodeContents(element);
+    const selection2 = window.getSelection();
+    selection2.removeAllRanges();
+    selection2.addRange(range2);
+
+    // Delete existing content via beforeinput
+    const deleteEvent = new InputEvent('beforeinput', {
       inputType: 'deleteContent',
       bubbles: true,
       cancelable: true,
       composed: true,
     });
-    element.dispatchEvent(deleteInput);
-    
+    element.dispatchEvent(deleteEvent);
     await new Promise(r => setTimeout(r, 50));
-    
-    console.log("[ContentScript] M1 clear — textContent after delete:", element.textContent.substring(0, 60));
-  } catch(e) {
-    console.log("[ContentScript] M1 clear error:", e.message);
-  }
-  
-  // ===== METHOD 2: Set innerHTML with Draft.js-compatible structure =====
-  // Draft.js uses a specific DOM structure. If we write to the DOM directly
-  // AND also trigger an input event, Draft.js may reconcile the changes.
-  try {
-    const escapedText = escapeHtml(text);
-    // data-editor is on the inner div[data-block="true"], not on the contentEditable itself
-    const editorId = element.querySelector('[data-editor]')?.getAttribute('data-editor') || 'editor';
-    const blockKey = 'block-' + Math.random().toString(36).substring(2, 7);
-    const offsetKey = blockKey + '-0-0';
-    
-    element.innerHTML = 
-      '<div data-contents="true">' +
-      '<div class="" data-block="true" data-editor="' + editorId + '" data-offset-key="' + offsetKey + '">' +
-      '<div data-offset-key="' + offsetKey + '" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr">' +
-      '<span data-offset-key="' + offsetKey + '">' + escapedText + '</span>' +
-      '</div>' +
-      '</div>' +
-      '</div>';
-    
-    // After writing to DOM, dispatch a generic input event to hint Draft.js to re-read the DOM
-    const inputEvent = new Event('input', {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-    });
-    element.dispatchEvent(inputEvent);
-    
-    await new Promise(r => setTimeout(r, 300));
-    
-    console.log("[ContentScript] M2 innerHTML — textContent:", element.textContent.substring(0, 60));
-    console.log("[ContentScript] M2 innerHTML — innerHTML (first 200):", element.innerHTML.substring(0, 200));
-    
+
+    // Inject each character one at a time
+    let charsInjected = 0;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const inputEvent = new InputEvent('beforeinput', {
+        inputType: 'insertText',
+        data: char,
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+      });
+      element.dispatchEvent(inputEvent);
+      charsInjected++;
+
+      // Yield every 20 characters to let React process
+      if (charsInjected % 20 === 0) {
+        await new Promise(r => setTimeout(r, 10));
+      }
+    }
+
+    await new Promise(r => setTimeout(r, 200));
+
+    console.log("[ContentScript] M2 char-by-char — textContent:", element.textContent.substring(0, 60));
+
     if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 2 (innerHTML) succeeded");
+      console.log("[ContentScript] Method 2 (char-by-char) succeeded");
       return true;
     }
-    
-    // If Draft.js cleared our injected HTML, try again with a second write
-    console.log("[ContentScript] Method 2 text was cleared, re-applying...");
-    element.innerHTML = 
-      '<div data-contents="true">' +
-      '<div class="" data-block="true" data-editor="' + editorId + '" data-offset-key="' + offsetKey + '">' +
-      '<div data-offset-key="' + offsetKey + '" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr">' +
-      '<span data-offset-key="' + offsetKey + '">' + escapedText + '</span>' +
-      '</div>' +
-      '</div>' +
-      '</div>';
-    element.dispatchEvent(inputEvent);
-    
-    await new Promise(r => setTimeout(r, 300));
-    
-    console.log("[ContentScript] M2 innerHTML (retry) — textContent:", element.textContent.substring(0, 60));
-    
-    if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 2 (innerHTML) succeeded on retry");
-      return true;
-    }
-    
-    console.log("[ContentScript] Method 2 (innerHTML) produced no text, trying method 3");
+
+    console.log("[ContentScript] Method 2 (char-by-char) produced no text");
   } catch(e) {
-    console.log("[ContentScript] Method 2 (innerHTML) error:", e.message);
+    console.log("[ContentScript] Method 2 (char-by-char) error:", e.message);
   }
-  
-  // ===== METHOD 3: textContent =====
+
+  // ===== METHOD 3: innerText (DOM-only, last resort) =====
+  // This won't update Draft.js's editor state but at least shows text in the DOM.
   try {
-    element.textContent = text;
+    element.innerText = text;
     await new Promise(r => setTimeout(r, 100));
-    console.log("[ContentScript] M3 textContent — textContent:", element.textContent.substring(0, 60));
-    
+    console.log("[ContentScript] M3 innerText — textContent:", element.textContent.substring(0, 60));
+
     if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 3 (textContent) succeeded");
+      console.log("[ContentScript] Method 3 (innerText) succeeded");
       return true;
     }
   } catch(e) {
-    console.log("[ContentScript] Method 3 (textContent) error:", e.message);
+    console.log("[ContentScript] Method 3 (innerText) error:", e.message);
   }
-  
+
   return false;
 }
 
