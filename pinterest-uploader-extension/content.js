@@ -217,18 +217,28 @@ function watchContentEditableChanges() {
  * Injects text into a Draft.js contenteditable editor.
  *
  * Uses a three-method cascade:
- * 1. Dispatch `beforeinput` events (Draft.js 0.11+ native handler) — works
- *    regardless of contentEditable value.
- * 2. Set innerHTML with Draft.js-compatible DOM structure + dispatch input event.
- * 3. Set textContent directly (last resort).
+ * 1. Simulate clipboard paste event — Draft.js's editOnPaste handler processes
+ *    paste events through Modifier.replaceText() -> EditorState.push(), which
+ *    properly updates the internal EditorState (Immutable.js data structure).
+ *    This is the ONLY reliable way to inject text into Draft.js's controlled
+ *    component model without causing reconciliation crashes.
+ * 2. Character-by-character beforeinput events — fallback if paste fails.
+ * 3. innerText (DOM-only, last resort) — shows text in DOM but won't update
+ *    Draft.js EditorState.
  *
  * BUG NOTES (do not reintroduce):
+ *  - NEVER use document.execCommand('insertText') — Draft.js processes the
+ *    resulting 'select' event and calls getBlockTree(blockKey).getIn(...) on a
+ *    blockKey that doesn't exist in the internal EditorState, causing
+ *    "Cannot read properties of undefined (reading 'getIn')".
+ *  - NEVER use innerHTML — React reconciliation overwrites with empty state
+ *    because EditorState was never updated.
+ *  - NEVER use new DataTransfer() for clipboardData on synthetic ClipboardEvents.
+ *    In Chrome extension content scripts, DataTransfer.getData() returns "" when
+ *    read back. Use a mock object with a custom getData function instead.
  *  - NEVER use document.execCommand('selectAll') — it selects the entire page when
  *    the contenteditable doesn't hold keyboard focus. Use window.getSelection()
  *    .selectAllChildren(element) instead; that is scoped to the element.
- *  - NEVER use new DataTransfer() for clipboardData on synthetic ClipboardEvents.
- *    In Chrome extension content scripts, DataTransfer.getData() returns "" when
- *    read back. Use Object.defineProperty to inject a mock instead.
  *  - Do NOT use setAttribute('contenteditable', 'true') as the primary approach —
  *    it triggers React to remount the DraftEditor component, wiping any text.
  *    The beforeinput event fires even when contenteditable is "false".
@@ -237,55 +247,67 @@ async function setDraftJsText(element, text) {
   console.log("[ContentScript] setDraftJsText() — text length:", text.length);
   console.log("[ContentScript] contentEditable attr:", element.getAttribute('contenteditable'));
 
-  // ===== METHOD 1: document.execCommand('insertText') =====
-  // This is the native contentEditable API. Draft.js 0.11+ builds on top of
-  // beforeinput/input events, and execCommand dispatches those events natively.
-  // This keeps Draft.js's internal EditorState in sync with the DOM.
+  // ===== METHOD 1: Simulate Clipboard Paste =====
+  // Draft.js's editOnPaste handler processes clipboard paste events through
+  // Modifier.replaceText() -> EditorState.push(), which properly updates
+  // the internal EditorState. This is the ONLY reliable way to inject text
+  // into Draft.js's controlled component model.
+  //
+  // In Chrome extension content scripts, DataTransfer.getData() returns ""
+  // when read back. We use a mock clipboardData object with a custom getData
+  // implementation that returns our text.
   try {
     element.focus();
 
-    // Clear existing content: select all, then delete
+    // Create a mock clipboardData object with getData returning our text
+    const customGetData = new Map();
+    customGetData.set('text/plain', text);
+    customGetData.set('text', text);
+
+    const clipboardData = {
+      getData: function(type) {
+        return customGetData.get(type) || '';
+      },
+      types: ['text/plain'],
+      files: [],
+      items: [],
+    };
+
+    // Dispatch the paste event
+    const pasteEvent = new ClipboardEvent('paste', {
+      clipboardData: clipboardData,
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+
+    element.dispatchEvent(pasteEvent);
+    await new Promise(r => setTimeout(r, 300));
+
+    console.log("[ContentScript] M1 paste — textContent:", element.textContent.substring(0, 60));
+
+    if (element.textContent.trim().length > 0) {
+      console.log("[ContentScript] Method 1 (paste) succeeded");
+      return true;
+    }
+
+    console.log("[ContentScript] Method 1 (paste) produced no text, trying method 2");
+  } catch(e) {
+    console.log("[ContentScript] Method 1 (paste) error:", e.message);
+  }
+
+  // ===== METHOD 2: Character-by-character beforeinput events =====
+  // If paste didn't work, try injecting one character at a time.
+  // Single-character insertText beforeinput events are simpler for
+  // Draft.js to process than large paste events.
+  try {
+    element.focus();
+
     const range = document.createRange();
     range.selectNodeContents(element);
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-
-    // Delete existing content
-    document.execCommand('delete', false, null);
-    await new Promise(r => setTimeout(r, 100));
-
-    console.log("[ContentScript] M1 execCommand clear — textContent:", element.textContent.substring(0, 60));
-
-    // Now insert the text
-    document.execCommand('insertText', false, text);
-    await new Promise(r => setTimeout(r, 200));
-
-    console.log("[ContentScript] M1 execCommand insertText — textContent:", element.textContent.substring(0, 60));
-
-    if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 1 (execCommand) succeeded");
-      return true;
-    }
-
-    console.log("[ContentScript] Method 1 (execCommand) produced no text, trying method 2");
-  } catch(e) {
-    console.log("[ContentScript] Method 1 (execCommand) error:", e.message);
-  }
-
-  // ===== METHOD 2: Character-by-character beforeinput events =====
-  // If execCommand didn't work (e.g. contenteditable="false"), try injecting
-  // one character at a time. Single-character insertText beforeinput events
-  // are simpler for Draft.js to process than large paste events.
-  try {
-    element.focus();
-
-    // Clear existing content first
-    const range2 = document.createRange();
-    range2.selectNodeContents(element);
-    const selection2 = window.getSelection();
-    selection2.removeAllRanges();
-    selection2.addRange(range2);
 
     // Delete existing content via beforeinput
     const deleteEvent = new InputEvent('beforeinput', {
@@ -298,7 +320,6 @@ async function setDraftJsText(element, text) {
     await new Promise(r => setTimeout(r, 50));
 
     // Inject each character one at a time
-    let charsInjected = 0;
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
       const inputEvent = new InputEvent('beforeinput', {
@@ -309,10 +330,8 @@ async function setDraftJsText(element, text) {
         composed: true,
       });
       element.dispatchEvent(inputEvent);
-      charsInjected++;
 
-      // Yield every 20 characters to let React process
-      if (charsInjected % 20 === 0) {
+      if (i % 20 === 0) {
         await new Promise(r => setTimeout(r, 10));
       }
     }
@@ -325,8 +344,6 @@ async function setDraftJsText(element, text) {
       console.log("[ContentScript] Method 2 (char-by-char) succeeded");
       return true;
     }
-
-    console.log("[ContentScript] Method 2 (char-by-char) produced no text");
   } catch(e) {
     console.log("[ContentScript] Method 2 (char-by-char) error:", e.message);
   }
