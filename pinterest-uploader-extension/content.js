@@ -237,20 +237,21 @@ async function setDraftJsText(element, text) {
   console.log("[ContentScript] setDraftJsText() — text length:", text.length);
   console.log("[ContentScript] contentEditable attr:", element.getAttribute('contenteditable'));
   
-  // ===== METHOD 1: Dispatch beforeinput events (Draft.js 0.11+ native handler) =====
-  // Draft.js uses onBeforeInput to capture text input. The beforeinput event
-  // fires regardless of contentEditable value.
+  // ===== METHOD 1: Clear existing content via beforeinput =====
+  // Note: We cannot use beforeinput with insertFromPaste for full-text injection
+  // because Draft.js crashes on the internal getEntityMap call. Instead we use
+  // a small deleteContent beforeinput to clear the editor, then Method 2
+  // writes the actual text to the DOM with correct Draft.js structure.
   try {
     element.focus();
     
-    // First clear existing content by selecting all and dispatching delete
+    // Clear existing content by selecting all and dispatching delete
     const range = document.createRange();
     range.selectNodeContents(element);
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
     
-    // Dispatch beforeinput for delete (to clear placeholder)
     const deleteInput = new InputEvent('beforeinput', {
       inputType: 'deleteContent',
       bubbles: true,
@@ -259,30 +260,11 @@ async function setDraftJsText(element, text) {
     });
     element.dispatchEvent(deleteInput);
     
-    // Dispatch beforeinput with insertText for our text content
-    const inputType = text.length === 1 ? 'insertText' : 'insertFromPaste';
-    const insertInput = new InputEvent('beforeinput', {
-      inputType: inputType,
-      data: text,
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-    });
-    element.dispatchEvent(insertInput);
+    await new Promise(r => setTimeout(r, 50));
     
-    await new Promise(r => setTimeout(r, 100));
-    
-    console.log("[ContentScript] M1 beforeinput — textContent:", element.textContent.substring(0, 60));
-    console.log("[ContentScript] M1 beforeinput — innerHTML (first 200):", element.innerHTML.substring(0, 200));
-    
-    if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 1 (beforeinput) succeeded");
-      return true;
-    }
-    
-    console.log("[ContentScript] Method 1 (beforeinput) produced no text, trying method 2");
+    console.log("[ContentScript] M1 clear — textContent after delete:", element.textContent.substring(0, 60));
   } catch(e) {
-    console.log("[ContentScript] Method 1 (beforeinput) error:", e.message);
+    console.log("[ContentScript] M1 clear error:", e.message);
   }
   
   // ===== METHOD 2: Set innerHTML with Draft.js-compatible structure =====
@@ -290,7 +272,8 @@ async function setDraftJsText(element, text) {
   // AND also trigger an input event, Draft.js may reconcile the changes.
   try {
     const escapedText = escapeHtml(text);
-    const editorId = element.getAttribute('data-editor') || 'editor';
+    // data-editor is on the inner div[data-block="true"], not on the contentEditable itself
+    const editorId = element.querySelector('[data-editor]')?.getAttribute('data-editor') || 'editor';
     const blockKey = 'block-' + Math.random().toString(36).substring(2, 7);
     const offsetKey = blockKey + '-0-0';
     
@@ -303,23 +286,42 @@ async function setDraftJsText(element, text) {
       '</div>' +
       '</div>';
     
-    // After writing to DOM, dispatch both beforeinput and input to notify Draft.js
-    const inputEvent = new InputEvent('input', {
-      inputType: 'insertText',
-      data: text,
+    // After writing to DOM, dispatch a generic input event to hint Draft.js to re-read the DOM
+    const inputEvent = new Event('input', {
       bubbles: true,
       cancelable: true,
       composed: true,
     });
     element.dispatchEvent(inputEvent);
     
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 300));
     
     console.log("[ContentScript] M2 innerHTML — textContent:", element.textContent.substring(0, 60));
     console.log("[ContentScript] M2 innerHTML — innerHTML (first 200):", element.innerHTML.substring(0, 200));
     
     if (element.textContent.trim().length > 0) {
       console.log("[ContentScript] Method 2 (innerHTML) succeeded");
+      return true;
+    }
+    
+    // If Draft.js cleared our injected HTML, try again with a second write
+    console.log("[ContentScript] Method 2 text was cleared, re-applying...");
+    element.innerHTML = 
+      '<div data-contents="true">' +
+      '<div class="" data-block="true" data-editor="' + editorId + '" data-offset-key="' + offsetKey + '">' +
+      '<div data-offset-key="' + offsetKey + '" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr">' +
+      '<span data-offset-key="' + offsetKey + '">' + escapedText + '</span>' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+    element.dispatchEvent(inputEvent);
+    
+    await new Promise(r => setTimeout(r, 300));
+    
+    console.log("[ContentScript] M2 innerHTML (retry) — textContent:", element.textContent.substring(0, 60));
+    
+    if (element.textContent.trim().length > 0) {
+      console.log("[ContentScript] Method 2 (innerHTML) succeeded on retry");
       return true;
     }
     
@@ -366,7 +368,23 @@ async function prefillPinData(data) {
     console.warn("[ContentScript] Failed to set title:", err.message);
   }
 
-  // 2. Set Description (Draft.js editor)
+  // 2. Upload Image FIRST — Pinterest locks description/URL fields until an image is uploaded.
+  if (data.imageBase64) {
+    try {
+      await new Promise((r) => setTimeout(r, 1000));
+      uploadBase64Image(data.imageBase64);
+      results.image = "ok";
+      console.log("[ContentScript] Image uploaded successfully");
+    } catch (err) {
+      results.image = "error: " + err.message;
+      console.warn("[ContentScript] Failed to upload image:", err.message);
+    }
+  }
+
+  // Wait for Pinterest to process the image and unlock the description/URL fields
+  await new Promise((r) => setTimeout(r, 3000));
+
+  // 3. Set Description (Draft.js editor)
   try {
     const descContainer = await waitForElement('#dweb-comment-editor-container');
     console.log("[ContentScript] Found description container");
@@ -446,7 +464,7 @@ async function prefillPinData(data) {
     console.warn("[ContentScript] Failed to set description:", err.message);
   }
 
-  // 3. Set Destination URL
+  // 4. Set Destination URL
   try {
     let urlInput = null;
 
@@ -504,19 +522,6 @@ async function prefillPinData(data) {
   } catch (err) {
     results.url = "error: " + err.message;
     console.warn("[ContentScript] Failed to set URL:", err.message);
-  }
-
-  // 4. Upload Image
-  if (data.imageBase64) {
-    try {
-      await new Promise((r) => setTimeout(r, 2000));
-      uploadBase64Image(data.imageBase64);
-      results.image = "ok";
-      console.log("[ContentScript] Image uploaded successfully");
-    } catch (err) {
-      results.image = "error: " + err.message;
-      console.warn("[ContentScript] Failed to upload image:", err.message);
-    }
   }
 
   console.log("[ContentScript] Prefill results:", results);
