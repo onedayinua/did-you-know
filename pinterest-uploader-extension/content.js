@@ -34,6 +34,110 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/**
+ * Try to find Draft.js EditorState in the React fiber tree of the editor element.
+ * This is a last-resort approach to directly update Draft.js state.
+ */
+function findDraftEditorState(contentEditable) {
+  // Try to find the React fiber key on the element
+  const reactKey = Object.keys(contentEditable).find(k => k.startsWith('__reactFiber$'));
+  if (reactKey) {
+    let fiber = contentEditable[reactKey];
+    // Walk up the fiber tree looking for DraftEditor component
+    let depth = 0;
+    while (fiber && depth < 50) {
+      const name = fiber.tag === 1 ? 'FunctionComponent' : 
+                   fiber.tag === 0 ? 'Indeterminate' :
+                   fiber.tag === 2 ? 'ClassComponent' :
+                   fiber.tag === 3 ? 'HostRoot' :
+                   fiber.tag === 5 ? 'HostComponent' :
+                   fiber.tag === 6 ? 'HostText' :
+                   fiber.tag === 10 ? 'ContextProvider' :
+                   fiber.tag === 11 ? 'ContextConsumer' :
+                   fiber.tag;
+      const typeName = fiber.type?.name || fiber.type?.displayName || fiber.type?.toString().substring(0, 40) || 'N/A';
+      
+      if (fiber.memoizedState && fiber.memoizedState.queue) {
+        console.log(`[DEBUG] fiber depth=${depth} tag=${name} type=${typeName} HAS memoizedState with queue`);
+      } else if (fiber.memoizedState) {
+        // Class component state - check for editorState
+        let state = fiber.memoizedState;
+        if (state && typeof state === 'object' && !Array.isArray(state)) {
+          if (state.editorState || state._immutable) {
+            console.log(`[DEBUG] fiber depth=${depth} tag=${name} type=${typeName} HAS editorState!`);
+            return { fiber, state, editorState: state.editorState || state };
+          }
+          // Check linked list of hooks states
+          let hook = fiber.memoizedState;
+          while (hook) {
+            if (hook.queue && hook.memoizedState) {
+              const ms = hook.memoizedState;
+              if (ms._immutable && typeof ms.getCurrentContent === 'function') {
+                console.log(`[DEBUG] HOOK depth=${depth} type=${typeName} FOUND Draft.js EditorState via hook!`);
+                return { fiber, state: ms, editorState: ms };
+              }
+              if (ms.constructor?.name === 'EditorState') {
+                console.log(`[DEBUG] HOOK depth=${depth} type=${typeName} FOUND EditorState by constructor name`);
+                return { fiber, state: ms, editorState: ms };
+              }
+            }
+            hook = hook.next;
+          }
+        }
+      }
+      
+      if (typeName && typeName.includes('Draft') || typeName.includes('Editor') && typeName.length < 30) {
+        console.log(`[DEBUG] fiber depth=${depth} tag=${name} type=${typeName} — potential DraftEditor!`);
+        // Check all state
+        if (fiber.memoizedState) {
+          let hook = fiber.memoizedState;
+          let hookIdx = 0;
+          while (hook) {
+            console.log(`[DEBUG]   hook[${hookIdx}] memoizedState type:`, typeof hook.memoizedState, 
+              hook.memoizedState?.constructor?.name,
+              hook.memoizedState?._immutable !== undefined ? 'IMMUTABLE' : '');
+            if (hook.memoizedState && hook.memoizedState._immutable !== undefined) {
+              console.log(`[DEBUG]   hook[${hookIdx}] — FOUND Draft.js state!`);
+              return { fiber, state: hook.memoizedState, editorState: hook.memoizedState };
+            }
+            hook = hook.next;
+            hookIdx++;
+          }
+        }
+      }
+      fiber = fiber.return;
+      depth++;
+    }
+  }
+  
+  // Also check for __reactInternalInstance$
+  const reactInternalKey = Object.keys(contentEditable).find(k => k.startsWith('__reactInternalInstance$'));
+  if (reactInternalKey) {
+    let fiber = contentEditable[reactInternalKey];
+    let depth = 0;
+    while (fiber && depth < 50) {
+      // Same check as above
+      if (fiber.memoizedState) {
+        let hook = fiber.memoizedState;
+        let hookIdx = 0;
+        while (hook) {
+          if (hook.memoizedState && hook.memoizedState._immutable !== undefined) {
+            console.log(`[DEBUG] internalInstance depth=${depth} hook[${hookIdx}] — FOUND Draft.js state!`);
+            return { fiber, state: hook.memoizedState, editorState: hook.memoizedState };
+          }
+          hook = hook.next;
+          hookIdx++;
+        }
+      }
+      fiber = fiber.return;
+      depth++;
+    }
+  }
+  
+  console.log("[DEBUG] No DraftEditor fiber found on contentEditable or its ancestors");
+  return null;
+}
+
 function simulateInput(element, value) {
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
     window.HTMLInputElement.prototype,
@@ -213,6 +317,24 @@ async function setDraftJsText(element, text) {
   }
   if (!foundReact) {
     console.log("[DEBUG] No React fiber keys found up to 10 ancestors");
+  }
+
+  // Try to find and log Draft.js EditorState
+  const draftState = findDraftEditorState(element);
+  if (draftState) {
+    const es = draftState.editorState;
+    console.log("[DEBUG] Draft.js EditorState found!");
+    console.log("[DEBUG]   getCurrentContent:", es.getCurrentContent ? 'YES' : 'NO');
+    try {
+      const content = es.getCurrentContent();
+      console.log("[DEBUG]   content blockMap:", content.getBlockMap ? 'YES' : 'NO');
+      if (content.getBlockMap) {
+        const blocks = content.getBlockMap();
+        console.log("[DEBUG]   blockCount:", blocks.size || blocks.count ? blocks.size || blocks.count() : '?');
+      }
+    } catch(e) {
+      console.log("[DEBUG]   Error accessing content:", e.message);
+    }
   }
 
   // ===== FOCUS =====
