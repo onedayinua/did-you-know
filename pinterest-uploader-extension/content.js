@@ -395,16 +395,18 @@ async function prefillPinData(data) {
       overlayButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
       overlayButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
       overlayButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
-      await new Promise(r => setTimeout(r, 500));
     } else {
       console.log("[ContentScript] No overlay button found, trying direct click on container");
       descContainer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
       descContainer.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
       descContainer.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-      await new Promise(r => setTimeout(r, 500));
     }
     
-    // Now find the contentEditable element (should now be contenteditable="true" if Draft.js activated)
+    // After clicking the overlay, React needs time to re-render the editor.
+    // Wait for the render to complete, then find the NEW editor element.
+    await new Promise(r => setTimeout(r, 2000));
+    
+    // Now find the contentEditable element in the NEW render tree
     let contentEditable = descContainer.querySelector(
       '[contenteditable="true"], ' +
       '.public-DraftEditor-content, ' +
@@ -425,7 +427,8 @@ async function prefillPinData(data) {
 
     console.log("[ContentScript] contentEditable found — tag:", contentEditable.tagName,
       "class:", contentEditable.className?.substring(0, 60),
-      "contentEditable attr:", contentEditable.getAttribute('contenteditable'));
+      "contentEditable attr:", contentEditable.getAttribute('contenteditable'),
+      "data-editor:", contentEditable.querySelector('[data-editor]')?.getAttribute('data-editor') || 'N/A');
 
     // If still contenteditable="false", try focusing directly
     if (contentEditable.getAttribute('contenteditable') !== 'true') {
