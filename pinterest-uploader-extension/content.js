@@ -534,6 +534,57 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "prefill") {
     prefillPinData(request.data).then((results) => {
       console.log("[ContentScript] Prefill completed:", results);
+
+      // ===== DELAYED STATE CHECK (watch for React re-render clearing the field) =====
+      setTimeout(() => {
+        const descContainer = document.querySelector('#dweb-comment-editor-container');
+        if (descContainer) {
+          const ce = descContainer.querySelector('.public-DraftEditor-content') || 
+                     descContainer.querySelector('[contenteditable="true"]');
+          if (ce) {
+            console.log("[ContentScript] [DELAYED] 0s — contentEditable:", ce.getAttribute('contenteditable'),
+              "textContent:", (ce.textContent || '').substring(0, 60),
+              "innerHTML:", ce.innerHTML.substring(0, 100));
+          }
+        }
+      }, 100);
+
+      setTimeout(() => {
+        const descContainer = document.querySelector('#dweb-comment-editor-container');
+        if (descContainer) {
+          const ce = descContainer.querySelector('.public-DraftEditor-content') || 
+                     descContainer.querySelector('[contenteditable="true"]');
+          if (ce) {
+            console.log("[ContentScript] [DELAYED] 1s — contentEditable:", ce.getAttribute('contenteditable'),
+              "textContent:", (ce.textContent || '').substring(0, 60));
+          }
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        const descContainer = document.querySelector('#dweb-comment-editor-container');
+        if (descContainer) {
+          const ce = descContainer.querySelector('.public-DraftEditor-content') || 
+                     descContainer.querySelector('[contenteditable="true"]');
+          if (ce) {
+            console.log("[ContentScript] [DELAYED] 2s — contentEditable:", ce.getAttribute('contenteditable'),
+              "textContent:", (ce.textContent || '').substring(0, 60));
+          }
+        }
+      }, 2000);
+
+      setTimeout(() => {
+        const descContainer = document.querySelector('#dweb-comment-editor-container');
+        if (descContainer) {
+          const ce = descContainer.querySelector('.public-DraftEditor-content') || 
+                     descContainer.querySelector('[contenteditable="true"]');
+          if (ce) {
+            console.log("[ContentScript] [DELAYED] 5s — contentEditable:", ce.getAttribute('contenteditable'),
+              "textContent:", (ce.textContent || '').substring(0, 60));
+          }
+        }
+        console.log("[ContentScript] [DELAYED] Done watching");
+      }, 5000);
     });
     sendResponse({ status: "success" });
   }
