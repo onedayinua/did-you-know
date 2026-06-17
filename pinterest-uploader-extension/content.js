@@ -567,15 +567,52 @@ async function prefillPinData(data) {
       "contentEditable attr:", contentEditable.getAttribute('contenteditable'),
       "data-editor:", contentEditable.querySelector('[data-editor]')?.getAttribute('data-editor') || 'N/A');
 
-    // If still contenteditable="false", try focusing directly
+    // CRITICAL: Do NOT use setAttribute('contenteditable', 'true') — it triggers
+    // React to remount the DraftEditor component (new data-editor ID), which
+    // resets EditorState and clears any text we wrote.
+    // Instead, try all other methods to activate the editor naturally.
+    
     if (contentEditable.getAttribute('contenteditable') !== 'true') {
-      console.log("[ContentScript] contentEditable is not 'true', trying direct focus");
+      console.log("[ContentScript] contentEditable is not 'true', trying to activate naturally");
+      
+      // Strategy 1: Focus directly on the contentEditable
       contentEditable.focus();
-      await new Promise(r => setTimeout(r, 300));
-      // If still not true, force it
-      if (contentEditable.getAttribute('contenteditable') !== 'true') {
-        console.log("[ContentScript] Still not 'true', forcing via setAttribute");
-        contentEditable.setAttribute('contenteditable', 'true');
+      await new Promise(r => setTimeout(r, 500));
+      
+      if (contentEditable.getAttribute('contenteditable') === 'true') {
+        console.log("[ContentScript] focus() activated the editor naturally");
+      } else {
+        console.log("[ContentScript] focus() didn't activate, trying the DraftEditor-root click");
+        
+        // Strategy 2: Find the DraftEditor-root (parent of the editor) and click/focus it
+        const draftRoot = contentEditable.closest('.DraftEditor-root') || 
+                          contentEditable.parentElement?.closest('.DraftEditor-root');
+        if (draftRoot) {
+          draftRoot.focus();
+          draftRoot.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          draftRoot.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          draftRoot.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          await new Promise(r => setTimeout(r, 500));
+        }
+        
+        if (contentEditable.getAttribute('contenteditable') === 'true') {
+          console.log("[ContentScript] DraftEditor-root click activated the editor naturally");
+        } else {
+          console.log("[ContentScript] Still not 'true' — trying contentEditable click dispatch");
+          
+          // Strategy 3: Dispatch mousedown on the contentEditable itself
+          contentEditable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          contentEditable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          contentEditable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
+          await new Promise(r => setTimeout(r, 500));
+          
+          if (contentEditable.getAttribute('contenteditable') === 'true') {
+            console.log("[ContentScript] contentEditable click activated the editor naturally");
+          } else {
+            console.log("[ContentScript] STILL not 'true' — using setAttribute as last resort despite remount risk");
+            contentEditable.setAttribute('contenteditable', 'true');
+          }
+        }
       }
     }
 
