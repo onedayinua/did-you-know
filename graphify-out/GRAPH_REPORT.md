@@ -1,16 +1,16 @@
-# Graph Report - did-you-know  (2026-06-07)
+# Graph Report - did-you-know  (2026-06-17)
 
 ## Corpus Check
-- 78 files · ~57,666 words
+- 96 files · ~72,529 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2204 nodes · 3472 edges · 134 communities (127 shown, 7 thin omitted)
-- Extraction: 86% EXTRACTED · 14% INFERRED · 0% AMBIGUOUS · INFERRED: 489 edges (avg confidence: 0.54)
+- 2710 nodes · 4038 edges · 205 communities (172 shown, 33 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 494 edges (avg confidence: 0.54)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b7b8ce24`
+- Built from commit: `b59f8f5d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -143,35 +143,102 @@
 - [[_COMMUNITY_Community 131|Community 131]]
 - [[_COMMUNITY_Community 132|Community 132]]
 - [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
+- [[_COMMUNITY_Community 140|Community 140]]
+- [[_COMMUNITY_Community 141|Community 141]]
+- [[_COMMUNITY_Community 142|Community 142]]
+- [[_COMMUNITY_Community 143|Community 143]]
+- [[_COMMUNITY_Community 144|Community 144]]
+- [[_COMMUNITY_Community 145|Community 145]]
+- [[_COMMUNITY_Community 146|Community 146]]
+- [[_COMMUNITY_Community 147|Community 147]]
+- [[_COMMUNITY_Community 148|Community 148]]
+- [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
+- [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
+- [[_COMMUNITY_Community 157|Community 157]]
+- [[_COMMUNITY_Community 158|Community 158]]
+- [[_COMMUNITY_Community 159|Community 159]]
+- [[_COMMUNITY_Community 160|Community 160]]
+- [[_COMMUNITY_Community 161|Community 161]]
+- [[_COMMUNITY_Community 162|Community 162]]
+- [[_COMMUNITY_Community 163|Community 163]]
+- [[_COMMUNITY_Community 164|Community 164]]
+- [[_COMMUNITY_Community 165|Community 165]]
+- [[_COMMUNITY_Community 166|Community 166]]
+- [[_COMMUNITY_Community 167|Community 167]]
+- [[_COMMUNITY_Community 168|Community 168]]
+- [[_COMMUNITY_Community 169|Community 169]]
+- [[_COMMUNITY_Community 170|Community 170]]
+- [[_COMMUNITY_Community 171|Community 171]]
+- [[_COMMUNITY_Community 172|Community 172]]
+- [[_COMMUNITY_Community 173|Community 173]]
+- [[_COMMUNITY_Community 174|Community 174]]
+- [[_COMMUNITY_Community 175|Community 175]]
+- [[_COMMUNITY_Community 176|Community 176]]
+- [[_COMMUNITY_Community 177|Community 177]]
+- [[_COMMUNITY_Community 178|Community 178]]
+- [[_COMMUNITY_Community 179|Community 179]]
+- [[_COMMUNITY_Community 180|Community 180]]
+- [[_COMMUNITY_Community 181|Community 181]]
+- [[_COMMUNITY_Community 182|Community 182]]
+- [[_COMMUNITY_Community 183|Community 183]]
+- [[_COMMUNITY_Community 184|Community 184]]
+- [[_COMMUNITY_Community 185|Community 185]]
+- [[_COMMUNITY_Community 186|Community 186]]
+- [[_COMMUNITY_Community 187|Community 187]]
+- [[_COMMUNITY_Community 188|Community 188]]
+- [[_COMMUNITY_Community 189|Community 189]]
+- [[_COMMUNITY_Community 190|Community 190]]
+- [[_COMMUNITY_Community 191|Community 191]]
+- [[_COMMUNITY_Community 192|Community 192]]
+- [[_COMMUNITY_Community 193|Community 193]]
+- [[_COMMUNITY_Community 194|Community 194]]
+- [[_COMMUNITY_Community 195|Community 195]]
+- [[_COMMUNITY_Community 196|Community 196]]
+- [[_COMMUNITY_Community 197|Community 197]]
+- [[_COMMUNITY_Community 198|Community 198]]
+- [[_COMMUNITY_Community 199|Community 199]]
+- [[_COMMUNITY_Community 200|Community 200]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Trend` - 77 edges
-2. `ContentOption` - 72 edges
+1. `Trend` - 78 edges
+2. `ContentOption` - 73 edges
 3. `Theme` - 60 edges
-4. `AsyncMock` - 55 edges
-5. `ContentStatus` - 54 edges
+4. `ContentStatus` - 55 edges
+5. `AsyncMock` - 55 edges
 6. `ContentGenerator` - 54 edges
-7. `TrendSelector` - 43 edges
+7. `TrendSelector` - 48 edges
 8. `MagicMock` - 43 edges
 9. `AsyncMock` - 39 edges
 10. `OpenRouterClient` - 37 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `int` --uses--> `Trend`  [INFERRED]
+  modules/trend_selector.py → shared/models.py
+- `float` --uses--> `Trend`  [INFERRED]
+  modules/trend_selector.py → shared/models.py
 - `Any` --uses--> `ContentOption`  [INFERRED]
   modules/visual_generator.py → shared/models.py
 - `bool` --uses--> `Trend`  [INFERRED]
   modules/trend_selector.py → shared/models.py
 - `str` --uses--> `OpenRouterClient`  [INFERRED]
   main.py → shared/openrouter_client.py
-- `int` --uses--> `OpenRouterClient`  [INFERRED]
-  main.py → shared/openrouter_client.py
-- `bool` --uses--> `OpenRouterClient`  [INFERRED]
-  main.py → shared/openrouter_client.py
 
 ## Import Cycles
 - 1-file cycle: `app/main.py -> app/main.py`
 
-## Communities (134 total, 7 thin omitted)
+## Communities (205 total, 33 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -203,7 +270,7 @@ Nodes (23): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementatio
 
 ### Community 7 - "Community 7"
 Cohesion: 0.12
-Nodes (11): Integration tests for the actual schema migrations., Integration tests for the actual schema migrations., Verify CHECK constraints on status columns., Verify CHECK constraints on status columns., Create a test database connection., Test that migrations can be run multiple times without issues., Test that migrations can be run multiple times without issues., Clean the database before each test. (+3 more)
+Nodes (11): Integration tests for the actual schema migrations., Integration tests for the actual schema migrations., Verify CHECK constraints on status columns., Verify CHECK constraints on status columns., Create a test database connection., Verify updated_at triggers work correctly., Verify updated_at triggers work correctly., Test that migrations can be run multiple times without issues. (+3 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.11
@@ -226,8 +293,8 @@ Cohesion: 0.12
 Nodes (15): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+7 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.19
-Nodes (16): Connection, _connect_with_retry(), _ensure_migrations_table(), _get_applied_versions(), _get_dsn_from_env(), main(), Connection, float (+8 more)
+Cohesion: 0.20
+Nodes (18): Connection, _connect_with_retry(), _ensure_migrations_table(), _get_applied_versions(), _get_dsn_from_env(), main(), Connection, float (+10 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.12
@@ -278,8 +345,8 @@ Cohesion: 0.17
 Nodes (11): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+3 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.21
-Nodes (8): _parse_migration_files(), Parse migration files from directory., Test migration file parsing and validation., Test parsing valid migration files., Test that invalid filenames are skipped with warning., Test detection of missing migration versions., Test that migrations are ordered by version., TestMigrationParsing
+Cohesion: 0.20
+Nodes (9): Path, _parse_migration_files(), Parse migration files from directory., Test migration file parsing and validation., Test parsing valid migration files., Test that invalid filenames are skipped with warning., Test detection of missing migration versions., Test that migrations are ordered by version. (+1 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.14
@@ -294,12 +361,12 @@ Cohesion: 0.20
 Nodes (9): Database Schema, Development, Did You Know? - AI Content Channel, License, Migration Runner, Project Structure, Quick Start, Setting up development environment (+1 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.24
-Nodes (7): Exception, MigrationError, Raised when a migration fails to apply., Tests for the migration runner., Test connection retry logic., Test the retry logic (mocked)., TestConnectionRetry
+Cohesion: 0.12
+Nodes (13): Exception, MigrationError, Raised when a migration fails to apply., Tests for the migration runner., Test successful migration application., Test error handling for bad migration SQL., Test MigrationError exception formatting., Test connection retry logic. (+5 more)
 
 ### Community 31 - "Community 31"
-Cohesion: 0.20
-Nodes (6): Test successful migration application., Test error handling for bad migration SQL., Test MigrationError exception formatting., Test the migration runner integration., Create a test migrations directory., TestMigrationRunner
+Cohesion: 0.05
+Nodes (34): 1. Feature Overview, 2. Service Ownership, 3.1 OpenRouterClient.generate_image() — Rewrite, 3.2 VisualGenerator — Update dimension handling, 3.3 Image bytes extraction from base64, 3.4 Error handling for new response format, 3. Detailed Implementation, 4. Error Handling (+26 more)
 
 ### Community 32 - "Community 32"
 Cohesion: 0.22
@@ -314,16 +381,16 @@ Cohesion: 0.25
 Nodes (8): techlead, maxTokens, min_p, mode, model, prompt, temperature, top_p
 
 ### Community 35 - "Community 35"
-Cohesion: 0.16
-Nodes (16): permission, *, cat board/*, git *, ls *, mkdir *, mv board/*, * (+8 more)
+Cohesion: 0.11
+Nodes (23): reviewer, permission, *, cat board/*, git *, ls *, mkdir *, mv board/* (+15 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.29
 Nodes (7): qa, min_p, mode, model, permission, prompt, temperature
 
 ### Community 37 - "Community 37"
-Cohesion: 0.11
-Nodes (34): approve_option(), cancel_option(), dashboard(), health(), history(), option_detail(), preview_all(), preview_platform() (+26 more)
+Cohesion: 0.14
+Nodes (23): approved_page(), dashboard(), history(), option_detail(), preview_all(), preview_platform(), str, API routes for the content management dashboard.  Endpoints: - GET  / (+15 more)
 
 ### Community 38 - "Community 38"
 Cohesion: 0.18
@@ -386,16 +453,16 @@ Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-012] APScheduler & CLI Entrypoint
 
 ### Community 54 - "Community 54"
-Cohesion: 0.11
-Nodes (13): Deduplication logic against recently used themes., Deduplication logic against recently used themes., Exact match returns True., Exact match returns True., Substring match in DB returns True., Substring match in DB returns True., No matching theme returns False., No matching theme returns False. (+5 more)
+Cohesion: 0.09
+Nodes (18): Deduplication logic against recently used themes., Deduplication logic against recently used themes., Deduplication logic against recently used themes., Exact match returns True., Exact match returns True., Substring match in DB returns True., Substring match in DB returns True., Substring match in DB returns True. (+10 more)
 
 ### Community 55 - "Community 55"
 Cohesion: 0.50
 Nodes (3): Architectural Structure & Lifespan, Context & Constraints, Skill: FastAPI REST Pattern
 
 ### Community 59 - "Community 59"
-Cohesion: 0.16
-Nodes (8): Path, Full pipeline integration tests (mocked)., Full flow: fetch pending -> generate -> save -> update DB -> return updated opti, Returns empty list when no pending options need images., Processes only the content option IDs passed to run()., Continues processing remaining options when one fails., Uses platform-specific dimensions from config., TestRun
+Cohesion: 0.11
+Nodes (17): db_pool(), AsyncMock, Full pipeline integration tests (mocked)., Full flow: fetch pending -> generate -> save -> update DB -> return updated opti, Full pipeline integration tests (mocked)., Full flow: fetch pending -> generate -> save -> update DB -> return updated opti, Returns empty list when no pending options need images., Processes only the content option IDs passed to run(). (+9 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.33
@@ -403,171 +470,163 @@ Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-001] 
 
 ### Community 66 - "Community 66"
 Cohesion: 0.05
-Nodes (22): Tests for shared/db.py., Test the query helper functions., Set up a mock pool for each test., Test fetch returns all rows., Test fetch_one returns a single row., Test fetch_one returns None when no rows., Test fetch_val returns a single value., Test execute returns status string. (+14 more)
+Nodes (21): Tests for shared/db.py., Test the query helper functions., Test fetch returns all rows., Test fetch_one returns a single row., Test fetch_one returns None when no rows., Test fetch_val returns a single value., Test execute returns status string., Test pool initialization and teardown. (+13 more)
 
 ### Community 67 - "Community 67"
 Cohesion: 0.05
 Nodes (21): Tests for shared/config_loader.py., Test loading a valid YAML config file., Test that env vars are substituted in loaded config., Test that config is cached after first load., Test that malformed YAML raises an error., Test that shortcut functions call load_config correctly., Test environment variable substitution logic., Test basic ${VAR_NAME} substitution. (+13 more)
 
 ### Community 68 - "Community 68"
-Cohesion: 0.12
-Nodes (23): lifespan(), FastAPI application with lifespan management.  Initializes DB pool on startup, s, Startup/shutdown lifecycle.      Startup:         - Initialize DB pool from DATA, generate(), Run the content pipeline once (manual execution).      Executes the full pipelin, Run the content pipeline once (manual execution).      Executes the full pipelin, Pool, close_pool() (+15 more)
+Cohesion: 0.16
+Nodes (14): lifespan(), FastAPI application with lifespan management.  Initializes DB pool on startup, s, Startup/shutdown lifecycle.      Startup:         - Initialize DB pool from DATA, generate(), migrate(), Run database migrations.      Reads ``DATABASE_URL`` from environment and applie, Run database migrations.      Reads ``DATABASE_URL`` from environment and applie, Run the content pipeline once (manual execution).      Executes the full pipelin (+6 more)
 
 ### Community 69 - "Community 69"
-Cohesion: 0.07
-Nodes (25): FastAPI, TestClient, client(), _make_row(), Tests for app/routes.py — FastAPI endpoints.  Covers: - Dashboard (GET /) - Opti, Option detail endpoint tests., Approve endpoint tests., Cancel endpoint tests. (+17 more)
+Cohesion: 0.22
+Nodes (8): FastAPI, client(), Tests for app/routes.py — FastAPI endpoints.  Covers: - Dashboard (GET /) - Opti, Regenerate text endpoint tests., Regenerate text endpoint tests., Test client with mocked DB dependencies and no lifespan.      We create a fresh, Test client with mocked DB dependencies and no lifespan.      We create a fresh, TestRegenerateText
 
 ### Community 70 - "Community 70"
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
 ### Community 71 - "Community 71"
-Cohesion: 0.20
-Nodes (18): Enum, did-you-know shared utilities.  Provides: - config_loader: YAML config loading w, content_option_from_record(), Platform, post_from_record(), PostStatus, Any, Shared Pydantic v2 data models for the Did You Know project.  Provides: - Enums: (+10 more)
+Cohesion: 0.06
+Nodes (33): 1. Feature Overview, 2. Service Ownership, 3.1 Database Changes, 3.2 New API Endpoint, 3.3 Template Changes (preview/base.html), 3.4 JS: sendPinToExtension Integration, 3.4 State Management, 3. Detailed Implementation (+25 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.33
 Nodes (5): Dependencies, Description, Tasks, Technical Specification, [TKT-002] Shared Config Loader & DB Connection Pool
 
 ### Community 73 - "Community 73"
-Cohesion: 0.11
-Nodes (19): BaseModel, ApproveRequest, CancelRequest, No body needed — just the content_option_id from URL path., No body needed — just the content_option_id from URL path., No body needed — regenerates using existing theme., No body needed — regenerates using existing image_prompt., RegenerateImageRequest (+11 more)
+Cohesion: 0.05
+Nodes (73): BaseModel, Enum, did-you-know shared utilities.  Provides: - config_loader: YAML config loading w, ApproveRequest, CancelRequest, content_option_from_record(), ContentOptionResponse, HealthResponse (+65 more)
 
 ### Community 74 - "Community 74"
 Cohesion: 0.06
-Nodes (23): Any, ContentGenerator module — generates platform-specific content options from theme, ContentOption, ContentStatus, Status of a content option through its lifecycle., Represents a generated content option (text + image prompt + optional image)., Tests for modules/content_generator.py — ContentGenerator class.  Covers: - ``_c, Full config dict as loaded from content_template.yaml + queue settings. (+15 more)
+Nodes (42): Any, ContentGenerator, ContentGenerator module — generates platform-specific content options from theme, Generates platform-specific content options from themes.      For each enabled p, ContentOption, ContentStatus, Status of a content option through its lifecycle., Represents a short theme name derived from a trend. (+34 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.11
-Nodes (17): Any, bool, int, str, Theme, Trend, Call OpenRouter to generate a theme name from a keyword.          Args:, Call OpenRouter to generate a theme name from a keyword.          Args: (+9 more)
+Cohesion: 0.12
+Nodes (15): bool, int, Call OpenRouter to generate a theme name from a keyword.          Args:, Call OpenRouter to generate a theme name from a keyword.          Args:, Call OpenRouter to generate a theme name from a keyword.          Args:, Check if a theme name is too similar to recently used themes.          Uses ILIK, Check if a theme name is too similar to recently used themes.          Uses ILIK, Check if a theme name is too similar to recently used themes.          Uses ILIK (+7 more)
 
 ### Community 76 - "Community 76"
-Cohesion: 0.14
-Nodes (12): Post, Represents a published post on a platform.     Platform is inherited from the pa, Test Post model creation and validation., Valid Post with all required fields., Valid Post with all optional fields populated., Post with FAILED status and error message., Missing content_option_id should raise ValidationError., Missing platform should raise ValidationError. (+4 more)
-
-### Community 77 - "Community 77"
-Cohesion: 0.17
-Nodes (10): Represents a short theme name derived from a trend., Theme, Test Theme model creation and validation., Valid Theme with all required fields., Valid Theme with optional fields populated., Empty name (min_length=1) should raise ValidationError., Name exceeding max_length should raise ValidationError., Missing trend_id should raise ValidationError. (+2 more)
+Cohesion: 0.11
+Nodes (10): Test Post model creation and validation., Valid Post with all required fields., Valid Post with all optional fields populated., Post with FAILED status and error message., Missing content_option_id should raise ValidationError., Missing platform should raise ValidationError., Platform exceeding max_length should raise ValidationError., Default status should be PostStatus.PENDING. (+2 more)
 
 ### Community 78 - "Community 78"
 Cohesion: 0.06
-Nodes (32): ContentGenerator, generator(), JSON parsing of AI responses., JSON parsing of AI responses., Parses a JSON array response correctly., Parses a JSON object with a 'variations' key., Parses a JSON object with a 'variations' key., Parses a JSON object with an 'options' key as fallback. (+24 more)
+Nodes (22): JSON parsing of AI responses., JSON parsing of AI responses., Parses a JSON array response correctly., Parses a JSON object with an 'options' key as fallback., Parses a JSON object with an 'options' key as fallback., Wraps a single JSON object into a list., Wraps a single JSON object into a list., Adds # prefix to hashtags missing it. (+14 more)
 
 ### Community 79 - "Community 79"
 Cohesion: 0.12
 Nodes (14): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+6 more)
 
 ### Community 80 - "Community 80"
-Cohesion: 0.18
-Nodes (10): HealthResponse, Health check response., Test HealthResponse API model., Valid HealthResponse., Default status and database values., Test model_dump() and model_dump_json() round-trip., HealthResponse serializes and deserializes correctly., Post serializes to JSON and back. (+2 more)
+Cohesion: 0.08
+Nodes (24): 10.1 Unit Tests, 10.2 Integration Tests, 10.3 Existing Tests, 10. Testing Requirements, 11. Tasks, 1. Feature Overview, 2. Service Ownership, 3. Root Cause Analysis (+16 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.07
-Nodes (27): AsyncMock, MagicMock, Test that init_pool accepts an explicit DSN., Test the full init → query → close lifecycle., Test generate_text with response_format for JSON mode., Test that empty prompt raises ValueError., Test that whitespace-only prompt raises ValueError., Test that empty choices array raises OpenRouterError. (+19 more)
+Cohesion: 0.05
+Nodes (34): AsyncMock, MagicMock, Set up a mock pool for each test., Test that init_pool accepts an explicit DSN., Test the full init → query → close lifecycle., Test generate_text with response_format for JSON mode., Test that empty prompt raises ValueError., Test that whitespace-only prompt raises ValueError. (+26 more)
 
 ### Community 82 - "Community 82"
-Cohesion: 0.08
-Nodes (25): AsyncClient, bytes, Response, _parse_retry_after(), float, int, str, Generate text using OpenRouter chat completion API.          Args:             p (+17 more)
+Cohesion: 0.12
+Nodes (17): AsyncClient, bytes, str, Generate text using OpenRouter chat completion API.          Args:             p, Generate text using OpenRouter chat completion API.          Args:             p, Generate an image using OpenRouter image generation API.          Args:, Generate an image using OpenRouter chat completions API with modalities., Truncate a response body for logging, keeping first and last portion.          A (+9 more)
 
 ### Community 83 - "Community 83"
 Cohesion: 0.08
-Nodes (19): Additional edge-case coverage., Additional edge-case coverage., Duplicate keywords in candidates are handled., Duplicate keywords in candidates are handled., _get_used_keywords returns empty set when no rows., _get_used_keywords returns empty set when no rows., _get_used_keywords returns set of keywords from DB., _get_used_keywords returns set of keywords from DB. (+11 more)
+Nodes (21): Additional edge-case coverage., Duplicate keywords in candidates are handled., _get_used_keywords returns empty set when no rows., _get_used_keywords returns set of keywords from DB., Additional edge-case coverage., Additional edge-case coverage., Duplicate keywords in candidates are handled., Duplicate keywords in candidates are handled. (+13 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.04
-Nodes (48): Any, float, int, str, Trend, Fetch trending searches from Google Trends API.          Fallback chain:, Fetch trending searches from Google Trends API.          Fallback chain:, Fetch trending searches from Google Trends API.          Fallback chain: (+40 more)
+Cohesion: 0.06
+Nodes (26): Any, str, Theme, Trend, ThemeAssociator module — creates short theme names from trend keywords using AI., Represents a trending keyword from Google Trends., Trend, Score < 0 should raise ValidationError. (+18 more)
 
 ### Community 85 - "Community 85"
-Cohesion: 0.12
-Nodes (12): _is_food_related(), bool, TrendSelector module — selects trending topics from Google Trends.  Provides the, Check whether a keyword appears to be food-related.      Performs a case-insensi, Tests for modules/trend_selector.py — TrendSelector class.  Covers: - ``_select_, Full config dict as loaded from backup_trends.yaml., TrendSelector instance with mocked db pool and sample config., TrendSelector instance with mocked db pool and sample config. (+4 more)
+Cohesion: 0.17
+Nodes (8): _is_food_related(), bool, Check whether a keyword appears to be food-related.      Performs a case-insensi, Tests for modules/trend_selector.py — TrendSelector class.  Covers: - ``_select_, Full config dict as loaded from backup_trends.yaml., Verify the food-related keyword filter., sample_config(), TestIsFoodRelated
 
 ### Community 86 - "Community 86"
-Cohesion: 0.04
-Nodes (31): Theme name cleaning and validation., Theme name cleaning and validation., Leading/trailing whitespace is removed., Leading/trailing whitespace is removed., Surrounding double quotes are removed., Surrounding double quotes are removed., Surrounding single quotes are removed., Surrounding single quotes are removed. (+23 more)
+Cohesion: 0.33
+Nodes (6): Theme name cleaning and validation., Theme name cleaning and validation., Theme name cleaning and validation., Leading/trailing whitespace is removed., Leading/trailing whitespace is removed., TestCleanThemeName
 
 ### Community 87 - "Community 87"
-Cohesion: 0.08
-Nodes (19): pytrends integration (mocked)., Successfully fetches and parses trending searches., Returns empty list when trending_searches() raises., Returns empty list when trending_searches() raises., pytrends integration (mocked)., Successfully fetches and parses trending searches., Falls through to realtime_trending_searches when trending_searches fails., Falls through to realtime_trending_searches when trending_searches fails. (+11 more)
+Cohesion: 0.07
+Nodes (25): MagicMock, pytrends integration (mocked)., Successfully fetches and parses trending searches., RSS feed integration (mocked)., Successfully fetches and parses RSS feed., Returns empty list when trending_searches() raises., Returns empty list when HTTP request fails., Returns empty list when trending_searches() raises. (+17 more)
 
 ### Community 88 - "Community 88"
 Cohesion: 0.10
-Nodes (17): Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., When all API trends have been used, falls back to backup trends., When all API trends have been used, falls back to backup trends., When the API fails, uses backup trends., When the API fails, uses backup trends., When API fails and all backups are used, returns None., When API fails and all backups are used, returns None. (+9 more)
+Nodes (17): Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., When all API trends have been used, falls back to backup trends., When all API trends have been used, falls back to backup trends., When all API trends have been used, falls back to backup trends., When the API fails, uses backup trends., When the API fails, uses backup trends., When the API fails, uses backup trends. (+9 more)
 
 ### Community 89 - "Community 89"
 Cohesion: 0.07
 Nodes (26): 10. Deployment Considerations, 1. Feature Overview, 2. Problem Statement, 3. Service Ownership, 4.1 Config Changes (`config/backup_trends.yaml`), 4.2 Code Changes (`modules/trend_selector.py`), 4.3 Test Changes (`tests/test_trend_selector.py`), 4. Detailed Implementation (+18 more)
 
 ### Community 90 - "Community 90"
-Cohesion: 0.12
-Nodes (14): Database INSERT operations., Database INSERT operations., Inserts a trend and returns a Trend model with generated id., Inserts a trend and returns a Trend model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Raises RuntimeError if INSERT RETURNING yields no row., Verifies the SQL query and parameters passed to the DB., Verifies the SQL query and parameters passed to the DB. (+6 more)
+Cohesion: 0.11
+Nodes (16): Database INSERT operations., Database INSERT operations., Database INSERT operations., Inserts a trend and returns a Trend model with generated id., Inserts a trend and returns a Trend model with generated id., Inserts a trend and returns a Trend model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Raises RuntimeError if INSERT RETURNING yields no row. (+8 more)
 
 ### Community 91 - "Community 91"
 Cohesion: 0.09
-Nodes (20): db_pool(), AsyncMock, Additional edge-case coverage., Additional edge-case coverage., Config without theme_prompt key uses empty string default., Config without deduplication key uses 12 hours default., Config without deduplication key uses 12 hours default., Dedup config without min_hours_between_similar uses 12 hours default. (+12 more)
+Nodes (18): Additional edge-case coverage., Additional edge-case coverage., Additional edge-case coverage., Config without theme_prompt key uses empty string default., Config without theme_prompt key uses empty string default., Dedup config without min_hours_between_similar uses 12 hours default., Dedup config without min_hours_between_similar uses 12 hours default., Dedup config without min_hours_between_similar uses 12 hours default. (+10 more)
 
 ### Community 93 - "Community 93"
 Cohesion: 0.09
-Nodes (17): Core selection algorithm., Backup fallback behaviour., First backup trend is used when none have been used recently., Backup trends that have been used recently are skipped., Backup fallback behaviour., First backup trend is used when none have been used recently., When every backup trend has been used, returns None., Backup trends that have been used recently are skipped. (+9 more)
+Nodes (22): db_pool(), AsyncMock, Backup fallback behaviour., First backup trend is used when none have been used recently., Backup fallback behaviour., First backup trend is used when none have been used recently., Backup trends that have been used recently are skipped., Backup trends that have been used recently are skipped. (+14 more)
 
 ### Community 94 - "Community 94"
 Cohesion: 0.07
 Nodes (22): cli(), Did You Know — AI Content Channel CLI., Did You Know — AI Content Channel CLI., MagicMock, Tests for main.py — CLI entrypoint commands.  Covers: - ``migrate`` command - ``, generate command runs pipeline successfully., generate command fails when OPENROUTER_API_KEY is not set., generate command fails when OPENROUTER_API_KEY is not set. (+14 more)
 
 ### Community 95 - "Community 95"
-Cohesion: 0.12
-Nodes (16): db_pool(), generator(), openrouter_client(), AsyncMock, Tests for modules/visual_generator.py — VisualGenerator class.  Covers: - ``_get, Returns all pending options when no specific IDs are given., Returns only the options matching the given IDs., Returns empty list when no rows match. (+8 more)
+Cohesion: 0.13
+Nodes (11): Returns all pending options when no specific IDs are given., Returns all pending options when no specific IDs are given., Returns only the options matching the given IDs., Returns only the options matching the given IDs., Returns empty list when no rows match., Returns empty list when no rows match., Only pending options without image_path are returned., Only pending options without image_path are returned. (+3 more)
 
 ### Community 96 - "Community 96"
-Cohesion: 0.10
-Nodes (19): Trend, Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., When first theme is a duplicate, retries with alternative prompt., When first theme is a duplicate, retries with alternative prompt., After all retries exhausted, last theme is accepted even if duplicate. (+11 more)
+Cohesion: 0.07
+Nodes (27): Trend, Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., Full flow: generate -> dedup (no duplicate) -> save -> return Theme., When first theme is a duplicate, retries with alternative prompt. (+19 more)
 
 ### Community 97 - "Community 97"
-Cohesion: 0.09
-Nodes (20): MagicMock, When API returns only non-food results, they pass through (no filter)., When API returns only non-food results, they pass through (no filter)., Unit tests for the parsing methods., Unit tests for the parsing methods., Scores decrease by 5 from 100 for each trend., Scores decrease by 5 from 100 for each trend., Extracts keywords from realtime trending entries. (+12 more)
-
-### Community 98 - "Community 98"
-Cohesion: 0.08
-Nodes (23): Theme, Full pipeline integration tests (mocked)., Full pipeline integration tests (mocked)., Full successful flow: check queue -> expire -> generate -> save -> return., Full successful flow: check queue -> expire -> generate -> save -> return., Returns empty list when queue is at max_pending capacity., Returns empty list when queue is at max_pending capacity., Generates content for multiple platforms successfully. (+15 more)
+Cohesion: 0.11
+Nodes (15): Unit tests for the parsing methods., Unit tests for the parsing methods., Scores decrease by 5 from 100 for each trend., Custom geo and period values are stored., Extracts keywords from realtime trending entries., Extracts keywords from realtime trending entries., Unit tests for the parsing methods., Scores decrease by 5 from 100 for each trend. (+7 more)
 
 ### Community 99 - "Community 99"
-Cohesion: 0.10
-Nodes (22): OpenRouterError, OpenRouterRateLimitError, Async HTTP client for OpenRouter API (text + image generation).  Provides: - Ope, Raised on 429 Too Many Requests., Base error for OpenRouter API failures., Raised on 429 Too Many Requests., Tests for shared/openrouter_client.py., Test the base OpenRouterError exception. (+14 more)
+Cohesion: 0.14
+Nodes (15): OpenRouterError, Base error for OpenRouter API failures., client(), Tests for shared/openrouter_client.py., Return an OpenRouterClient with a test API key., Test the base OpenRouterError exception., Test that OpenRouterError stores message, status_code, response_body., Test that exponential backoff with jitter is used. (+7 more)
 
 ### Community 100 - "Community 100"
-Cohesion: 0.16
-Nodes (15): ContentGenerator, Any, ContentOption, int, str, Count pending content options in the database.          Returns:             Num, Expire old pending options by setting their status to ``'expired'``.          Ar, Generate N text variations (fact + hashtags) for a theme.          Calls OpenRou (+7 more)
+Cohesion: 0.09
+Nodes (22): Any, ContentOption, int, str, Count pending content options in the database.          Returns:             Num, Count pending content options in the database.          Returns:             Num, Expire old pending options by setting their status to ``'expired'``.          Ar, Expire old pending options by setting their status to ``'expired'``.          Ar (+14 more)
 
 ### Community 101 - "Community 101"
-Cohesion: 0.21
-Nodes (10): db_pool(), AsyncMock, MagicMock, All steps complete successfully., Pipeline skips when no trend is found., Pipeline skips when no platforms are enabled., Pipeline skips when content generator returns empty (queue full)., Mock asyncpg connection pool. (+2 more)
+Cohesion: 0.15
+Nodes (11): db_pool(), openrouter_client(), AsyncMock, MagicMock, All steps complete successfully., Pipeline skips when no trend is found., Pipeline skips when no platforms are enabled., Pipeline skips when content generator returns empty (queue full). (+3 more)
 
 ### Community 102 - "Community 102"
-Cohesion: 0.17
-Nodes (13): Any, ContentOption, int, str, VisualGenerator module — generates images for content options using AI.  Provide, Query for content options needing image generation.          Args:             i, Get image dimensions for a platform.          Args:             platform: Platfo, Get DALL-E supported size string for a platform.          Args:             plat (+5 more)
+Cohesion: 0.12
+Nodes (19): Any, ContentOption, int, str, Query for content options needing image generation.          Args:             i, Query for content options needing image generation.          Args:             i, Get image dimensions for a platform.          Args:             platform: Platfo, Get image dimensions for a platform.          Args:             platform: Platfo (+11 more)
 
 ### Community 103 - "Community 103"
-Cohesion: 0.22
-Nodes (11): Any, str, APScheduler integration for automated content pipeline execution.  Provides: - `, Configure and add the content pipeline job to the scheduler.      The pipeline r, Execute the full content generation pipeline.      Steps:     1. Trend Selector, run_pipeline(), setup_scheduler(), ThemeAssociator module — creates short theme names from trend keywords using AI. (+3 more)
+Cohesion: 0.27
+Nodes (10): Any, str, APScheduler integration for automated content pipeline execution.  Provides: - `, Configure and add the content pipeline job to the scheduler.      The pipeline r, Execute the full content generation pipeline.      Steps:     1. Trend Selector, run_pipeline(), setup_scheduler(), Creates short, memorable theme names (max 3 words) from trending keywords. (+2 more)
 
 ### Community 104 - "Community 104"
-Cohesion: 0.20
-Nodes (8): Database INSERT operations for themes., Database INSERT operations for themes., Inserts a theme and returns a Theme model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Raises RuntimeError if INSERT RETURNING yields no row., Verifies the SQL query and parameters passed to the DB., Verifies the SQL query and parameters passed to the DB., TestSaveTheme
+Cohesion: 0.14
+Nodes (12): Database INSERT operations for themes., Database INSERT operations for themes., Database INSERT operations for themes., Inserts a theme and returns a Theme model with generated id., Inserts a theme and returns a Theme model with generated id., Raises RuntimeError if INSERT RETURNING yields no row., Raises RuntimeError if INSERT RETURNING yields no row., Raises RuntimeError if INSERT RETURNING yields no row. (+4 more)
 
 ### Community 105 - "Community 105"
 Cohesion: 0.17
 Nodes (10): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+2 more)
 
 ### Community 106 - "Community 106"
-Cohesion: 0.13
-Nodes (12): Platform-specific dimension lookup., Pinterest returns 1000x1500., Instagram returns 1080x1080., Unknown platform defaults to 1024x1024., Partial platform config uses 1024 defaults for missing keys., DALL-E size string mapping., Pinterest maps to 1024x1792., Instagram maps to 1024x1024. (+4 more)
+Cohesion: 0.11
+Nodes (13): Platform-specific dimension lookup., Platform-specific dimension lookup., Pinterest returns 1000x1500., Pinterest returns 1000x1500., Instagram returns 1080x1080., Instagram returns 1080x1080., Unknown platform defaults to 1024x1024., Unknown platform defaults to 1024x1024. (+5 more)
 
 ### Community 107 - "Community 107"
-Cohesion: 0.11
-Nodes (13): Retry prompt asks for a different theme., Retry prompt asks for a different theme., Correct model, max_tokens, and temperature are passed to generate_text., Correct model, max_tokens, and temperature are passed to generate_text., Response is stripped of leading/trailing whitespace., Response is stripped of leading/trailing whitespace., API errors are re-raised after logging., API errors are re-raised after logging. (+5 more)
+Cohesion: 0.10
+Nodes (19): Retry prompt asks for a different theme., Retry prompt asks for a different theme., Retry prompt asks for a different theme., Correct model, max_tokens, and temperature are passed to generate_text., Correct model, max_tokens, and temperature are passed to generate_text., Correct model, max_tokens, and temperature are passed to generate_text., Response is stripped of leading/trailing whitespace., Response is stripped of leading/trailing whitespace. (+11 more)
 
 ### Community 108 - "Community 108"
-Cohesion: 0.20
-Nodes (7): openrouter_client(), Scheduler configuration tests., setup_scheduler adds a job to the scheduler., Mock OpenRouterClient., Full config dict for pipeline., sample_config(), TestSetupScheduler
+Cohesion: 0.09
+Nodes (12): Test generate_image() method., Test that empty choices array raises OpenRouterError., Test that missing images field raises OpenRouterError., Test that empty images array raises OpenRouterError., Test that missing image_url.url raises OpenRouterError., Test that malformed base64 data URL raises OpenRouterError., Test fallback to regular URL fetch when URL is not a data URL., Test that fallback URL fetch failure raises OpenRouterError. (+4 more)
 
 ### Community 109 - "Community 109"
 Cohesion: 0.08
@@ -578,104 +637,276 @@ Cohesion: 0.22
 Nodes (7): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Testing Requirements, 6. Deployment Considerations, File: `modules/theme_associator.py`
 
 ### Community 111 - "Community 111"
-Cohesion: 0.19
-Nodes (9): ContentOption, Image generation + file write (mocked)., Image is generated and written to disk at the expected path., Raises when the image generation API call fails., Raises RuntimeError when the image file cannot be written., generate_image is called with the right prompt, model, size, and quality., Sample ContentOption model for testing., sample_option() (+1 more)
+Cohesion: 0.12
+Nodes (15): ContentOption, Image generation + file write (mocked)., Image is generated and written to disk at the expected path., Image generation + file write (mocked)., Image is generated and written to disk at the expected path., Raises when the image generation API call fails., Raises RuntimeError when the image file cannot be written., Raises when the image generation API call fails. (+7 more)
 
 ### Community 112 - "Community 112"
-Cohesion: 0.25
-Nodes (5): Database update operations., Executes UPDATE query with image_path and option_id., Logs a warning when no row is updated (non-existent ID)., Verifies the SQL query and parameters passed to the DB., TestUpdateImagePath
+Cohesion: 0.20
+Nodes (8): Database update operations., Executes UPDATE query with image_path and option_id., Database update operations., Executes UPDATE query with image_path and option_id., Verifies the SQL query and parameters passed to the DB., Logs a warning when no row is updated (non-existent ID)., Verifies the SQL query and parameters passed to the DB., TestUpdateImagePath
 
 ### Community 113 - "Community 113"
-Cohesion: 0.07
-Nodes (24): db_pool(), openrouter_client(), AsyncMock, Returns the count of pending content options., Returns the count of pending content options., Returns 0 when database returns None., Returns 0 when database returns None., Uses COUNT query filtering on pending status. (+16 more)
+Cohesion: 0.09
+Nodes (17): db_pool(), openrouter_client(), AsyncMock, Uses COUNT query filtering on pending status., Uses COUNT query filtering on pending status., Returns 0 when execute result doesn't match expected format., Returns 0 when execute result doesn't match expected format., Re-raises exception from OpenRouter API. (+9 more)
 
 ### Community 114 - "Community 114"
-Cohesion: 0.13
-Nodes (11): AI text generation (mocked)., AI text generation (mocked)., Returns parsed list of variations from AI response., Returns parsed list of variations from AI response., Works correctly when only one variation is requested., Works correctly when only one variation is requested., Re-raises exception from OpenRouter API., Re-raises exception from OpenRouter API. (+3 more)
+Cohesion: 0.15
+Nodes (10): ContentGenerator, generator(), Returns 0 when there are no pending options., Returns 0 when there are no pending options., Returns 0 when no options match expiry criteria., Returns 0 when no options match expiry criteria., Returns parsed list of variations from AI response., Returns parsed list of variations from AI response. (+2 more)
 
 ### Community 115 - "Community 115"
-Cohesion: 0.10
-Nodes (19): db_pool(), AsyncMock, Mock asyncpg connection pool with async helpers., Mock asyncpg connection pool with async helpers., Configurable geo and period for Google Trends API calls., Configurable geo and period for Google Trends API calls., build_payload is called with the configured timeframe., build_payload is called with the configured timeframe. (+11 more)
+Cohesion: 0.11
+Nodes (15): Configurable geo for Google Trends RSS feed., Defaults to 'US' when geo not in config., Defaults to 'now 1-d' when period not in config., Both default when neither in config., Configurable geo and period for Google Trends API calls., Configurable geo and period for Google Trends API calls., build_payload is called with the configured timeframe., build_payload is called with the configured timeframe. (+7 more)
 
 ### Community 116 - "Community 116"
-Cohesion: 0.20
-Nodes (6): Additional edge-case coverage., DALLE_SIZE_MAP covers all supported platforms., Generator works with an empty config using defaults., Returns empty list when no options have image_prompt., Creates the images directory if it does not exist., TestEdgeCases
+Cohesion: 0.14
+Nodes (10): Additional edge-case coverage., DALLE_SIZE_MAP covers all supported platforms., Generator works with an empty config using defaults., Additional edge-case coverage., ASPECT_RATIO_MAP covers all supported platforms., Generator works with an empty config using defaults., Creates the images directory if it does not exist., Returns empty list when no options have image_prompt. (+2 more)
+
+### Community 117 - "Community 117"
+Cohesion: 0.17
+Nodes (20): Regenerate fact + hashtags for a content option, keeping the image.      Require, Regenerate fact + hashtags for a content option, keeping the image.      Require, regenerate_text(), Pool, Record, execute(), execute_many(), fetch() (+12 more)
 
 ### Community 118 - "Community 118"
-Cohesion: 0.25
-Nodes (7): openrouter_client(), Tests for modules/theme_associator.py — ThemeAssociator class.  Covers: - ``_gen, Full config dict as loaded from content_template.yaml., Full config dict as loaded from content_template.yaml., Mock OpenRouterClient with async generate_text., Mock OpenRouterClient with async generate_text., sample_config()
+Cohesion: 0.15
+Nodes (12): associator(), openrouter_client(), Tests for modules/theme_associator.py — ThemeAssociator class.  Covers: - ``_gen, Full config dict as loaded from content_template.yaml., Full config dict as loaded from content_template.yaml., Mock OpenRouterClient with async generate_text., Mock OpenRouterClient with async generate_text., Mock OpenRouterClient with async generate_text. (+4 more)
 
 ### Community 119 - "Community 119"
 Cohesion: 0.40
 Nodes (5): id, options, deepseek-v4-flash, reasoning, effort
 
-### Community 120 - "Community 120"
-Cohesion: 0.17
-Nodes (9): AI image prompt generation (mocked)., AI image prompt generation (mocked)., Returns stripped response from OpenRouter., Returns stripped response from OpenRouter., Strips leading/trailing whitespace from response., Strips leading/trailing whitespace from response., Re-raises exception from OpenRouter API., Re-raises exception from OpenRouter API. (+1 more)
-
 ### Community 121 - "Community 121"
-Cohesion: 0.10
-Nodes (18): Start the FastAPI web server with APScheduler.      The server serves the conten, Start the FastAPI web server with APScheduler.      The server serves the conten, serve(), bool, int, str, OpenRouterClient, Close the underlying HTTP client, if it was created. (+10 more)
+Cohesion: 0.18
+Nodes (11): Start the FastAPI web server with APScheduler.      The server serves the conten, Start the FastAPI web server with APScheduler.      The server serves the conten, serve(), bool, int, str, OpenRouterClient, Close the underlying HTTP client, if it was created. (+3 more)
 
 ### Community 122 - "Community 122"
-Cohesion: 0.50
-Nodes (3): Config.from_attributes should be True for ORM compatibility., Test Trend model creation and validation., TestTrend
-
-### Community 123 - "Community 123"
-Cohesion: 0.18
-Nodes (9): migrate(), Run database migrations.      Reads ``DATABASE_URL`` from environment and applie, Run database migrations.      Reads ``DATABASE_URL`` from environment and applie, Run all pending migrations.          Args:         dsn: PostgreSQL connection st, run_migrations(), Verify all tables, indexes, and constraints are created correctly., Verify all tables, indexes, and constraints are created correctly., Verify updated_at triggers work correctly. (+1 more)
-
-### Community 125 - "Community 125"
-Cohesion: 0.11
-Nodes (13): Expiry logic for old pending options., Expiry logic for old pending options., Returns count of expired options from UPDATE result., Returns count of expired options from UPDATE result., Returns 0 when no options match expiry criteria., Returns 0 when no options match expiry criteria., Uses UPDATE query with expired status and interval filter., Uses UPDATE query with expired status and interval filter. (+5 more)
+Cohesion: 0.10
+Nodes (19): 1. Feature Overview, 2. Service Ownership, 3.1 Add Pillow dependency, 3.2 Add import in `visual_generator.py`, 3.3 Modify `_generate_and_save()` — Resize after generation, 3.4 Update `_get_aspect_ratio()` to derive from dimensions, 3. Detailed Implementation, 4. Error Handling (+11 more)
 
 ### Community 126 - "Community 126"
-Cohesion: 0.12
-Nodes (9): Test *_from_record() helper functions., Convert a dict-like record to ContentOption., Record with no hashtags should default to empty list., Convert a dict-like record to Trend., Record without source should get default., Convert a dict-like record to Theme., Convert a dict-like record to Post., Record with FAILED status and error message. (+1 more)
+Cohesion: 0.10
+Nodes (18): 1. Feature Overview, 2. Service Ownership, 3.1 New Route: `GET /approved`, 3.2 Modify Cancel Endpoint, 3.3 Template Changes, 3.4 Navigation Update, 3. Detailed Implementation, 4. Error Handling (+10 more)
 
 ### Community 127 - "Community 127"
 Cohesion: 0.13
 Nodes (13): 1. Feature Overview, 2. Service Ownership, 3.1 Google Trends 404 — Remove `exc_info=True` from expected failures, 3.2 Suppress httpx INFO logging, 3.3 File-based logging with rotation, 3.4 Fix queue config key mismatch, 3. Detailed Implementation, 4. Error Handling (+5 more)
 
 ### Community 128 - "Community 128"
-Cohesion: 0.20
-Nodes (8): associator(), The hours parameter is passed as part of the SQL interval., The hours parameter is passed as timedelta to the query., Empty prompt template falls through gracefully., Empty prompt template falls through gracefully., ThemeAssociator instance with mocked db pool, client, and sample config., ThemeAssociator instance with mocked db pool, client, and sample config., ThemeAssociator
+Cohesion: 0.10
+Nodes (18): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+10 more)
 
 ### Community 129 - "Community 129"
-Cohesion: 0.32
-Nodes (6): ContentOptionResponse, API response for a single content option., Test ContentOptionResponse API model., Valid ContentOptionResponse with all fields., image_url should default to None., TestContentOptionResponse
+Cohesion: 0.11
+Nodes (15): mock_rss_response(), str, Full flow: fetch -> dedup -> save -> return Trend., Full flow: fetch -> dedup -> save -> return Trend., When API returns only non-food results, they pass through (no filter)., RSS feed URL uses the configured geo value., When API returns only non-food results, they pass through (no filter)., Returns a mock RSS XML response. (+7 more)
 
 ### Community 130 - "Community 130"
-Cohesion: 0.29
-Nodes (7): reviewer, min_p, mode, model, permission, prompt, temperature
+Cohesion: 0.11
+Nodes (17): 1. Feature Overview, 2. Service Ownership, 3.1 Add `image_size` to config, 3.2 Read `image_size` in `VisualGenerator.__init__()`, 3.3 Pass `size` to `generate_image()` in `_generate_and_save()`, 3.4 Add `size` parameter to `OpenRouterClient.generate_image()`, 3.5 Update `VisualGenerator.__init__()` docstring, 3. Detailed Implementation (+9 more)
 
 ### Community 131 - "Community 131"
-Cohesion: 0.40
-Nodes (5): PostResponse, API response for a post., Test PostResponse API model., Valid PostResponse with all fields., TestPostResponse
+Cohesion: 0.11
+Nodes (16): 1. Feature Overview, 2. Service Ownership, 3.1 Config file changes, 3.2 ThemeAssociator changes, 3.3 ContentGenerator changes, 3.4 VisualGenerator changes, 3.5 Test changes, 3. Detailed Implementation (+8 more)
 
 ### Community 132 - "Community 132"
+Cohesion: 0.09
+Nodes (12): Test ContentOption model creation and validation., Valid ContentOption with all required fields., Valid ContentOption with all optional fields populated., Platform can be created from string enum value., Invalid platform string should raise ValidationError., Empty fact (min_length=1) should raise ValidationError., Empty theme (min_length=1) should raise ValidationError., Batch_id exceeding max_length should raise ValidationError. (+4 more)
+
+### Community 133 - "Community 133"
+Cohesion: 0.14
+Nodes (14): Any, str, Fetch trending searches from Google Trends API.          Fallback chain:, Fetch trending searches from Google Trends API.          Fallback chain:, Fetch trending searches from Google Trends API.          Fallback chain:, Parse the DataFrame returned by ``trending_searches()``.          Assigns a scor, Parse the DataFrame returned by ``trending_searches()``.          Assigns a scor, Parse the DataFrame returned by ``trending_searches()``.          Assigns a scor (+6 more)
+
+### Community 134 - "Community 134"
+Cohesion: 0.14
+Nodes (11): Aspect ratio derived from Instagram dimensions (1080x1080 = 1:1)., Pinterest maps to 1024x1792., Instagram maps to 1024x1024., Unknown platform defaults to 1024x1024., Aspect ratio string mapping., Pinterest maps to 2:3., Instagram maps to 1:1., Unknown platform defaults to 1:1. (+3 more)
+
+### Community 135 - "Community 135"
+Cohesion: 0.15
+Nodes (14): float, Trend, INSERT a trend into the ``trends`` table and return a :class:`Trend` model., INSERT a trend into the ``trends`` table and return a :class:`Trend` model., INSERT a trend into the ``trends`` table and return a :class:`Trend` model., INSERT a trend into the ``trends`` table and return a :class:`Trend` model., Use a backup trend from config when the API fails.          Iterates through the, Use a backup trend from config when the API fails.          Iterates through the (+6 more)
+
+### Community 136 - "Community 136"
+Cohesion: 0.13
+Nodes (15): approve_option(), cancel_option(), mark_option_as_posted(), int, Approve a content option — marks as ready for manual posting.      Args:, Cancel a content option.      Args:         id: Content option ID.      Returns:, Approve a content option — marks as ready for manual posting.      Args:, Cancel a content option.      Args:         id: Content option ID.         next: (+7 more)
+
+### Community 137 - "Community 137"
+Cohesion: 0.13
+Nodes (13): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+5 more)
+
+### Community 138 - "Community 138"
+Cohesion: 0.19
+Nodes (8): Core selection algorithm., TrendSelector instance with mocked db pool and sample config., TrendSelector instance with mocked db pool and sample config., Core selection algorithm., Core selection algorithm., selector(), TestSelectBest, TrendSelector
+
+### Community 139 - "Community 139"
+Cohesion: 0.18
+Nodes (9): _make_row(), Preview page button visibility tests., Approved pinterest option → buttons present in HTML., Pending option → buttons absent., Posted option → buttons absent., Instagram approved option → buttons absent (pinterest only)., Create a mock database row dict., Create a mock database row dict. (+1 more)
+
+### Community 140 - "Community 140"
+Cohesion: 0.14
+Nodes (8): Mark as Posted endpoint tests., Valid approved option → returns 200, creates post record, updates status., Non-existent id → first fetch_one returns None → returns 404., Option in 'pending' status → exists but not approved → returns 409., Option already 'posted' → exists but not approved → returns 409., Cancelled option → exists but not approved → returns 409., DB transaction fails → both fetch_ones succeed → returns 500., TestMarkPosted
+
+### Community 141 - "Community 141"
+Cohesion: 0.15
+Nodes (11): 1. Feature Overview, 2. Service Ownership, 3. Detailed Implementation, 4. Error Handling, 5. Input/Output Specifications, 6. Edge Cases, 7. Dependencies, 8. Testing Requirements (+3 more)
+
+### Community 142 - "Community 142"
+Cohesion: 0.15
+Nodes (12): action, default_popup, background, service_worker, content_scripts, description, host_permissions, manifest_version (+4 more)
+
+### Community 143 - "Community 143"
+Cohesion: 0.15
+Nodes (11): db_pool(), AsyncMock, No matching theme returns False., No matching theme returns False., No matching theme returns False., Config without deduplication key uses 12 hours default., Config without deduplication key uses 12 hours default., Config without deduplication key uses 12 hours default. (+3 more)
+
+### Community 144 - "Community 144"
+Cohesion: 0.17
+Nodes (10): TrendSelector module — selects trending topics from Google Trends.  Provides the, Select the highest-scoring unused trend.          Algorithm:         1. Filter *, Select the highest-scoring unused trend.          Algorithm:         1. Filter *, Select the highest-scoring unused trend.          Algorithm:         1. Filter *, Use a backup trend from config when the API fails.          Iterates through the, Selects trending topics from Google Trends.      The selector fetches real-time, Selects trending topics from Google Trends.      The selector fetches real-time, Selects trending topics from Google Trends.      The selector fetches real-time (+2 more)
+
+### Community 145 - "Community 145"
+Cohesion: 0.29
+Nodes (8): fallbackSetDraftJsText(), prefillPinData(), setDraftJsText(), simulateInput(), uploadBase64Image(), waitForElement(), watchAllDOMChanges(), watchContentEditableChanges()
+
+### Community 146 - "Community 146"
+Cohesion: 0.20
+Nodes (7): float, int, Sleep with exponential backoff and jitter.          Args:             attempt: C, Sleep with exponential backoff and jitter.          Args:             attempt: C, Sleep with exponential backoff and jitter.          Args:             attempt: C, Initialize the client.          Args:             api_key: OpenRouter API key (s, Initialize the client.          Args:             api_key: OpenRouter API key (s
+
+### Community 147 - "Community 147"
+Cohesion: 0.24
+Nodes (8): OpenRouterRateLimitError, Raised on 429 Too Many Requests., Raised on 429 Too Many Requests., Test the rate-limit subclass., Test default retry_after is 60 seconds., Test custom retry_after value., Test that the error message mentions the retry_after value., TestOpenRouterRateLimitError
+
+### Community 148 - "Community 148"
+Cohesion: 0.18
+Nodes (10): generator(), openrouter_client(), Tests for modules/visual_generator.py — VisualGenerator class.  Covers: - ``_get, Full config dict as loaded from platforms.yaml., Full config dict as loaded from platforms.yaml., Mock OpenRouterClient with generate_image., Mock OpenRouterClient with generate_image., VisualGenerator instance with mocked dependencies. (+2 more)
+
+### Community 149 - "Community 149"
+Cohesion: 0.22
+Nodes (7): When API returns empty list, uses backup trends., When API returns empty list, uses backup trends., When API returns empty list, uses backup trends., Config without backup_trends key still works., Config without backup_trends key still works., Config without backup_trends key still works., Config without backup_trends key still works.
+
+### Community 150 - "Community 150"
+Cohesion: 0.21
+Nodes (6): Unicode keyword is handled correctly., Unicode keyword is handled correctly., Unicode keyword is handled correctly., Special characters in keyword are handled., Special characters in keyword are handled., Special characters in keyword are handled.
+
+### Community 151 - "Community 151"
+Cohesion: 0.29
+Nodes (6): Response, _parse_retry_after(), Async HTTP client for OpenRouter API (text + image generation).  Provides: - Ope, Extract ``retry-after`` header value from a response.      Falls back to 60 seco, Extract ``retry-after`` header value from a response.      Falls back to 60 seco, Extract ``retry-after`` header value from a response.      Falls back to 60 seco
+
+### Community 152 - "Community 152"
+Cohesion: 0.38
+Nodes (4): TestClient, Dashboard endpoint tests., Dashboard endpoint tests., TestDashboard
+
+### Community 153 - "Community 153"
+Cohesion: 0.29
+Nodes (5): Test client initialization and teardown., Test that custom aspect_ratio is passed in the request body., Test client initialization and teardown., Test that the HTTP client is not created until the first request., TestClientLifecycle
+
+### Community 154 - "Community 154"
+Cohesion: 0.33
+Nodes (5): int, Query the ``trends`` table for keywords used in the last *days* days.          R, Query the ``trends`` table for keywords used in the last *days* days.          R, Query the ``trends`` table for keywords used in the last *days* days.          R, Query the ``trends`` table for keywords used in the last *days* days.          R
+
+### Community 155 - "Community 155"
+Cohesion: 0.33
+Nodes (3): Preview endpoint tests., Preview endpoint tests., TestPreview
+
+### Community 156 - "Community 156"
+Cohesion: 0.40
+Nodes (3): Option detail endpoint tests., Option detail endpoint tests., TestOptionDetail
+
+### Community 157 - "Community 157"
+Cohesion: 0.40
+Nodes (3): Approve endpoint tests., Approve endpoint tests., TestApprove
+
+### Community 158 - "Community 158"
+Cohesion: 0.40
+Nodes (3): Cancel endpoint tests., Cancel endpoint tests., TestCancel
+
+### Community 159 - "Community 159"
+Cohesion: 0.40
+Nodes (3): History endpoint tests., History endpoint tests., TestHistory
+
+### Community 160 - "Community 160"
+Cohesion: 0.40
+Nodes (3): Health check endpoint tests., Health check endpoint tests., TestHealth
+
+### Community 161 - "Community 161"
 Cohesion: 0.50
-Nodes (3): Test ContentOption model creation and validation., Config.from_attributes should be True., TestContentOption
+Nodes (3): Clean and validate a theme name.          - Strips whitespace         - Removes, Clean and validate a theme name.          - Strips whitespace         - Removes, Clean and validate a theme name.          - Strips whitespace         - Removes
+
+### Community 162 - "Community 162"
+Cohesion: 0.83
+Nodes (3): findOrCreatePinterestTab(), handleOpenAndPrefill(), waitForTabComplete()
+
+### Community 164 - "Community 164"
+Cohesion: 0.50
+Nodes (3): Surrounding double quotes are removed., Surrounding double quotes are removed., Surrounding double quotes are removed.
+
+### Community 165 - "Community 165"
+Cohesion: 0.50
+Nodes (3): Surrounding single quotes are removed., Surrounding single quotes are removed., Surrounding single quotes are removed.
+
+### Community 166 - "Community 166"
+Cohesion: 0.50
+Nodes (3): Trailing period is removed., Trailing period is removed., Trailing period is removed.
+
+### Community 167 - "Community 167"
+Cohesion: 0.50
+Nodes (3): Trailing exclamation mark is removed., Trailing exclamation mark is removed., Trailing exclamation mark is removed.
+
+### Community 168 - "Community 168"
+Cohesion: 0.50
+Nodes (3): Trailing question mark is removed., Trailing question mark is removed., Trailing question mark is removed.
+
+### Community 169 - "Community 169"
+Cohesion: 0.50
+Nodes (3): More than 3 words are truncated to first 3., More than 3 words are truncated to first 3., More than 3 words are truncated to first 3.
+
+### Community 170 - "Community 170"
+Cohesion: 0.50
+Nodes (3): Exactly 3 words are left unchanged., Exactly 3 words are left unchanged., Exactly 3 words are left unchanged.
+
+### Community 171 - "Community 171"
+Cohesion: 0.50
+Nodes (3): Single word is left unchanged., Single word is left unchanged., Single word is left unchanged.
+
+### Community 172 - "Community 172"
+Cohesion: 0.50
+Nodes (3): Two words are left unchanged., Two words are left unchanged., Two words are left unchanged.
+
+### Community 173 - "Community 173"
+Cohesion: 0.50
+Nodes (3): Empty string returns empty string., Empty string returns empty string., Empty string returns empty string.
+
+### Community 174 - "Community 174"
+Cohesion: 0.50
+Nodes (3): Whitespace-only string returns empty string., Whitespace-only string returns empty string., Whitespace-only string returns empty string.
+
+### Community 175 - "Community 175"
+Cohesion: 0.50
+Nodes (3): Multiple punctuation marks are handled., Multiple punctuation marks are handled., Multiple punctuation marks are handled.
+
+### Community 176 - "Community 176"
+Cohesion: 0.50
+Nodes (3): Unicode characters are preserved., Unicode characters are preserved., Unicode characters are preserved.
+
+### Community 177 - "Community 177"
+Cohesion: 0.50
+Nodes (3): Integration test that actually calls the Google Trends RSS feed., Actually calls the Google Trends RSS feed and verifies it returns data., test_rss_feed_returns_real_trends()
+
+### Community 178 - "Community 178"
+Cohesion: 0.67
+Nodes (3): health(), Health check endpoint.      Returns:         JSON with ``status``, ``database``, Health check endpoint.      Returns:         JSON with ``status``, ``database``
 
 ## Knowledge Gaps
-- **543 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+538 more)
+- **724 isolated node(s):** `$schema`, `instructions`, `id`, `id`, `id` (+719 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Trend` connect `Community 84` to `Community 128`, `Community 129`, `Community 131`, `Community 132`, `Community 133`, `Community 54`, `Community 71`, `Community 73`, `Community 75`, `Community 76`, `Community 77`, `Community 80`, `Community 81`, `Community 83`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 90`, `Community 91`, `Community 93`, `Community 96`, `Community 97`, `Community 101`, `Community 103`, `Community 104`, `Community 107`, `Community 108`, `Community 115`, `Community 118`, `Community 122`, `Community 126`?**
-  _High betweenness centrality (0.126) - this node is a cross-community bridge._
-- **Why does `OpenRouterClient` connect `Community 121` to `Community 99`, `Community 68`, `Community 69`, `Community 37`, `Community 74`, `Community 81`, `Community 82`?**
-  _High betweenness centrality (0.104) - this node is a cross-community bridge._
-- **Why does `ContentOption` connect `Community 74` to `Community 129`, `Community 131`, `Community 132`, `Community 133`, `Community 37`, `Community 59`, `Community 71`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 80`, `Community 95`, `Community 98`, `Community 100`, `Community 102`, `Community 106`, `Community 109`, `Community 111`, `Community 112`, `Community 113`, `Community 114`, `Community 116`, `Community 120`, `Community 122`, `Community 125`, `Community 126`?**
-  _High betweenness centrality (0.086) - this node is a cross-community bridge._
-- **Are the 56 inferred relationships involving `Trend` (e.g. with `AsyncMock` and `MagicMock`) actually correct?**
-  _`Trend` has 56 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 49 inferred relationships involving `ContentOption` (e.g. with `Any` and `int`) actually correct?**
-  _`ContentOption` has 49 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `Trend` connect `Community 84` to `Community 129`, `Community 132`, `Community 133`, `Community 135`, `Community 138`, `Community 143`, `Community 144`, `Community 154`, `Community 54`, `Community 73`, `Community 75`, `Community 76`, `Community 81`, `Community 83`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 90`, `Community 91`, `Community 93`, `Community 96`, `Community 97`, `Community 101`, `Community 103`, `Community 104`, `Community 107`, `Community 115`, `Community 118`?**
+  _High betweenness centrality (0.131) - this node is a cross-community bridge._
+- **Why does `ContentOption` connect `Community 74` to `Community 132`, `Community 134`, `Community 136`, `Community 148`, `Community 26`, `Community 37`, `Community 59`, `Community 200`, `Community 73`, `Community 76`, `Community 78`, `Community 84`, `Community 95`, `Community 100`, `Community 102`, `Community 106`, `Community 109`, `Community 111`, `Community 112`, `Community 113`, `Community 114`, `Community 116`?**
+  _High betweenness centrality (0.090) - this node is a cross-community bridge._
+- **Why does `ContentStatus` connect `Community 74` to `Community 132`, `Community 134`, `Community 136`, `Community 148`, `Community 26`, `Community 37`, `Community 59`, `Community 73`, `Community 76`, `Community 78`, `Community 84`, `Community 95`, `Community 100`, `Community 106`, `Community 109`, `Community 111`, `Community 112`, `Community 113`, `Community 114`, `Community 116`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+- **Are the 57 inferred relationships involving `Trend` (e.g. with `AsyncMock` and `MagicMock`) actually correct?**
+  _`Trend` has 57 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 50 inferred relationships involving `ContentOption` (e.g. with `Any` and `int`) actually correct?**
+  _`ContentOption` has 50 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 45 inferred relationships involving `Theme` (e.g. with `ContentGenerator` and `Any`) actually correct?**
   _`Theme` has 45 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 29 inferred relationships involving `AsyncMock` (e.g. with `TrendSelector` and `Trend`) actually correct?**
-  _`AsyncMock` has 29 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 45 inferred relationships involving `ContentStatus` (e.g. with `Any` and `int`) actually correct?**
+  _`ContentStatus` has 45 INFERRED edges - model-reasoned connections that need verification._

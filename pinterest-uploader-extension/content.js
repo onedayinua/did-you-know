@@ -209,11 +209,79 @@ function watchContentEditableChanges() {
   });
   
   console.log("[ContentScript] ContentEditable change watcher installed");
+  
+  // Also watch all DOM changes on the editor container
+  watchAllDOMChanges();
+  
   return observer;
 }
 
 /**
- * Injects text into a Draft.js contenteditable editor using three strategies.
+ * Watches ALL DOM changes on the editor container to understand Pinterest's
+ * activation mechanism. This is a diagnostic tool.
+ */
+function watchAllDOMChanges() {
+  const container = document.querySelector('#dweb-comment-editor-container');
+  if (!container) {
+    // Retry after a delay
+    setTimeout(watchAllDOMChanges, 2000);
+    return;
+  }
+  
+  console.log("[ContentScript] [DOM_WATCH] Starting comprehensive DOM watch on editor container");
+  
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes') {
+        const el = mutation.target;
+        console.log("[DOM_WATCH] ATTR:", mutation.attributeName,
+          "on:", el.tagName,
+          "class:", el.className?.substring(0, 30),
+          "old:", mutation.oldValue?.substring(0, 50),
+          "new:", el.getAttribute(mutation.attributeName)?.substring(0, 50));
+      } else if (mutation.type === 'childList') {
+        const added = mutation.addedNodes.length;
+        const removed = mutation.removedNodes.length;
+        if (added > 0 || removed > 0) {
+          console.log("[DOM_WATCH] CHILD:", 
+            "added:", added, 
+            "removed:", removed,
+            "on:", mutation.target.tagName,
+            "class:", mutation.target.className?.substring(0, 30));
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1) { // Element
+              console.log("[DOM_WATCH]   + added:", node.tagName,
+                "class:", node.className?.substring(0, 40),
+                "id:", node.id || 'none');
+            }
+          }
+        }
+      } else if (mutation.type === 'characterData') {
+        console.log("[DOM_WATCH] TEXT:", 
+          "data:", mutation.target.textContent?.substring(0, 40),
+          "parent:", mutation.target.parentElement?.tagName,
+          "parent class:", mutation.target.parentElement?.className?.substring(0, 30));
+      }
+    }
+  });
+  
+  observer.observe(container, {
+    attributes: true,
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributeOldValue: true,
+  });
+  
+  return observer;
+}
+
+/**
+ * Injects text into a Draft.js contenteditable editor.
+ *
+ * Uses clipboard API + paste event as the primary strategy, because Draft.js
+ * handles paste events natively (extracts text from clipboardData and inserts
+ * it into EditorState, updating React state directly).
  *
  * BUG NOTES (do not reintroduce):
  *  - NEVER use document.execCommand('selectAll') — it selects the entire page when
@@ -221,267 +289,155 @@ function watchContentEditableChanges() {
  *    .selectAllChildren(element) instead; that is scoped to the element.
  *  - NEVER use new DataTransfer() for clipboardData on synthetic ClipboardEvents.
  *    In Chrome extension content scripts, DataTransfer.getData() returns "" when
- *    read back. Use Object.defineProperty to inject a plain-object mock instead.
- *  - Do NOT await between focus() and execCommand() — Pinterest can steal focus
- *    asynchronously before a setTimeout fires.
+ *    read back. Use Object.defineProperty to inject a mock instead.
+ *  - Do NOT use setAttribute('contenteditable', 'true') as the primary approach —
+ *    it triggers React to remount the DraftEditor component, wiping any text.
+ *    The paste method works even when contenteditable is "false".
  */
 async function setDraftJsText(element, text) {
   // ===== DEBUG: Log initial state =====
   console.log("[DEBUG] ===== setDraftJsText() invoked =====");
   console.log("[DEBUG] text.length:", text.length, "text:", text.substring(0, 100));
   console.log("[DEBUG] BEFORE — tagName:", element.tagName);
-  console.log("[DEBUG] BEFORE — id:", element.id);
   console.log("[DEBUG] BEFORE — className:", element.className?.substring(0, 60));
   console.log("[DEBUG] BEFORE — isContentEditable:", element.isContentEditable);
   console.log("[DEBUG] BEFORE — contentEditable attr:", element.getAttribute('contenteditable'));
-  console.log("[DEBUG] BEFORE — contentEditable attr value:", element.contentEditable);
-  console.log("[DEBUG] BEFORE — offsetParent:", element.offsetParent?.tagName);
-  const rect = element.getBoundingClientRect();
-  console.log("[DEBUG] BEFORE — boundingClientRect:", JSON.stringify({x: rect.x, y: rect.y, w: rect.width, h: rect.height}));
-  console.log("[DEBUG] BEFORE — document.activeElement:", (document.activeElement?.tagName || 'null') +
-    (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : ''));
-  console.log("[DEBUG] BEFORE — document.activeElement is contentEditable:", document.activeElement?.isContentEditable);
   console.log("[DEBUG] BEFORE — textContent:", element.textContent);
-  console.log("[DEBUG] BEFORE — innerHTML (first 500):", element.innerHTML.substring(0, 500));
-  console.log("[DEBUG] BEFORE — childNodes.length:", element.childNodes.length);
-  for (let i = 0; i < element.childNodes.length && i < 5; i++) {
-    const child = element.childNodes[i];
-    console.log("[DEBUG] BEFORE — child[" + i + "]:", "nodeName=" + child.nodeName, "nodeType=" + child.nodeType,
-      "textContent=" + (child.textContent?.substring(0, 40) || '""'));
-  }
-
-  // Check for React properties on the contentEditable element itself
-  const ceOwnKeys = Object.getOwnPropertyNames(element);
-  const ceReactFiber = ceOwnKeys.find(k => k.startsWith('__reactFiber$'));
-  const ceReactProps = ceOwnKeys.find(k => k.startsWith('__reactProps$'));
-  const ceReactInternal = ceOwnKeys.find(k => k.startsWith('__reactInternalInstance$'));
-  if (ceReactFiber || ceReactProps || ceReactInternal) {
-    console.log("[DEBUG] React props directly on contentEditable:",
-      "fiber:", ceReactFiber ? "yes" : "no",
-      "props:", ceReactProps ? Object.keys(element[ceReactProps]).filter(k => k.startsWith('on') || k === 'contentEditable').join(',') : "no",
-      "internal:", ceReactInternal ? "yes" : "no");
-  } else {
-    console.log("[DEBUG] No React props directly on contentEditable");
-  }
-
-  console.log("[DEBUG] React keys on contentEditable:",
-    element.hasAttribute('data-reactroot') ? "has data-reactroot" : "NONE");
   
-  // Scan up to 10 ancestors for React fiber keys
-  let ancestor = element.parentElement;
-  let depth = 0;
-  let foundReact = false;
-  while (ancestor && depth < 10) {
-    const fiberKey = ancestor.hasAttribute('data-reactroot') ? 'data-reactroot' :
-      (ancestor.hasAttribute('data-reactid') ? 'data-reactid' : null);
-    if (fiberKey) {
-      console.log("[DEBUG] React key found at depth", depth, ":", fiberKey,
-        "on tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40));
-      foundReact = true;
-    }
-    // Also check for __reactFiber$ properties (React 16+)
-    const ownKeys = Object.getOwnPropertyNames(ancestor);
-    const reactFiberKey = ownKeys.find(k => k.startsWith('__reactFiber$'));
-    const reactPropsKey = ownKeys.find(k => k.startsWith('__reactProps$'));
-    if (reactFiberKey) {
-      const fiber = ancestor[reactFiberKey];
-      if (fiber && fiber.memoizedState) {
-        console.log("[DEBUG] React fiber found at depth", depth, ":",
-          "tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40));
-        // Try to find EditorState in the fiber tree
-        let stateNode = fiber;
-        let searchDepth = 0;
-        while (stateNode && searchDepth < 20) {
-          if (stateNode.memoizedState) {
-            const ms = stateNode.memoizedState;
-            // Check if this looks like Draft.js EditorState (has _immutable or currentContent)
-            const stateKeys = Object.keys(ms).filter(k => typeof k === 'string').join(',');
-            if (stateKeys.includes('currentContent') || stateKeys.includes('_immutable')) {
-              console.log("[DEBUG] Found Draft.js EditorState candidate at depth", depth,
-                "fiber depth", searchDepth, "keys:", stateKeys.substring(0, 100));
-            }
-          }
-          stateNode = stateNode.child;
-          searchDepth++;
-        }
-        foundReact = true;
-      }
-    }
-    if (reactPropsKey) {
-      console.log("[DEBUG] React props found at depth", depth, ":",
-        "tag:", ancestor.tagName, "class:", ancestor.className?.substring(0, 40),
-        "props keys:", Object.keys(ancestor[reactPropsKey]).filter(k => k.startsWith('on') || k === 'contentEditable').join(','));
-    }
-    ancestor = ancestor.parentElement;
-    depth++;
-  }
-  if (!foundReact) {
-    console.log("[DEBUG] No React fiber keys found up to 10 ancestors");
-  }
-
-  // Try to find and log Draft.js EditorState
-  const draftState = findDraftEditorState(element);
-  if (draftState) {
-    const es = draftState.editorState;
-    console.log("[DEBUG] Draft.js EditorState found!");
-    console.log("[DEBUG]   getCurrentContent:", es.getCurrentContent ? 'YES' : 'NO');
-    try {
-      const content = es.getCurrentContent();
-      console.log("[DEBUG]   content blockMap:", content.getBlockMap ? 'YES' : 'NO');
-      if (content.getBlockMap) {
-        const blocks = content.getBlockMap();
-        console.log("[DEBUG]   blockCount:", blocks.size || blocks.count ? blocks.size || blocks.count() : '?');
-      }
-    } catch(e) {
-      console.log("[DEBUG]   Error accessing content:", e.message);
-    }
-  }
-
-  // ===== FOCUS =====
-  element.focus();
-  await new Promise(r => setTimeout(r, 100));
-
-  console.log("[DEBUG] AFTER FOCUS — document.activeElement:", (document.activeElement?.tagName || 'null') +
-    (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : ''));
-  console.log("[DEBUG] AFTER FOCUS — activeElement === contentEditable:", document.activeElement === element);
-  console.log("[DEBUG] AFTER FOCUS — textContent:", element.textContent);
-
-  // If focus didn't land on the contentEditable, try focusing again
-  if (document.activeElement !== element) {
-    console.log("[DEBUG] Focus didn't land on contentEditable, trying element.focus() again");
+  // ===== Try paste-based approach first (bypasses contenteditable check) =====
+  try {
+    // Step 1: Focus the element
     element.focus();
-    console.log("[DEBUG] AFTER RE-FOCUS — document.activeElement:", document.activeElement?.tagName,
-      document.activeElement === element ? "(same)" : "DIFFERENT");
+    await new Promise(r => setTimeout(r, 50));
+    
+    // Step 2: Write to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      console.log("[DEBUG] PASTE — wrote text to clipboard");
+    } else {
+      console.log("[DEBUG] PASTE — clipboard API not available");
+      return await fallbackSetDraftJsText(element, text);
+    }
+    
+    // Step 3: Create clipboardData mock for the paste event
+    // Chrome extensions can't read DataTransfer.getData() from synthetic events,
+    // so we use Object.defineProperty to inject a mock.
+    const clipboardData = new DataTransfer();
+    clipboardData.setData('text/plain', text);
+    
+    // Override getData to return our text
+    const originalGetData = clipboardData.getData.bind(clipboardData);
+    Object.defineProperty(clipboardData, 'getData', {
+      value: function(type) {
+        console.log("[DEBUG] PASTE — getData called with type:", type);
+        if (type === 'text/plain' || type === 'text') {
+          return text;
+        }
+        return originalGetData(type);
+      },
+      writable: false,
+      configurable: true,
+    });
+    
+    // Step 4: Select all existing content (to be replaced by paste)
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    // Step 5: Dispatch paste event
+    const pasteEvent = new ClipboardEvent('paste', {
+      clipboardData: clipboardData,
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    
+    element.dispatchEvent(pasteEvent);
+    console.log("[DEBUG] PASTE — dispatched paste event");
+    
+    // Step 6: Wait for Draft.js to process
+    await new Promise(r => setTimeout(r, 200));
+    
+    console.log("[DEBUG] PASTE — textContent after paste:", element.textContent.substring(0, 100));
+    console.log("[DEBUG] PASTE — innerHTML (first 500):", element.innerHTML.substring(0, 500));
+    
+    if (element.textContent.trim().length > 0) {
+      console.log("[ContentScript] Paste method succeeded");
+      return true;
+    }
+    
+    console.log("[ContentScript] Paste method produced no text, trying execCommand fallback");
+  } catch (e) {
+    console.log("[DEBUG] PASTE — Error:", e.message);
   }
+  
+  // ===== Fallback: Use the existing execCommand approach =====
+  return await fallbackSetDraftJsText(element, text);
+}
 
-  // ===== SELECT ALL CHILDREN (scoped to element) =====
+/**
+ * Fallback method: use execCommand('insertText') after ensuring
+ * contentEditable is 'true'. Note: this may trigger React remount.
+ */
+async function fallbackSetDraftJsText(element, text) {
+  // Ensure contentEditable is true (may trigger React remount)
+  if (element.getAttribute('contenteditable') !== 'true') {
+    element.setAttribute('contenteditable', 'true');
+    await new Promise(r => setTimeout(r, 50));
+  }
+  
+  console.log("[DEBUG] FALLBACK — contentEditable attr:", element.getAttribute('contenteditable'));
+  console.log("[DEBUG] FALLBACK — textContent:", element.textContent);
+  console.log("[DEBUG] FALLBACK — innerHTML (first 500):", element.innerHTML.substring(0, 500));
+  
+  // Focus the element
+  element.focus();
+  console.log("[DEBUG] FALLBACK AFTER FOCUS — document.activeElement:", 
+    (document.activeElement?.tagName || 'null') +
+    (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : ''));
+  console.log("[DEBUG] FALLBACK AFTER FOCUS — activeElement === contentEditable:", document.activeElement === element);
+  
+  // Select all children
   const range = document.createRange();
   range.selectNodeContents(element);
   const selection = window.getSelection();
   selection.removeAllRanges();
   selection.addRange(range);
-
-  console.log("[DEBUG] AFTER SELECTALL — selection.toString():", selection.toString().substring(0, 40));
-  console.log("[DEBUG] AFTER SELECTALL — rangeCount:", selection.rangeCount);
-  console.log("[DEBUG] AFTER SELECTALL — commonAncestor:", selection.getRangeAt(0)?.commonAncestorContainer?.nodeName);
-  console.log("[DEBUG] AFTER SELECTALL — collapsed:", selection.getRangeAt(0)?.collapsed);
-  console.log("[DEBUG] AFTER SELECTALL — startOffset:", selection.getRangeAt(0)?.startOffset, 
-    "endOffset:", selection.getRangeAt(0)?.endOffset);
-  console.log("[DEBUG] AFTER SELECTALL — startContainer:", selection.getRangeAt(0)?.startContainer?.nodeName);
-
-  // ===== METHOD 1: Insert text via selection + execCommand =====
-  // Clear existing content first
-  document.execCommand('delete', false, null);
   
-  // Insert text in chunks to match Draft.js expectations
+  console.log("[DEBUG] FALLBACK AFTER SELECTALL — selection.toString():", selection.toString().substring(0, 40));
+  
+  // Clear and insert text
+  document.execCommand('delete', false, null);
   const result = document.execCommand('insertText', false, text);
   
-  console.log("[DEBUG] METHOD 1 — execCommand('insertText') returned:", result);
-  console.log("[DEBUG] METHOD 1 — textContent:", element.textContent.substring(0, 100));
-  console.log("[DEBUG] METHOD 1 — document.activeElement:", (document.activeElement?.tagName || 'null') +
-    (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : ''));
+  console.log("[DEBUG] FALLBACK — execCommand('insertText') returned:", result);
+  console.log("[DEBUG] FALLBACK — textContent:", element.textContent.substring(0, 100));
+  console.log("[DEBUG] FALLBACK — innerHTML (first 500):", element.innerHTML.substring(0, 500));
   
-  const selAfter = window.getSelection();
-  console.log("[DEBUG] METHOD 1 — selection toString:", selAfter.toString().substring(0, 40));
-  console.log("[DEBUG] METHOD 1 — rangeCount:", selAfter.rangeCount);
-  console.log("[DEBUG] METHOD 1 — selection collapsed:", selAfter.getRangeAt(0)?.collapsed);
-  console.log("[DEBUG] METHOD 1 — innerHTML (first 500):", element.innerHTML.substring(0, 500));
-
-  // Dispatch InputEvent so Draft.js's onChange handler fires and updates its EditorState
+  // Dispatch InputEvent for Draft.js
   try {
     const inputEvent = new InputEvent('input', {
       inputType: 'insertText',
       data: text,
       bubbles: true,
       cancelable: true,
-      composed: true
+      composed: true,
     });
     element.dispatchEvent(inputEvent);
-    console.log("[DEBUG] METHOD 1 — dispatched InputEvent('input') to Draft.js");
+    console.log("[DEBUG] FALLBACK — dispatched InputEvent");
   } catch(e) {
-    console.log("[DEBUG] METHOD 1 — Error dispatching InputEvent:", e.message);
+    console.log("[DEBUG] FALLBACK — Error dispatching InputEvent:", e.message);
   }
-
+  
   await new Promise(r => setTimeout(r, 100));
-  console.log("[DEBUG] AFTER M1 WAIT — textContent:", element.textContent.substring(0, 100));
-  console.log("[DEBUG] AFTER M1 WAIT — innerHTML (first 500):", element.innerHTML.substring(0, 500));
-  console.log("[DEBUG] AFTER M1 WAIT — document.activeElement:", (document.activeElement?.tagName || 'null') +
-    (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : ''));
-
-  // Check if text was actually written
+  
   if (element.textContent.trim().length > 0) {
-    console.log("[ContentScript] Method 1 (execCommand) succeeded");
+    console.log("[ContentScript] Fallback method succeeded");
     return true;
   }
-
-  // ===== METHOD 2: Direct DOM manipulation =====
-  // If execCommand failed, try setting innerHTML directly
-  console.log("[ContentScript] Method 1 failed. textContent:", element.textContent.substring(0, 100));
   
-  try {
-    // Escape HTML entities for safe insertion
-    const escapedText = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-    
-    // Build Draft.js-compatible innerHTML structure
-    const editorId = element.getAttribute('data-editor') || 'editor';
-    const blockKey = 'block-' + Math.random().toString(36).substring(2, 7);
-    const offsetKey = blockKey + '-0-0';
-    
-    element.innerHTML = 
-      '<div data-contents="true">' +
-      '<div class="" data-block="true" data-editor="' + editorId + '" data-offset-key="' + offsetKey + '">' +
-      '<div data-offset-key="' + offsetKey + '" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr">' +
-      '<span data-offset-key="' + offsetKey + '">' + escapedText + '</span>' +
-      '</div>' +
-      '</div>' +
-      '</div>';
-    
-    await new Promise(r => setTimeout(r, 100));
-    console.log("[DEBUG] M2 innerHTML — textContent:", element.textContent.substring(0, 100));
-    console.log("[DEBUG] M2 innerHTML — innerHTML (first 500):", element.innerHTML.substring(0, 500));
-    
-    if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 2 (innerHTML) succeeded");
-      return true;
-    }
-  } catch (e) {
-    console.log("[ContentScript] Method 2 failed:", e.message);
-  }
-
-  // ===== METHOD 3: textContent =====
-  console.log("[ContentScript] Method 2 failed. textContent:", element.textContent.substring(0, 100));
-  try {
-    element.textContent = text;
-    await new Promise(r => setTimeout(r, 100));
-    console.log("[DEBUG] M3 textContent — textContent:", element.textContent.substring(0, 100));
-    
-    if (element.textContent.trim().length > 0) {
-      console.log("[ContentScript] Method 3 (textContent) succeeded");
-      return true;
-    }
-  } catch (e) {
-    console.log("[ContentScript] Method 3 failed:", e.message);
-  }
-
-  // ===== FINAL STATE DUMP =====
-  console.log("[DEBUG] ===== FINAL STATE DUMP =====");
-  console.log("[DEBUG] FINAL — tagName:", element.tagName);
-  console.log("[DEBUG] FINAL — id:", element.id);
-  console.log("[DEBUG] FINAL — className:", element.className?.substring(0, 60));
-  console.log("[DEBUG] FINAL — isContentEditable:", element.isContentEditable);
-  console.log("[DEBUG] FINAL — contentEditable attr:", element.getAttribute('contenteditable'));
-  console.log("[DEBUG] FINAL — innerHTML (first 500):", element.innerHTML.substring(0, 500));
-  console.log("[DEBUG] FINAL — textContent:", element.textContent.substring(0,100));
-  console.log("[DEBUG] FINAL — childNodes.length:", element.childNodes.length);
-  for (let i = 0; 
-  i < element.childNodes.length && i < 5; i++) { const child = 
-    element.childNodes[i]; console.log("[DEBUG] FINAL - child[" + i + "]:", "nodeName=" + child.nodeName, "nodeType=" + child.nodeType, "textContent=" + (child.textContent?.substring(0, 40) || '""')); } console.log("[DEBUG] FINAL — document.activeElement:", (document.activeElement?.tagName || 'null') + (document.activeElement?.className ? '.' + document.activeElement.className?.substring(0, 40) : '')); console.log("[DEBUG] FINAL — activeElement === contentEditable:", document.activeElement === element); console.log("[DEBUG] FINAL — React keys on contentEditable:", element.hasAttribute('data-reactroot') ? "has data-reactroot" : "NONE"); const finalOwnKeys = Object.getOwnPropertyNames(element); const finalCeReactFiber = finalOwnKeys.find(k => k.startsWith('__reactFiber$')); const finalCeReactProps = finalOwnKeys.find(k => k.startsWith('__reactProps$')); if (finalCeReactFiber || finalCeReactProps) { console.log("[DEBUG] FINAL — React fiber:", finalCeReactFiber ? "yes" : "no", "React props:", finalCeReactProps ? "yes" : "no"); } const finalAttrs = []; for (const attr of element.attributes) { finalAttrs.push(attr.name + "=\"" + attr.value + "\""); } console.log("[DEBUG] FINAL — all attributes:", finalAttrs.join(", "));
-
   return false;
 }
 
@@ -528,10 +484,10 @@ async function prefillPinData(data) {
     
     if (overlayButton) {
       console.log("[ContentScript] Found overlay button, clicking to activate editor");
-      // Use real browser click with all proper event properties
-      overlayButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
-      overlayButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
-      overlayButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+      // Use native .click() which is trusted (isTrusted=true) and triggers
+      // proper browser focus behavior. dispatchEvent with synthetic MouseEvent
+      // has isTrusted=false which breaks React's focus handling.
+      overlayButton.click();
     } else {
       console.log("[ContentScript] No overlay button found, trying direct click on container");
       descContainer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
@@ -567,54 +523,11 @@ async function prefillPinData(data) {
       "contentEditable attr:", contentEditable.getAttribute('contenteditable'),
       "data-editor:", contentEditable.querySelector('[data-editor]')?.getAttribute('data-editor') || 'N/A');
 
-    // CRITICAL: Do NOT use setAttribute('contenteditable', 'true') — it triggers
-    // React to remount the DraftEditor component (new data-editor ID), which
-    // resets EditorState and clears any text we wrote.
-    // Instead, try all other methods to activate the editor naturally.
-    
-    if (contentEditable.getAttribute('contenteditable') !== 'true') {
-      console.log("[ContentScript] contentEditable is not 'true', trying to activate naturally");
-      
-      // Strategy 1: Focus directly on the contentEditable
-      contentEditable.focus();
-      await new Promise(r => setTimeout(r, 500));
-      
-      if (contentEditable.getAttribute('contenteditable') === 'true') {
-        console.log("[ContentScript] focus() activated the editor naturally");
-      } else {
-        console.log("[ContentScript] focus() didn't activate, trying the DraftEditor-root click");
-        
-        // Strategy 2: Find the DraftEditor-root (parent of the editor) and click/focus it
-        const draftRoot = contentEditable.closest('.DraftEditor-root') || 
-                          contentEditable.parentElement?.closest('.DraftEditor-root');
-        if (draftRoot) {
-          draftRoot.focus();
-          draftRoot.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          draftRoot.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          draftRoot.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          await new Promise(r => setTimeout(r, 500));
-        }
-        
-        if (contentEditable.getAttribute('contenteditable') === 'true') {
-          console.log("[ContentScript] DraftEditor-root click activated the editor naturally");
-        } else {
-          console.log("[ContentScript] Still not 'true' — trying contentEditable click dispatch");
-          
-          // Strategy 3: Dispatch mousedown on the contentEditable itself
-          contentEditable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          contentEditable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          contentEditable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0, button: 0 }));
-          await new Promise(r => setTimeout(r, 500));
-          
-          if (contentEditable.getAttribute('contenteditable') === 'true') {
-            console.log("[ContentScript] contentEditable click activated the editor naturally");
-          } else {
-            console.log("[ContentScript] STILL not 'true' — using setAttribute as last resort despite remount risk");
-            contentEditable.setAttribute('contenteditable', 'true');
-          }
-        }
-      }
-    }
+    // Note: The editor's contenteditable attribute naturally stays "false" on Pinterest.
+    // Our setDraftJsText function will try paste-based injection first (no contenteditable
+    // needed), then fall back to execCommand with setAttribute if paste fails.
+    console.log("[ContentScript] Editor found, contentEditable attr:", 
+      contentEditable.getAttribute('contenteditable'), "- proceeding with setDraftJsText");
 
     const ok = await setDraftJsText(contentEditable, data.description);
 
@@ -772,10 +685,10 @@ watchContentEditableChanges();
 
 // Log what element was clicked
 document.addEventListener('click', (e) => {
-  const target = e.target;
-  console.log("[ContentScript] [CLICK] clicked on:", target.tagName,
-    "id:", target.id,
-    "class:", target.className?.substring(0, 40));
+  console.log("[ContentScript] [CLICK] clicked on:", e.target.tagName,
+    "id:", e.target.id || '',
+    "class:", e.target.className?.substring(0, 60) || '',
+    "isTrusted:", e.isTrusted);
 }, true); // useCapture = true to catch all clicks
 
 console.log("[ContentScript] Pinterest Pre-filler content script loaded.");
