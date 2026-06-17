@@ -387,6 +387,21 @@ async function setDraftJsText(element, text) {
   console.log("[DEBUG] METHOD 1 — selection collapsed:", selAfter.getRangeAt(0)?.collapsed);
   console.log("[DEBUG] METHOD 1 — innerHTML (first 500):", element.innerHTML.substring(0, 500));
 
+  // Dispatch InputEvent so Draft.js's onChange handler fires and updates its EditorState
+  try {
+    const inputEvent = new InputEvent('input', {
+      inputType: 'insertText',
+      data: text,
+      bubbles: true,
+      cancelable: true,
+      composed: true
+    });
+    element.dispatchEvent(inputEvent);
+    console.log("[DEBUG] METHOD 1 — dispatched InputEvent('input') to Draft.js");
+  } catch(e) {
+    console.log("[DEBUG] METHOD 1 — Error dispatching InputEvent:", e.message);
+  }
+
   await new Promise(r => setTimeout(r, 100));
   console.log("[DEBUG] AFTER M1 WAIT — textContent:", element.textContent.substring(0, 100));
   console.log("[DEBUG] AFTER M1 WAIT — innerHTML (first 500):", element.innerHTML.substring(0, 500));
