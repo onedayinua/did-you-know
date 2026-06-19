@@ -608,7 +608,14 @@ def _row_to_dict(row: Any) -> dict[str, Any]:
     Returns:
         Dict with serializable values.
     """
-    hashtags = list(row.get("hashtags") or []) if row.get("hashtags") else []
+    hashtags_raw = row.get("hashtags")
+    if isinstance(hashtags_raw, list):
+        hashtags = hashtags_raw
+    elif isinstance(hashtags_raw, str):
+        import json
+        hashtags = json.loads(hashtags_raw)
+    else:
+        hashtags = []
     return {
         "id": row["id"],
         "batch_id": row["batch_id"],

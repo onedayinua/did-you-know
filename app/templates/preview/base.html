@@ -92,7 +92,7 @@
             {% block content %}
             <h1>{{ option.theme }}</h1>
             <div class="fact-text">{{ option.fact }}</div>
-            <div class="hashtags">{{ option.hashtags|join(' ') }}</div>
+            <div class="hashtags">{% for hashtag in option.hashtags %}{{ hashtag }}{% if not loop.last %}<br>{% endif %}{% endfor %}</div>
             {% endblock %}
             {% if option.status == 'approved' and option.platform == 'pinterest' %}
             <div class="preview-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
@@ -139,7 +139,7 @@
                     const imageBase64 = await fetchImageAsBase64(imageUrl);
                     console.log("[TKT-029] Image loaded successfully as base64, length:", imageBase64.length);
                     const title = '{{ option.theme|e }}';
-                    const description = '{{ option.fact|e }}\n\n{{ option.hashtags|join(" ") }}';
+                    const description = '{{ option.fact|e }}\n\n{% for hashtag in option.hashtags %}{{ hashtag }}{% if not loop.last %}\n{% endif %}{% endfor %}';
                     const destinationUrl = '{{ config.get("SITE_URL", "https://example.com") }}';
                     
                     // Use postMessage instead of chrome.runtime.sendMessage
