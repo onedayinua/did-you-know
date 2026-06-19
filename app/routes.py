@@ -26,7 +26,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from shared.db import fetch, fetch_one, execute
+from shared.db import fetch, fetch_one, execute, transaction
 from shared.models import ContentStatus
 
 logger = logging.getLogger(__name__)
@@ -233,6 +233,66 @@ async def cancel_option(id: int, next: str = "/"):
     return RedirectResponse(url=next, status_code=302)
 
 
+@router.post("/options/{id}/mark-posted")
+async def mark_option_as_posted(id: int):
+    """Mark an approved content option as posted.
+
+    Creates a posts record and updates content_options status to 'posted'.
+
+    Args:
+        id: Content option ID.
+
+    Returns:
+        JSON with post_id on success.
+
+    Raises:
+        HTTPException 404: If option not found.
+        HTTPException 409: If option is not in 'approved' status.
+        HTTPException 500: If DB transaction fails.
+    """
+    # First check if the option exists at all
+    exists = await fetch_one(
+        "SELECT id FROM content_options WHERE id = $1",
+        id,
+    )
+    if exists is None:
+        raise HTTPException(status_code=404, detail="Content option not found")
+
+    # Then check status
+    row = await fetch_one(
+        "SELECT id, platform, image_path FROM content_options "
+        "WHERE id = $1 AND status = 'approved'",
+        id,
+    )
+    if row is None:
+        raise HTTPException(
+            status_code=409,
+            detail="Option not found or not in approved status",
+        )
+
+    try:
+        async with transaction() as conn:
+            post_row = await conn.fetchrow(
+                "INSERT INTO posts (content_option_id, platform, image_path, status) "
+                "VALUES ($1, $2, $3, 'success') "
+                "RETURNING id",
+                id,
+                row["platform"],
+                row.get("image_path"),
+            )
+            await conn.execute(
+                "UPDATE content_options SET status = 'posted', updated_at = CURRENT_TIMESTAMP "
+                "WHERE id = $1",
+                id,
+            )
+    except Exception as e:
+        logger.error("Mark-posted transaction failed for option %d: %s", id, e)
+        raise HTTPException(status_code=500, detail="Failed to mark post as posted")
+
+    logger.info("Marked option %d as posted, post_id=%d", id, post_row["id"])
+    return {"status": "ok", "message": "Post marked as posted", "post_id": post_row["id"]}
+
+
 @router.post("/options/{id}/regenerate-text")
 async def regenerate_text(id: int):
     """Regenerate fact + hashtags for a content option, keeping the image.
@@ -388,11 +448,16 @@ async def preview_all(request: Request, id: int):
     option = _row_to_dict(row)
     platform = option["platform"]
 
+    config = {
+        "PINTEREST_EXTENSION_ID": os.environ.get("PINTEREST_EXTENSION_ID", "PASTE_YOUR_EXTENSION_ID_HERE"),
+    }
+
     return templates.TemplateResponse(
         request,
         f"preview/{platform}.html",
         {
             "option": option,
+            "config": config,
         },
     )
 
@@ -426,11 +491,17 @@ async def preview_platform(request: Request, id: int, platform: str):
         raise HTTPException(status_code=404, detail="Content option not found")
 
     option = _row_to_dict(row)
+
+    config = {
+        "PINTEREST_EXTENSION_ID": os.environ.get("PINTEREST_EXTENSION_ID", "PASTE_YOUR_EXTENSION_ID_HERE"),
+    }
+
     return templates.TemplateResponse(
         request,
         f"preview/{platform}.html",
         {
             "option": option,
+            "config": config,
         },
     )
 

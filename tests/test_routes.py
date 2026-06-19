@@ -5,6 +5,7 @@ Covers:
 - Option detail (GET /options/{id})
 - Approve option (POST /options/{id}/approve)
 - Cancel option (POST /options/{id}/cancel)
+- Mark as Posted (POST /options/{id}/mark-posted)
 - Regenerate text (POST /options/{id}/regenerate-text)
 - Regenerate image (POST /options/{id}/regenerate-image)
 - Preview (GET /preview/{id})
@@ -42,7 +43,8 @@ def client():
     """
     with patch("app.routes.fetch", new_callable=AsyncMock) as mock_fetch, \
          patch("app.routes.fetch_one", new_callable=AsyncMock) as mock_fetch_one, \
-         patch("app.routes.execute", new_callable=AsyncMock) as mock_execute:
+         patch("app.routes.execute", new_callable=AsyncMock) as mock_execute, \
+         patch("app.routes.transaction") as mock_transaction:
 
         # Build a minimal app with only the router (no lifespan)
         from app.routes import router
@@ -50,10 +52,22 @@ def client():
         test_app = FastAPI()
         test_app.include_router(router)
 
+        # Set up the transaction mock to return a mock connection
+        mock_conn = AsyncMock()
+        mock_conn.fetchrow = AsyncMock(return_value={"id": 42})
+        mock_conn.execute = AsyncMock(return_value="UPDATE 1")
+        # transaction() returns an async context manager
+        mock_cm = MagicMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_conn)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+        mock_transaction.return_value = mock_cm
+
         with TestClient(test_app) as test_client:
             test_client.mock_fetch = mock_fetch
             test_client.mock_fetch_one = mock_fetch_one
             test_client.mock_execute = mock_execute
+            test_client.mock_transaction = mock_transaction
+            test_client.mock_conn = mock_conn
             yield test_client
 
 
@@ -158,6 +172,143 @@ class TestCancel:
         client.mock_execute.return_value = "UPDATE 0"
         response = client.post("/options/999/cancel")
         assert response.status_code == 409
+
+
+# ===================================================================
+# Mark as Posted
+# ===================================================================
+
+
+class TestMarkPosted:
+    """Mark as Posted endpoint tests."""
+
+    def test_mark_posted_success(self, client: TestClient):
+        """Valid approved option → returns 200, creates post record, updates status.
+
+        Two fetch_one calls are made: first checks existence, second checks approved status.
+        """
+        # First call (existence check) returns a row; second call (approved status) returns full data
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            {            # approved + data
+                "id": 1,
+                "platform": "pinterest",
+                "image_path": "test.png",
+            },
+        ]
+        response = client.post("/options/1/mark-posted")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+        assert data["message"] == "Post marked as posted"
+        assert data["post_id"] == 42
+
+        # Verify transaction was used with correct SQL
+        client.mock_conn.fetchrow.assert_called_once()
+        call_args = client.mock_conn.fetchrow.call_args
+        assert "INSERT INTO posts" in call_args[0][0]
+        assert call_args[0][1] == 1  # content_option_id
+        assert call_args[0][2] == "pinterest"  # platform
+        assert call_args[0][3] == "test.png"  # image_path
+
+        client.mock_conn.execute.assert_called_once()
+        call_args = client.mock_conn.execute.call_args
+        assert "UPDATE content_options" in call_args[0][0]
+        assert "posted" in call_args[0][0]
+        assert call_args[0][1] == 1
+
+    def test_mark_posted_not_found(self, client: TestClient):
+        """Non-existent id → first fetch_one returns None → returns 404."""
+        client.mock_fetch_one.return_value = None
+        response = client.post("/options/999/mark-posted")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Content option not found"
+
+    def test_mark_posted_not_approved(self, client: TestClient):
+        """Option in 'pending' status → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
+        response = client.post("/options/1/mark-posted")
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
+
+    def test_mark_posted_already_posted(self, client: TestClient):
+        """Option already 'posted' → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
+        response = client.post("/options/1/mark-posted")
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
+
+    def test_mark_posted_cancelled(self, client: TestClient):
+        """Cancelled option → exists but not approved → returns 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            None,        # not approved
+        ]
+        response = client.post("/options/1/mark-posted")
+        assert response.status_code == 409
+        assert response.json()["detail"] == "Option not found or not in approved status"
+
+    def test_mark_posted_transaction_failure(self, client: TestClient):
+        """DB transaction fails → both fetch_ones succeed → returns 500."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1},  # exists
+            {            # approved + data
+                "id": 1,
+                "platform": "pinterest",
+                "image_path": "test.png",
+            },
+        ]
+        client.mock_conn.fetchrow.side_effect = Exception("DB connection lost")
+        response = client.post("/options/1/mark-posted")
+        assert response.status_code == 500
+        assert "Failed to mark post as posted" in response.json()["detail"]
+
+
+# ===================================================================
+# Preview — Button Visibility
+# ===================================================================
+
+
+class TestPreviewButtons:
+    """Preview page button visibility tests."""
+
+    def test_preview_shows_buttons_for_approved(self, client: TestClient):
+        """Approved pinterest option → buttons present in HTML."""
+        client.mock_fetch_one.return_value = _make_row(status="approved")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Post to Pinterest" in response.text
+        assert "Mark as Posted" in response.text
+
+    def test_preview_hides_buttons_for_pending(self, client: TestClient):
+        """Pending option → buttons absent."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Post to Pinterest" not in response.text
+        assert "Mark as Posted" not in response.text
+
+    def test_preview_hides_buttons_for_posted(self, client: TestClient):
+        """Posted option → buttons absent."""
+        client.mock_fetch_one.return_value = _make_row(status="posted")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Post to Pinterest" not in response.text
+        assert "Mark as Posted" not in response.text
+
+    def test_preview_hides_buttons_for_instagram(self, client: TestClient):
+        """Instagram approved option → buttons absent (pinterest only)."""
+        client.mock_fetch_one.return_value = _make_row(status="approved", platform="instagram")
+        response = client.get("/preview/1/instagram")
+        assert response.status_code == 200
+        assert "Post to Pinterest" not in response.text
+        assert "Mark as Posted" not in response.text
 
 
 # ===================================================================

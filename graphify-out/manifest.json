@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/architecture/ai_content_channel.md": {
-    "mtime": 1780238693.0556169,
-    "ast_hash": "b08b9628cac9d2a90373f28d0c4e5baf",
+    "mtime": 1781636150.8019822,
+    "ast_hash": "6e885c3fc23c34c9f761d1c1cb1e2a64",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/database_schema_and_migration.md": {
@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/yaml_configuration_files.md": {
-    "mtime": 1780238693.0975516,
-    "ast_hash": "88c322b8121ec86284e0ec8aa90048fd",
+    "mtime": 1780851053.7631927,
+    "ast_hash": "36fbe7282130f6ceaea56bc27ce7ec47",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/done/TKT-001_database_schema_and_migration.md": {
@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/content_template.yaml": {
-    "mtime": 1780818336.003834,
-    "ast_hash": "06c3e264df86441321ad030d1e51452f",
+    "mtime": 1781634608.0207462,
+    "ast_hash": "416cad01c763b03ac1e19ad4c739ce42",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/board/done/TKT-002_shared_config_and_db_pool.md": {
@@ -290,13 +290,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/shared/openrouter_client.py": {
-    "mtime": 1780818336.1617725,
-    "ast_hash": "7224ee92a0fa57dc56861a82ddcb4eea",
+    "mtime": 1780849253.1298778,
+    "ast_hash": "d3a4e30454a8b1d9dc3eeef041f4865b",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_openrouter_client.py": {
-    "mtime": 1780241840.1488636,
-    "ast_hash": "94ea39e1b2fd27c4f2da8d2c675cee7f",
+    "mtime": 1780849253.1371648,
+    "ast_hash": "23da186a3236d007be093498abffe2cd",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/backup_trends.yaml": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/config/platforms.yaml": {
-    "mtime": 1780243250.346352,
-    "ast_hash": "517fc9a253c145a68c455d28f4216fd2",
+    "mtime": 1780849253.1096463,
+    "ast_hash": "54f5f24798de194e7eecb05b1963415e",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/__init__.py": {
@@ -315,23 +315,23 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/trend_selector.py": {
-    "mtime": 1780818336.159497,
-    "ast_hash": "37769ea3ad57dfeb4ee07749f3297174",
+    "mtime": 1780820070.5342207,
+    "ast_hash": "0bbe122fa002091906701f7fd937920e",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_trend_selector.py": {
-    "mtime": 1780818336.173803,
-    "ast_hash": "8f97ad890875756e9a216d4b33058e2a",
+    "mtime": 1780820070.538068,
+    "ast_hash": "2050b2a9dbfd39442cb5747b05847453",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/theme_associator.py": {
-    "mtime": 1780342285.5335312,
-    "ast_hash": "d975f5ac8e0c7ce7d5618063ffa63064",
+    "mtime": 1780820780.6641705,
+    "ast_hash": "b5554c1c5e8a2918a70a433768a2fd45",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_theme_associator.py": {
-    "mtime": 1780818336.1713269,
-    "ast_hash": "41230fb7bcc95951fdbb9a720ff2f1eb",
+    "mtime": 1780820794.9823358,
+    "ast_hash": "4b94c40cbe467a6667d7fcc57aea1512",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/docs/technical/module_trend_selector_geo_period_config.md": {
@@ -350,13 +350,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/main.py": {
-    "mtime": 1780341364.4077132,
+    "mtime": 1780822378.506664,
     "ast_hash": "a5e339da0abe09c28721bfd20a53eef7",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/routes.py": {
-    "mtime": 1780341364.4096973,
-    "ast_hash": "5e7a3d48a5b6c856d4c855d87a39d785",
+    "mtime": 1781634776.7312934,
+    "ast_hash": "f6ab6749d50281f9aa6de87b3be0592a",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/scheduler.py": {
@@ -365,13 +365,13 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/content_generator.py": {
-    "mtime": 1780818336.1575022,
-    "ast_hash": "dfbbeac07c63e01b1f9e96835dc6def0",
+    "mtime": 1780820788.830559,
+    "ast_hash": "297131f86942600a1793d110f23bb824",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/modules/visual_generator.py": {
-    "mtime": 1780341364.5957785,
-    "ast_hash": "4cb03c86592a0ea98ad888ad5ab2a09a",
+    "mtime": 1780849253.1263993,
+    "ast_hash": "0b70b5119bdcbac8657b848a992aa28f",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_cli.py": {
@@ -385,28 +385,28 @@
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_routes.py": {
-    "mtime": 1780341364.6058133,
-    "ast_hash": "fb1872dd092f0f666888f4a3771420f2",
+    "mtime": 1781635296.932756,
+    "ast_hash": "d04f44c19f869d21bd46bbf015caf45a",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_scheduler.py": {
-    "mtime": 1780818336.168783,
-    "ast_hash": "11a52635fc06a6e1011e09fdd2e4a819",
+    "mtime": 1780820810.5081499,
+    "ast_hash": "3382a6ddb78a3cbb3acaa191d947e9a9",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/tests/test_visual_generator.py": {
-    "mtime": 1780341364.6100307,
-    "ast_hash": "52268a6704e6d2cb6b6cae72d93f651f",
+    "mtime": 1780849253.1450438,
+    "ast_hash": "9e78f38feaa51e341760ef767a48b7f2",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/templates/dashboard.html": {
-    "mtime": 1780341364.4165454,
-    "ast_hash": "43d80887e95443130d89a1416e7ca0d8",
+    "mtime": 1780851053.7555118,
+    "ast_hash": "c58f1a5c7b462d6422a114f7a074329e",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/templates/preview/base.html": {
-    "mtime": 1780341364.420258,
-    "ast_hash": "197f31c89252a6bf8958abcd33d1ea59",
+    "mtime": 1781637320.3178527,
+    "ast_hash": "7f3bc011961f5bd70a5694390319afdf",
     "semantic_hash": ""
   },
   "/workspaces/did-you-know/app/templates/preview/instagram.html": {
@@ -437,6 +437,106 @@
   "/workspaces/did-you-know/docs/technical/logging_and_cleanup_fixes.md": {
     "mtime": 1780818336.0066144,
     "ast_hash": "9bf5253c1dd0d17acf752adc73bc8f11",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/background.js": {
+    "mtime": 1781637668.0860364,
+    "ast_hash": "f11e709d634a85741283efefc30b5985",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/content.js": {
+    "mtime": 1781725819.3407197,
+    "ast_hash": "a2bb1c949aa9686a88b42c6437ac5322",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/dashboard-bridge.js": {
+    "mtime": 1781637669.274702,
+    "ast_hash": "6cfe80d213a0c7ab08a7bbfade95075a",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/inject.js": {
+    "mtime": 1780851053.7697062,
+    "ast_hash": "f92a93541a3e2c424233bf14ff06a73f",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/manifest.json": {
+    "mtime": 1781637303.4575584,
+    "ast_hash": "249ff674484e76cd0617106c9e9eff33",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/options.js": {
+    "mtime": 1780851053.7756283,
+    "ast_hash": "14d70f0ee3d19453dcd6267a9605e5de",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/popup.js": {
+    "mtime": 1780851053.7796173,
+    "ast_hash": "3a6e318ee3827abb2d85c0a78d947e45",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/tests/test_trend_selector_integration.py": {
+    "mtime": 1780820070.5408494,
+    "ast_hash": "f5106dadf2b7e3e5220df8b7548a43b7",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/app_approved_page.md": {
+    "mtime": 1780851053.7611346,
+    "ast_hash": "cabad9c3e97be2831bc435a2a81cf3ae",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/app_image_path_mismatch.md": {
+    "mtime": 1780849253.1160638,
+    "ast_hash": "3b24ff8d40667faf747ef98af6c4fef5",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/app_preview_post_actions.md": {
+    "mtime": 1781636582.1948836,
+    "ast_hash": "20fe48f170c625e69370275e4bdc01ef",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/content_template_model_config.md": {
+    "mtime": 1780820738.812317,
+    "ast_hash": "b526b4dba9b5ecdbac2535996437ff64",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/openrouter_image_generation_fix.md": {
+    "mtime": 1780820235.8535287,
+    "ast_hash": "4aaef394c1023def978996022494e1d8",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/trend_selector_add_traceback_logging.md": {
+    "mtime": 1780820070.3565621,
+    "ast_hash": "cafd7d5606536dc6d88edf1ad77722e5",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/trend_selector_fix_parsing_and_404.md": {
+    "mtime": 1780820070.3587947,
+    "ast_hash": "26550267c9f77f1ee0cfb89d33e9c6cb",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/trend_selector_replace_pytrends_with_rss.md": {
+    "mtime": 1780820070.360918,
+    "ast_hash": "0c46899ec1003530ac92f59a04534712",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/visual_generator_image_resize.md": {
+    "mtime": 1780849253.1186914,
+    "ast_hash": "9f8e3e0bc56fb8ca4325c4a6147a31f2",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/docs/technical/visual_generator_image_size_config.md": {
+    "mtime": 1780849253.1209319,
+    "ast_hash": "7492b15dcc9edaee6ca610452fbc8540",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/options.html": {
+    "mtime": 1780851053.7736025,
+    "ast_hash": "e2bb0c2d336fab752679d05e9d9e174c",
+    "semantic_hash": ""
+  },
+  "/workspaces/did-you-know/pinterest-uploader-extension/popup.html": {
+    "mtime": 1780851053.7775357,
+    "ast_hash": "511cce91d102002f76cf23a2ce609fa2",
     "semantic_hash": ""
   }
 }
