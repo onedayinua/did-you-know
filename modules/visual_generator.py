@@ -134,7 +134,7 @@ class VisualGenerator:
         """
         if ids is not None:
             query = """
-                SELECT id, batch_id, platform, theme, fact, hashtags,
+                SELECT id, batch_id, platform, theme, fact, hashtags, img_title,
                        image_prompt, image_path, status, created_at, updated_at
                 FROM content_options
                 WHERE id = ANY($1::int[])
@@ -146,7 +146,7 @@ class VisualGenerator:
             rows = await self._db.fetch(query, list(ids))
         else:
             query = """
-                SELECT id, batch_id, platform, theme, fact, hashtags,
+                SELECT id, batch_id, platform, theme, fact, hashtags, img_title,
                        image_prompt, image_path, status, created_at, updated_at
                 FROM content_options
                 WHERE image_prompt IS NOT NULL
@@ -165,6 +165,7 @@ class VisualGenerator:
                 theme=row["theme"],
                 fact=row["fact"],
                 hashtags=list(row["hashtags"]) if row.get("hashtags") else [],
+                img_title=row.get("img_title"),
                 image_prompt=row.get("image_prompt"),
                 image_path=row.get("image_path"),
                 status=row["status"],
@@ -252,6 +253,11 @@ class VisualGenerator:
         aspect_ratio = self._get_aspect_ratio(option.platform)
         output_megapixels = self._get_output_megapixels(option.platform)
 
+        # Build prompt with img_title overlay
+        prompt = option.image_prompt or ""
+        if option.img_title:
+            prompt += f"\n\nAdd the text '{option.img_title}' as an overlay on the image."
+
         logger.info(
             "Generating image for option id=%d platform=%s aspect_ratio=%s output_megapixels=%s",
             option.id,
@@ -262,7 +268,7 @@ class VisualGenerator:
 
         # Generate image via OpenRouter
         image_bytes = await self._client.generate_image(
-            prompt=option.image_prompt or "",
+            prompt=prompt,
             model=self._model,
             aspect_ratio=aspect_ratio,
             size=self._image_size,

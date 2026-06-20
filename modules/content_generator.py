@@ -141,13 +141,22 @@ class ContentGenerator:
             for variation in text_variations:
                 fact = variation.get("fact", "")
                 hashtags = variation.get("hashtags", [])
+                img_title = variation.get("img_title")
+
+                # Fallback: use theme if img_title is missing or empty
+                if not img_title or not img_title.strip():
+                    img_title = theme_name
+                else:
+                    img_title = img_title.strip()
+                # Truncate to 255 chars for DB column
+                img_title = img_title[:255]
 
                 if not fact:
                     logger.warning("Empty fact in variation; skipping")
                     continue
 
                 try:
-                    image_prompt = await self._generate_image_prompt(fact)
+                    image_prompt = await self._generate_image_prompt(fact, img_title)
                 except Exception:
                     logger.exception("Image prompt generation failed for fact; using fallback")
                     image_prompt = f"A food photography image about: {theme_name}"
@@ -155,6 +164,7 @@ class ContentGenerator:
                 platform_options.append({
                     "fact": fact,
                     "hashtags": hashtags,
+                    "img_title": img_title,
                     "image_prompt": image_prompt,
                 })
 
@@ -317,6 +327,7 @@ class ContentGenerator:
             if isinstance(var, dict):
                 fact = var.get("fact", "")
                 hashtags = var.get("hashtags", [])
+                img_title = var.get("img_title")
                 if isinstance(hashtags, str):
                     hashtags = [h.strip() for h in hashtags.split(",") if h.strip()]
                 if not isinstance(hashtags, list):
@@ -326,7 +337,11 @@ class ContentGenerator:
                     h if h.startswith("#") else f"#{h}" for h in hashtags
                 ]
                 if fact:
-                    result.append({"fact": fact, "hashtags": hashtags})
+                    result.append({
+                        "fact": fact,
+                        "hashtags": hashtags,
+                        "img_title": img_title,
+                    })
 
         if len(result) < expected_count:
             logger.warning(
@@ -352,9 +367,11 @@ class ContentGenerator:
         # Try to find fact/hashtags pairs
         fact_pattern = re.compile(r'"fact"\s*:\s*"([^"]+)"', re.IGNORECASE)
         hashtag_pattern = re.compile(r'"hashtags"\s*:\s*\[([^\]]*)\]', re.IGNORECASE)
+        img_title_pattern = re.compile(r'"img_title"\s*:\s*"([^"]+)"', re.IGNORECASE)
 
         facts = fact_pattern.findall(response)
         hashtag_matches = hashtag_pattern.findall(response)
+        img_titles = img_title_pattern.findall(response)
 
         for i, fact in enumerate(facts):
             hashtags: list[str] = []
@@ -364,20 +381,22 @@ class ContentGenerator:
                 hashtags = [
                     h if h.startswith("#") else f"#{h}" for h in hashtags
                 ]
-            variations.append({"fact": fact, "hashtags": hashtags})
+            img_title = img_titles[i] if i < len(img_titles) else None
+            variations.append({"fact": fact, "hashtags": hashtags, "img_title": img_title})
 
         return variations
 
-    async def _generate_image_prompt(self, fact: str) -> str:
+    async def _generate_image_prompt(self, fact: str, img_title: str = "") -> str:
         """Generate an image prompt from a fact using OpenRouter.
 
         Args:
             fact: The fact text to base the image on.
+            img_title: The image title text to overlay on the image.
 
         Returns:
             Image description string (2-3 sentences).
         """
-        prompt = self._image_prompt_template.format(fact=fact)
+        prompt = self._image_prompt_template.format(fact=fact, img_title=img_title)
 
         logger.info("Generating image prompt for fact (len=%d)", len(fact))
 
@@ -420,9 +439,9 @@ class ContentGenerator:
             RuntimeError: If the INSERT returns no rows.
         """
         query = """
-            INSERT INTO content_options (batch_id, platform, theme, fact, hashtags, image_prompt, status, created_at)
-            VALUES ($1, $2, $3, $4, $5::jsonb, $6, 'pending', CURRENT_TIMESTAMP)
-            RETURNING id, batch_id, platform, theme, fact, hashtags, image_prompt, image_path, status, created_at, updated_at
+            INSERT INTO content_options (batch_id, platform, theme, fact, hashtags, img_title, image_prompt, status, created_at)
+            VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, 'pending', CURRENT_TIMESTAMP)
+            RETURNING id, batch_id, platform, theme, fact, hashtags, img_title, image_prompt, image_path, status, created_at, updated_at
         """
 
         saved_options: list[ContentOption] = []
@@ -436,6 +455,7 @@ class ContentGenerator:
                 theme,
                 opt["fact"],
                 hashtags_json,
+                opt.get("img_title"),
                 opt["image_prompt"],
             )
             if row is None:
@@ -448,6 +468,7 @@ class ContentGenerator:
                 theme=row["theme"],
                 fact=row["fact"],
                 hashtags=list(row["hashtags"]) if row.get("hashtags") else [],
+                img_title=row.get("img_title"),
                 image_prompt=row.get("image_prompt"),
                 image_path=row.get("image_path"),
                 status=row["status"],

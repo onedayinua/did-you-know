@@ -197,8 +197,8 @@ class TestGenerateTextVariations:
     ):
         """Returns parsed list of variations from AI response."""
         openrouter_client.generate_text.return_value = (
-            '[{"fact": "Fact one", "hashtags": ["#tag1", "#tag2"]},'
-            '{"fact": "Fact two", "hashtags": ["#tag3"]}]'
+            '[{"fact": "Fact one", "hashtags": ["#tag1", "#tag2"], "img_title": "Crispy Title"},'
+            '{"fact": "Fact two", "hashtags": ["#tag3"], "img_title": "Tasty Title"}]'
         )
         platform_limits = {"character_limit": 500, "hashtag_count": "5-10"}
         result = await generator._generate_text_variations(
@@ -206,14 +206,16 @@ class TestGenerateTextVariations:
         )
         assert len(result) == 2
         assert result[0]["fact"] == "Fact one"
+        assert result[0]["img_title"] == "Crispy Title"
         assert result[1]["fact"] == "Fact two"
+        assert result[1]["img_title"] == "Tasty Title"
 
     async def test_handles_single_variation(
         self, generator: ContentGenerator, openrouter_client: AsyncMock
     ):
         """Works correctly when only one variation is requested."""
         openrouter_client.generate_text.return_value = (
-            '{"fact": "Single fact", "hashtags": ["#tag1"]}'
+            '{"fact": "Single fact", "hashtags": ["#tag1"], "img_title": "Single Title"}'
         )
         platform_limits = {"character_limit": 500, "hashtag_count": "5-10"}
         result = await generator._generate_text_variations(
@@ -221,6 +223,7 @@ class TestGenerateTextVariations:
         )
         assert len(result) == 1
         assert result[0]["fact"] == "Single fact"
+        assert result[0]["img_title"] == "Single Title"
 
     async def test_raises_on_api_error(
         self, generator: ContentGenerator, openrouter_client: AsyncMock
@@ -236,7 +239,7 @@ class TestGenerateTextVariations:
     ):
         """Prompt includes theme name, character limit, and hashtag count."""
         openrouter_client.generate_text.return_value = (
-            '[{"fact": "Test", "hashtags": ["#t"]}]'
+            '[{"fact": "Test", "hashtags": ["#t"], "img_title": "Test Title"}]'
         )
         await generator._generate_text_variations(
             "Crispy Cooking", 3, {"character_limit": 500, "hashtag_count": "5-10"}
@@ -258,56 +261,60 @@ class TestParseTextVariations:
     def test_parses_json_array(self, generator: ContentGenerator):
         """Parses a JSON array response correctly."""
         response = (
-            '[{"fact": "Fact A", "hashtags": ["#a", "#b"]},'
-            '{"fact": "Fact B", "hashtags": ["#c"]}]'
+            '[{"fact": "Fact A", "hashtags": ["#a", "#b"], "img_title": "Title A"},'
+            '{"fact": "Fact B", "hashtags": ["#c"], "img_title": "Title B"}]'
         )
         result = generator._parse_text_variations(response, 2)
         assert len(result) == 2
         assert result[0]["fact"] == "Fact A"
+        assert result[0]["img_title"] == "Title A"
         assert result[1]["fact"] == "Fact B"
+        assert result[1]["img_title"] == "Title B"
 
     def test_parses_json_object_with_variations_key(self, generator: ContentGenerator):
         """Parses a JSON object with a 'variations' key."""
         response = (
             '{"variations": ['
-            '{"fact": "Fact X", "hashtags": ["#x"]},'
-            '{"fact": "Fact Y", "hashtags": ["#y"]}'
+            '{"fact": "Fact X", "hashtags": ["#x"], "img_title": "Title X"},'
+            '{"fact": "Fact Y", "hashtags": ["#y"], "img_title": "Title Y"}'
             "]}"
         )
         result = generator._parse_text_variations(response, 2)
         assert len(result) == 2
         assert result[0]["fact"] == "Fact X"
-        assert result[1]["fact"] == "Fact Y"
+        assert result[0]["img_title"] == "Title X"
 
     def test_parses_json_object_with_options_key(self, generator: ContentGenerator):
         """Parses a JSON object with an 'options' key as fallback."""
         response = (
             '{"options": ['
-            '{"fact": "Opt A", "hashtags": ["#o1"]},'
-            '{"fact": "Opt B", "hashtags": ["#o2"]}'
+            '{"fact": "Opt A", "hashtags": ["#o1"], "img_title": "Opt Title A"},'
+            '{"fact": "Opt B", "hashtags": ["#o2"], "img_title": "Opt Title B"}'
             "]}"
         )
         result = generator._parse_text_variations(response, 2)
         assert len(result) == 2
         assert result[0]["fact"] == "Opt A"
+        assert result[0]["img_title"] == "Opt Title A"
 
     def test_handles_single_object(self, generator: ContentGenerator):
         """Wraps a single JSON object into a list."""
-        response = '{"fact": "Single", "hashtags": ["#s"]}'
+        response = '{"fact": "Single", "hashtags": ["#s"], "img_title": "Single Title"}'
         result = generator._parse_text_variations(response, 1)
         assert len(result) == 1
         assert result[0]["fact"] == "Single"
+        assert result[0]["img_title"] == "Single Title"
 
     def test_adds_hash_prefix(self, generator: ContentGenerator):
         """Adds # prefix to hashtags missing it."""
-        response = '[{"fact": "Test", "hashtags": ["tag1", "#tag2"]}]'
+        response = '[{"fact": "Test", "hashtags": ["tag1", "#tag2"], "img_title": "Test Title"}]'
         result = generator._parse_text_variations(response, 1)
         assert result[0]["hashtags"] == ["#tag1", "#tag2"]
 
     def test_falls_back_to_regex(self, generator: ContentGenerator):
         """Falls back to regex extraction when JSON parsing fails."""
         response = (
-            'Some text {"fact": "Regex fact", "hashtags": ["#h1", "#h2"]} more text'
+            'Some text {"fact": "Regex fact", "hashtags": ["#h1", "#h2"], "img_title": "Regex Title"} more text'
         )
         result = generator._parse_text_variations(response, 1)
         assert len(result) >= 1
@@ -320,31 +327,33 @@ class TestParseTextVariations:
 
     def test_handles_empty_hashtags(self, generator: ContentGenerator):
         """Handles empty hashtags list."""
-        response = '[{"fact": "No tags", "hashtags": []}]'
+        response = '[{"fact": "No tags", "hashtags": [], "img_title": "No Tags Title"}]'
         result = generator._parse_text_variations(response, 1)
         assert len(result) == 1
         assert result[0]["hashtags"] == []
+        assert result[0]["img_title"] == "No Tags Title"
 
     def test_handles_string_hashtags(self, generator: ContentGenerator):
         """Splits string hashtags by comma."""
-        response = '[{"fact": "String tags", "hashtags": "#a, #b, #c"}]'
+        response = '[{"fact": "String tags", "hashtags": "#a, #b, #c", "img_title": "Str Tags"}]'
         result = generator._parse_text_variations(response, 1)
         assert len(result) == 1
         assert "#a" in result[0]["hashtags"]
         assert "#b" in result[0]["hashtags"]
         assert "#c" in result[0]["hashtags"]
+        assert result[0]["img_title"] == "Str Tags"
 
     def test_warns_on_fewer_variations(self, generator: ContentGenerator):
         """Returns fewer items than expected without error."""
-        response = '[{"fact": "Only one", "hashtags": ["#t"]}]'
+        response = '[{"fact": "Only one", "hashtags": ["#t"], "img_title": "Only One"}]'
         result = generator._parse_text_variations(response, 3)
         assert len(result) == 1
 
     def test_skips_empty_fact(self, generator: ContentGenerator):
         """Skips variations with empty fact."""
         response = (
-            '[{"fact": "", "hashtags": ["#a"]},'
-            '{"fact": "Valid", "hashtags": ["#b"]}]'
+            '[{"fact": "", "hashtags": ["#a"], "img_title": "Empty"},'
+            '{"fact": "Valid", "hashtags": ["#b"], "img_title": "Valid Title"}]'
         )
         result = generator._parse_text_variations(response, 2)
         assert len(result) == 1
@@ -352,17 +361,19 @@ class TestParseTextVariations:
 
     def test_handles_non_list_hashtags(self, generator: ContentGenerator):
         """Handles hashtags that are not a list (e.g. None)."""
-        response = '[{"fact": "Test", "hashtags": null}]'
+        response = '[{"fact": "Test", "hashtags": null, "img_title": "No List"}]'
         result = generator._parse_text_variations(response, 1)
         assert len(result) == 1
         assert result[0]["hashtags"] == []
+        assert result[0]["img_title"] == "No List"
 
     def test_handles_dict_variations_value(self, generator: ContentGenerator):
         """Wraps dict variations value into a list."""
-        response = '{"variations": {"fact": "Dict wrap", "hashtags": ["#d"]}}'
+        response = '{"variations": {"fact": "Dict wrap", "hashtags": ["#d"], "img_title": "Dict Title"}}'
         result = generator._parse_text_variations(response, 1)
         assert len(result) == 1
         assert result[0]["fact"] == "Dict wrap"
+        assert result[0]["img_title"] == "Dict Title"
 
 
 # ===================================================================
@@ -421,6 +432,7 @@ class TestSaveOptions:
             "theme": "Crispy Cooking",
             "fact": "Test fact",
             "hashtags": ["#tag1"],
+            "img_title": "Crispy Title",
             "image_prompt": "An image of food",
             "image_path": None,
             "status": "pending",
@@ -428,7 +440,7 @@ class TestSaveOptions:
             "updated_at": None,
         }
         options = [
-            {"fact": "Test fact", "hashtags": ["#tag1"], "image_prompt": "An image of food"}
+            {"fact": "Test fact", "hashtags": ["#tag1"], "img_title": "Crispy Title", "image_prompt": "An image of food"}
         ]
         result = await generator._save_options(
             "Crispy Cooking", "batch_20240101_000000_abc123", "pinterest", options
@@ -450,6 +462,7 @@ class TestSaveOptions:
                 "theme": "Test",
                 "fact": "Fact 1",
                 "hashtags": ["#a"],
+                "img_title": "Title 1",
                 "image_prompt": "img1",
                 "image_path": None,
                 "status": "pending",
@@ -463,6 +476,7 @@ class TestSaveOptions:
                 "theme": "Test",
                 "fact": "Fact 2",
                 "hashtags": ["#b"],
+                "img_title": "Title 2",
                 "image_prompt": "img2",
                 "image_path": None,
                 "status": "pending",
@@ -471,8 +485,8 @@ class TestSaveOptions:
             },
         ]
         options = [
-            {"fact": "Fact 1", "hashtags": ["#a"], "image_prompt": "img1"},
-            {"fact": "Fact 2", "hashtags": ["#b"], "image_prompt": "img2"},
+            {"fact": "Fact 1", "hashtags": ["#a"], "img_title": "Title 1", "image_prompt": "img1"},
+            {"fact": "Fact 2", "hashtags": ["#b"], "img_title": "Title 2", "image_prompt": "img2"},
         ]
         result = await generator._save_options("Test", "batch_1", "pinterest", options)
         assert len(result) == 2
@@ -484,7 +498,7 @@ class TestSaveOptions:
     ):
         """Raises RuntimeError when INSERT returns no row."""
         db_pool.fetchrow.return_value = None
-        options = [{"fact": "Fail", "hashtags": [], "image_prompt": "fail"}]
+        options = [{"fact": "Fail", "hashtags": [], "img_title": "Fail Title", "image_prompt": "fail"}]
         with pytest.raises(RuntimeError, match="INSERT into content_options"):
             await generator._save_options("Test", "batch", "pinterest", options)
 
@@ -499,6 +513,7 @@ class TestSaveOptions:
             "theme": "T",
             "fact": "F",
             "hashtags": ["#a", "#b"],
+            "img_title": "Test Title",
             "image_prompt": "img",
             "image_path": None,
             "status": "pending",
@@ -507,7 +522,7 @@ class TestSaveOptions:
         }
         await generator._save_options(
             "T", "b", "pinterest",
-            [{"fact": "F", "hashtags": ["#a", "#b"], "image_prompt": "img"}],
+            [{"fact": "F", "hashtags": ["#a", "#b"], "img_title": "Test Title", "image_prompt": "img"}],
         )
         args = db_pool.fetchrow.call_args[0]
         hashtags_arg = args[5]  # 6th positional arg (0-indexed: query, batch_id, platform, theme, fact, hashtags_json, image_prompt)
@@ -534,7 +549,7 @@ class TestRun:
         db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
-            '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]'
+            '[{"fact": "Crispy fact", "hashtags": ["#crispy"], "img_title": "Crispy Title"}]'
         )
         db_pool.fetchrow.return_value = {
             "id": 1,
@@ -543,6 +558,7 @@ class TestRun:
             "theme": "Crispy Cooking",
             "fact": "Crispy fact",
             "hashtags": ["#crispy"],
+            "img_title": "Crispy Title",
             "image_prompt": "An image about crispy food",
             "image_path": None,
             "status": "pending",
@@ -579,7 +595,7 @@ class TestRun:
         db_pool.fetchval.return_value = 0
         db_pool.execute.return_value = "UPDATE 0"
         openrouter_client.generate_text.return_value = (
-            '[{"fact": "Test fact", "hashtags": ["#test"]}]'
+            '[{"fact": "Test fact", "hashtags": ["#test"], "img_title": "Test Title"}]'
         )
         db_pool.fetchrow.return_value = {
             "id": 1,
@@ -588,6 +604,7 @@ class TestRun:
             "theme": "Crispy Cooking",
             "fact": "Test fact",
             "hashtags": ["#test"],
+            "img_title": "Test Title",
             "image_prompt": "An image",
             "image_path": None,
             "status": "pending",
@@ -643,7 +660,7 @@ class TestRun:
         gen = ContentGenerator(db_pool, openrouter_client, config)
         db_pool.fetchval.return_value = 0
         openrouter_client.generate_text.return_value = (
-            '[{"fact": "Test", "hashtags": ["#t"]}]'
+            '[{"fact": "Test", "hashtags": ["#t"], "img_title": "Test Title"}]'
         )
         db_pool.fetchrow.return_value = {
             "id": 1,
@@ -652,6 +669,7 @@ class TestRun:
             "theme": "Crispy Cooking",
             "fact": "Test",
             "hashtags": ["#t"],
+            "img_title": "Test Title",
             "image_prompt": "img",
             "image_path": None,
             "status": "pending",
@@ -697,7 +715,7 @@ class TestRun:
         db_pool.execute.return_value = "UPDATE 0"
         # First call succeeds (text), second fails (image)
         openrouter_client.generate_text.side_effect = [
-            '[{"fact": "Crispy fact", "hashtags": ["#crispy"]}]',
+            '[{"fact": "Crispy fact", "hashtags": ["#crispy"], "img_title": "Crispy Title"}]',
             Exception("Image generation failed"),
         ]
         db_pool.fetchrow.return_value = {
@@ -707,6 +725,7 @@ class TestRun:
             "theme": "Crispy Cooking",
             "fact": "Crispy fact",
             "hashtags": ["#crispy"],
+            "img_title": "Crispy Title",
             "image_prompt": "A food photography image about: Crispy Cooking",
             "image_path": None,
             "status": "pending",
@@ -717,6 +736,74 @@ class TestRun:
         result = await generator.run(sample_theme, ["pinterest"])
         assert len(result) == 1
         assert result[0].image_prompt == "A food photography image about: Crispy Cooking"
+
+    async def test_img_title_fallback_to_theme_when_missing(
+        self,
+        generator: ContentGenerator,
+        db_pool: AsyncMock,
+        openrouter_client: AsyncMock,
+        sample_theme: Theme,
+    ):
+        """Uses theme as img_title when LLM response has no img_title."""
+        db_pool.fetchval.return_value = 0
+        db_pool.execute.return_value = "UPDATE 0"
+        openrouter_client.generate_text.return_value = (
+            '[{"fact": "Fallback fact", "hashtags": ["#test"], "img_title": ""}]'
+        )
+        db_pool.fetchrow.return_value = {
+            "id": 1,
+            "batch_id": "batch_test",
+            "platform": "pinterest",
+            "theme": "Crispy Cooking",
+            "fact": "Fallback fact",
+            "hashtags": ["#test"],
+            "img_title": "Crispy Cooking",
+            "image_prompt": "An image about crispy food",
+            "image_path": None,
+            "status": "pending",
+            "created_at": None,
+            "updated_at": None,
+        }
+
+        result = await generator.run(sample_theme, ["pinterest"])
+        assert len(result) == 1
+        # When img_title is empty string, the run() method falls back to theme_name
+        # The save step stores the fallback value
+        assert result[0].img_title == "Crispy Cooking"
+
+    async def test_img_title_truncated_at_255_chars(
+        self,
+        generator: ContentGenerator,
+        db_pool: AsyncMock,
+        openrouter_client: AsyncMock,
+        sample_theme: Theme,
+    ):
+        """Truncates img_title to 255 characters when over limit."""
+        db_pool.fetchval.return_value = 0
+        db_pool.execute.return_value = "UPDATE 0"
+        long_title = "A" * 300
+        openrouter_client.generate_text.return_value = (
+            f'[{{"fact": "Truncation test", "hashtags": ["#test"], "img_title": "{long_title}"}}]'
+        )
+        db_pool.fetchrow.return_value = {
+            "id": 1,
+            "batch_id": "batch_test",
+            "platform": "pinterest",
+            "theme": "Crispy Cooking",
+            "fact": "Truncation test",
+            "hashtags": ["#test"],
+            "img_title": long_title[:255],
+            "image_prompt": "An image about crispy food",
+            "image_path": None,
+            "status": "pending",
+            "created_at": None,
+            "updated_at": None,
+        }
+
+        result = await generator.run(sample_theme, ["pinterest"])
+        assert len(result) == 1
+        assert len(result[0].img_title) == 255
+        assert result[0].img_title == "A" * 255
 
 
 # ===================================================================

@@ -87,6 +87,7 @@ def sample_option() -> ContentOption:
         theme="Crispy Cooking",
         fact="Air fryers use rapid air technology.",
         hashtags=["#AirFryer"],
+        img_title="Crispy Title",
         image_prompt="A warm overhead shot of crispy chicken wings.",
         image_path=None,
         status=ContentStatus.PENDING,
@@ -113,6 +114,7 @@ class TestGetPendingOptions:
                 "theme": "Test",
                 "fact": "Fact",
                 "hashtags": ["#t"],
+                "img_title": "Test Title",
                 "image_prompt": "prompt",
                 "image_path": None,
                 "status": "pending",
@@ -137,6 +139,7 @@ class TestGetPendingOptions:
                 "theme": "Test",
                 "fact": "Fact",
                 "hashtags": [],
+                "img_title": "Insta Title",
                 "image_prompt": "prompt",
                 "image_path": None,
                 "status": "pending",
@@ -168,6 +171,7 @@ class TestGetPendingOptions:
                 "theme": "Filtered",
                 "fact": "Fact",
                 "hashtags": [],
+                "img_title": "Filtered Title",
                 "image_prompt": "prompt",
                 "image_path": None,
                 "status": "pending",
@@ -361,8 +365,12 @@ class TestGenerateAndSave:
             sample_option, {"width": 500, "height": 1000}
         )
 
+        expected_prompt = (
+            sample_option.image_prompt
+            + f"\n\nAdd the text '{sample_option.img_title}' as an overlay on the image."
+        )
         openrouter_client.generate_image.assert_called_once_with(
-            prompt=sample_option.image_prompt,
+            prompt=expected_prompt,
             model="openai/dall-e-3",
             aspect_ratio="2:3",
             size="0.5K",
@@ -436,6 +444,7 @@ class TestRun:
                 "theme": "Test",
                 "fact": "Fact",
                 "hashtags": ["#t"],
+                "img_title": "Test Title",
                 "image_prompt": "A test prompt",
                 "image_path": None,
                 "status": "pending",
@@ -478,6 +487,7 @@ class TestRun:
                 "theme": "Test",
                 "fact": "Fact",
                 "hashtags": [],
+                "img_title": "Insta Title",
                 "image_prompt": "prompt",
                 "image_path": None,
                 "status": "pending",
@@ -509,6 +519,7 @@ class TestRun:
                 "theme": "T1",
                 "fact": "F1",
                 "hashtags": [],
+                "img_title": "T1 Title",
                 "image_prompt": "p1",
                 "image_path": None,
                 "status": "pending",
@@ -522,6 +533,7 @@ class TestRun:
                 "theme": "T2",
                 "fact": "F2",
                 "hashtags": [],
+                "img_title": "T2 Title",
                 "image_prompt": "p2",
                 "image_path": None,
                 "status": "pending",
@@ -558,6 +570,7 @@ class TestRun:
                 "theme": "T3",
                 "fact": "F3",
                 "hashtags": [],
+                "img_title": "T3 Title",
                 "image_prompt": "p3",
                 "image_path": None,
                 "status": "pending",
@@ -572,7 +585,7 @@ class TestRun:
         assert len(result) == 1
         # Instagram aspect ratio should be 1:1
         openrouter_client.generate_image.assert_called_once_with(
-            prompt="p3",
+            prompt="p3\n\nAdd the text 'T3 Title' as an overlay on the image.",
             model="openai/dall-e-3",
             aspect_ratio="1:1",
             size="0.5K",
@@ -630,6 +643,7 @@ class TestEdgeCases:
                 "theme": "T7",
                 "fact": "F7",
                 "hashtags": [],
+                "img_title": "T7 Title",
                 "image_prompt": "p7",
                 "image_path": None,
                 "status": "pending",
@@ -642,3 +656,70 @@ class TestEdgeCases:
 
         await generator.run()
         assert images_dir.exists()
+
+    async def test_img_title_included_in_prompt(
+        self,
+        generator: VisualGenerator,
+        db_pool: AsyncMock,
+        openrouter_client: AsyncMock,
+        tmp_path: Path,
+    ):
+        """img_title is included in the image generation prompt."""
+        generator._images_dir = str(tmp_path)
+        db_pool.fetch.return_value = [
+            {
+                "id": 8,
+                "batch_id": "b8",
+                "platform": "pinterest",
+                "theme": "Test Theme",
+                "fact": "Test fact",
+                "hashtags": [],
+                "img_title": "Overlay Text",
+                "image_prompt": "A beautiful food scene",
+                "image_path": None,
+                "status": "pending",
+                "created_at": None,
+                "updated_at": None,
+            },
+        ]
+        openrouter_client.generate_image.return_value = b"bytes"
+        db_pool.execute.return_value = "UPDATE 1"
+
+        await generator.run()
+
+        expected_prompt = "A beautiful food scene\n\nAdd the text 'Overlay Text' as an overlay on the image."
+        openrouter_client.generate_image.assert_called_once()
+        assert openrouter_client.generate_image.call_args[1]["prompt"] == expected_prompt
+
+    async def test_img_title_omitted_when_none(
+        self,
+        generator: VisualGenerator,
+        db_pool: AsyncMock,
+        openrouter_client: AsyncMock,
+        tmp_path: Path,
+    ):
+        """Omits the overlay instruction when img_title is None."""
+        generator._images_dir = str(tmp_path)
+        db_pool.fetch.return_value = [
+            {
+                "id": 9,
+                "batch_id": "b9",
+                "platform": "pinterest",
+                "theme": "Test Theme",
+                "fact": "Test fact",
+                "hashtags": [],
+                "img_title": None,
+                "image_prompt": "A beautiful food scene",
+                "image_path": None,
+                "status": "pending",
+                "created_at": None,
+                "updated_at": None,
+            },
+        ]
+        openrouter_client.generate_image.return_value = b"bytes"
+        db_pool.execute.return_value = "UPDATE 1"
+
+        await generator.run()
+
+        openrouter_client.generate_image.assert_called_once()
+        assert openrouter_client.generate_image.call_args[1]["prompt"] == "A beautiful food scene"
