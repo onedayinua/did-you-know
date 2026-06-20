@@ -17,6 +17,7 @@ text_prompt: >
   Generate a supporting fact and hashtags. Requirements:
   - Fact: engaging, educational, fun tone, 3-4 sentences that expand on the theme
   - Hashtags: relevant to the theme
+  - img_title: relevant to the theme but not equal to it
 
   Return as JSON: {{"img_title": "...", "fact": "...", "hashtags": ["...", "..."]}}
 
@@ -31,8 +32,8 @@ image_prompt: >
   - Overhead or 45-degree angle
   - Include relevant food ingredients or dish
   - Composition: Shift the main food dish and complex props to the bottom-center and right side of the frame. At the top there will be Typography overlay so this part of the image should be blured but in a way like it will be in real lense photo shot.
-  - Typography overlay: add the text reading EXACTLY: '{img_title}' as an overlay that should be well readable
-  - Typography Style: Use a modern, ultra-bold, heavy-weight sans-serif font. The letterforms must be clean, solid, and highly readable (emulating clean geometric open-source fonts). The text must be readable, perfect high contrast against the blurred background. Slight shadow and slight outer glow could be used.
+  - Typography overlay: Add a text overlay reading EXACTLY: '{img_title}'. Flawless spelling is required.
+  - Typography Style: Professional editorial magazine design. Use a modern, ultra-bold, heavy-weight sans-serif font. The text color must be a solid, elegant color drawn from the scene's natural palette (e.g., warm cream, deep terracotta, or rich charcoal) to ensure aesthetic integration. Strictly NO drop shadows, NO black outlines/strokes, and NO glow effects. The text must look like a high-end food magazine cover, relying on the blurred background for readability rather than artificial borders.
 
 
   
