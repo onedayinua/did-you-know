@@ -32,7 +32,7 @@ image_prompt: >
   - Include relevant food ingredients or dish
   - Composition: Shift the main food dish and complex props to the bottom-center and right side of the frame. The entire top third of the image must be a beautifully blurred, textureless background area (soft bokeh) to serve as clean negative space
   - Typography overlay: add an short text overlay that should be well readable
-  - Typography Style: Use a modern, ultra-bold, heavy-weight sans-serif font. The letters must be thick and robust for maximum readability. The font color must provide perfect high contrast against the blurred background texture (e.g., solid white text on a dark blur, or deep charcoal text on a bright blur). Perfect letter spelling is required.
+  - Typography Style: Use a modern, ultra-bold, heavy-weight sans-serif font. The letterforms must be clean, solid, and highly readable (emulating clean geometric open-source fonts). Strictly NO drop shadows, NO outer glows, NO 3D effects, and NO gradients. The text color must be a single solid color that provides extreme, perfect high contrast against the blurred background.
 
 
   
