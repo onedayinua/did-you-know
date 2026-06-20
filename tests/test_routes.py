@@ -508,3 +508,122 @@ class TestHealth:
         data = response.json()
         assert data["status"] == "degraded"
         assert data["database"] is False
+
+
+# ===================================================================
+# Validate Text
+# ===================================================================
+
+
+class TestValidateText:
+    """Validate text endpoint tests."""
+
+    def test_validate_text_success(self, client: TestClient):
+        client.mock_fetch_one.return_value = {
+            "id": 1,
+            "fact": "Air fryers use rapid air technology.",
+            "hashtags": ["#AirFryer", "#Healthy"],
+            "img_title": "Crispy Air Fryer Tips",
+        }
+
+        with patch("shared.db.get_pool") as mock_get_pool, \
+             patch("shared.openrouter_client.OpenRouterClient") as mock_client_cls, \
+             patch("shared.config_loader.get_content_template") as mock_get_config, \
+             patch("modules.text_validator.TextValidator") as mock_validator_cls:
+
+            mock_pool = AsyncMock()
+            mock_get_pool.return_value = mock_pool
+
+            mock_client = AsyncMock()
+            mock_client_cls.return_value = mock_client
+
+            mock_get_config.return_value = {"validation": {"enabled": True}}
+
+            mock_validator = AsyncMock()
+            mock_validator.validate.return_value = {
+                "toxicity_score": 0.95,
+                "politeness_score": 0.90,
+                "grammar_score": 0.85,
+                "sentiment_score": 0.80,
+                "readability_score": 0.88,
+                "img_title_score": 0.92,
+            }
+            mock_validator_cls.return_value = mock_validator
+
+            response = client.post("/options/1/validate-text")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "ok"
+            assert data["scores"]["toxicity_score"] == 0.95
+            assert data["scores"]["politeness_score"] == 0.90
+            assert data["scores"]["grammar_score"] == 0.85
+            assert data["scores"]["sentiment_score"] == 0.80
+            assert data["scores"]["readability_score"] == 0.88
+            assert data["scores"]["img_title_score"] == 0.92
+
+    def test_validate_text_not_found(self, client: TestClient):
+        client.mock_fetch_one.return_value = None
+        response = client.post("/options/999/validate-text")
+        assert response.status_code == 404
+
+    def test_validate_text_handles_empty_hashtags(self, client: TestClient):
+        client.mock_fetch_one.return_value = {
+            "id": 1,
+            "fact": "Air fryers use rapid air technology.",
+            "hashtags": [],
+            "img_title": "Crispy Air Fryer Tips",
+        }
+
+        with patch("shared.db.get_pool") as mock_get_pool, \
+             patch("shared.openrouter_client.OpenRouterClient") as mock_client_cls, \
+             patch("shared.config_loader.get_content_template") as mock_get_config, \
+             patch("modules.text_validator.TextValidator") as mock_validator_cls:
+
+            mock_get_pool.return_value = AsyncMock()
+            mock_client_cls.return_value = AsyncMock()
+            mock_get_config.return_value = {"validation": {"enabled": True}}
+
+            mock_validator = AsyncMock()
+            mock_validator.validate.return_value = {
+                "toxicity_score": 0.95,
+                "politeness_score": 0.90,
+                "grammar_score": 0.85,
+                "sentiment_score": 0.80,
+                "readability_score": 0.88,
+                "img_title_score": 0.92,
+            }
+            mock_validator_cls.return_value = mock_validator
+
+            response = client.post("/options/1/validate-text")
+            assert response.status_code == 200
+
+    def test_validate_text_handles_string_hashtags(self, client: TestClient):
+        client.mock_fetch_one.return_value = {
+            "id": 1,
+            "fact": "Air fryers use rapid air technology.",
+            "hashtags": '["#AirFryer", "#Healthy"]',
+            "img_title": "Crispy Air Fryer Tips",
+        }
+
+        with patch("shared.db.get_pool") as mock_get_pool, \
+             patch("shared.openrouter_client.OpenRouterClient") as mock_client_cls, \
+             patch("shared.config_loader.get_content_template") as mock_get_config, \
+             patch("modules.text_validator.TextValidator") as mock_validator_cls:
+
+            mock_get_pool.return_value = AsyncMock()
+            mock_client_cls.return_value = AsyncMock()
+            mock_get_config.return_value = {"validation": {"enabled": True}}
+
+            mock_validator = AsyncMock()
+            mock_validator.validate.return_value = {
+                "toxicity_score": 0.95,
+                "politeness_score": 0.90,
+                "grammar_score": 0.85,
+                "sentiment_score": 0.80,
+                "readability_score": 0.88,
+                "img_title_score": 0.92,
+            }
+            mock_validator_cls.return_value = mock_validator
+
+            response = client.post("/options/1/validate-text")
+            assert response.status_code == 200

@@ -56,3 +56,25 @@ deduplication:
 
 # AI model selection (text generation only; image model is in platforms.yaml -> visual.model)
 text_model: "openai/gpt-4o-mini"
+
+# Text validation settings — runs after text generation to score quality
+validation:
+  enabled: true
+  model: "openai/gpt-4o-mini"
+  prompt: >
+    You are a content quality analyzer. Analyze the following text and return
+    a JSON object with scores from 0.0 to 1.0 (1.0 = best) for each metric:
+
+    - toxicity_score: How non-toxic is this text? (1.0 = completely safe/clean)
+    - politeness_score: How polite and respectful is this text?
+    - grammar_score: How grammatically correct is this text?
+    - sentiment_score: How positive is the sentiment?
+    - readability_score: How easy is this text to read?
+    - img_title_score: How appropriate and on-brand is the image title? (1.0 = perfect)
+
+    Text to analyze:
+    Fact: "{fact}"
+    Hashtags: {hashtags}
+    Image Title: "{img_title}"
+
+    Return ONLY valid JSON: {{"toxicity_score": 0.95, "politeness_score": 0.90, "grammar_score": 0.85, "sentiment_score": 0.80, "readability_score": 0.88, "img_title_score": 0.90}}
