@@ -43,7 +43,7 @@ class VisualGenerator:
         openrouter_client: An OpenRouterClient instance with ``generate_image()``.
         config: The ``platforms.yaml`` config dict. Expected keys:
             ``visual.dimensions`` (per-platform width/height),
-            ``visual.model`` (default ``"dall-e-3"``),
+            ``visual.model`` (default ``"black-forest-labs/flux.2-klein-4b"``),
             ``visual.image_size`` (default ``"0.5K"``).
     """
 

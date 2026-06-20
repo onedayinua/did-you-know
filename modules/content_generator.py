@@ -48,7 +48,6 @@ class ContentGenerator:
         self._platforms_config: dict[str, Any] = config.get("platforms", {})
         self._variations: int = config.get("variations", 3)
         self._text_model: str = config.get("text_model", "openai/gpt-4o-mini")
-        self._image_model: str = config.get("image_model", "openai/dall-e-3")
 
         queue_config = config.get("queue", {})
         self._max_pending: int = queue_config.get("max_pending", 10)

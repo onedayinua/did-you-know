@@ -53,6 +53,5 @@ variations: 1
 deduplication:
   min_hours_between_similar: 12
 
-# AI model selection
+# AI model selection (text generation only; image model is in platforms.yaml -> visual.model)
 text_model: "openai/gpt-4o-mini"
-image_model: "openai/dall-e-3"
