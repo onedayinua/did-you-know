@@ -30,9 +30,9 @@ image_prompt: >
   - Bright natural lighting, shallow depth of field
   - Overhead or 45-degree angle
   - Include relevant food ingredients or dish
-  - Composition: Shift the main food dish and complex props to the bottom-center and right side of the frame. The entire top third of the image must be a beautifully blurred, textureless background area (soft bokeh) to serve as clean negative space
-  - Typography overlay: add the text '{img_title}' as an overlay that should be well readable
-  - Typography Style: Use a modern, ultra-bold, heavy-weight sans-serif font. The letterforms must be clean, solid, and highly readable (emulating clean geometric open-source fonts). Strictly NO drop shadows, NO outer glows, NO 3D effects, and NO gradients. The text color must be a single solid color that provides extreme, perfect high contrast against the blurred background.
+  - Composition: Shift the main food dish and complex props to the bottom-center and right side of the frame. At the top there will be Typography overlay so this part of the image should be blured but in a way like it will be in real lense photo shot.
+  - Typography overlay: add the text reading EXACTLY: '{img_title}' as an overlay that should be well readable
+  - Typography Style: Use a modern, ultra-bold, heavy-weight sans-serif font. The letterforms must be clean, solid, and highly readable (emulating clean geometric open-source fonts). The text must be readable, perfect high contrast against the blurred background. Slight shadow and slight outer glow could be used.
 
 
   
