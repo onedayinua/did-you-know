@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1780238692.991669,
-    "ast_hash": "3f09635c2b877e8a4f6265a583d7e4ad",
+    "mtime": 1781962800.9801557,
+    "ast_hash": "9aaefc1222e8868e5a8e3b3152c055d5",
     "semantic_hash": ""
   },
   "PROJECT.md": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   ".opencode/agents/developer.md": {
-    "mtime": 1781953490.2119672,
-    "ast_hash": "3d60d1cda40d92df7fbd07d1e177ac5f",
+    "mtime": 1781961765.9769914,
+    "ast_hash": "c77a16a25934ac333bab6fc91cade58c",
     "semantic_hash": ""
   },
   ".opencode/agents/qa.md": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   ".opencode/agents/techlead.md": {
-    "mtime": 1781953593.5817482,
-    "ast_hash": "bd2aa89ecdb300f6fc8a42a1f929ea21",
+    "mtime": 1781962140.1942167,
+    "ast_hash": "c26298b25e6cd4af99201d6f10612c03",
     "semantic_hash": ""
   },
   ".opencode/agents/writer.md": {
@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   ".opencode/skills/kanban/SKILL.md": {
-    "mtime": 1780146118.3202834,
-    "ast_hash": "bf2dc9b9ff9d955775dd5609f174058e",
+    "mtime": 1781962121.8235493,
+    "ast_hash": "2745f271032dd7acfff6ec8ed245e97a",
     "semantic_hash": ""
   },
   ".opencode/tools/README.md": {
@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "config/content_template.yaml": {
-    "mtime": 1781939279.1619883,
-    "ast_hash": "37ccec46326ee360690b6333838bf195",
+    "mtime": 1781983603.0680475,
+    "ast_hash": "7c35751cfbfc3f6b42ba3654a0442d1d",
     "semantic_hash": ""
   },
   "board/done/TKT-002_shared_config_and_db_pool.md": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "shared/models.py": {
-    "mtime": 1780238693.3911479,
-    "ast_hash": "c4ce78521020d43cfa066ac5dcb54945",
+    "mtime": 1781969596.2501676,
+    "ast_hash": "0a679b45ba2da70ae222e29dcf4c4085",
     "semantic_hash": ""
   },
   "tests/test_models.py": {
@@ -345,33 +345,33 @@
     "semantic_hash": ""
   },
   "app/__init__.py": {
-    "mtime": 1780341364.4054854,
+    "mtime": 1781964914.8539908,
     "ast_hash": "8f74d012fe9f0a4fdcc8c431b1272d17",
     "semantic_hash": ""
   },
   "app/main.py": {
-    "mtime": 1780822378.506664,
-    "ast_hash": "a5e339da0abe09c28721bfd20a53eef7",
+    "mtime": 1781962935.1554425,
+    "ast_hash": "33e6e5da74b99b02b0d60478ad6a53db",
     "semantic_hash": ""
   },
   "app/routes.py": {
-    "mtime": 1781892759.6853952,
-    "ast_hash": "9a6d9063641d25649ce46489751e4898",
+    "mtime": 1781966184.8605864,
+    "ast_hash": "41a52b18d92ae31e74b3e7148930cc15",
     "semantic_hash": ""
   },
   "app/scheduler.py": {
-    "mtime": 1780818336.0014741,
-    "ast_hash": "5fd3e19f5aedc6cd53024452b30b54bf",
+    "mtime": 1781964208.9339716,
+    "ast_hash": "7e5f9b0767b204644a14ee7a9ae9d7b1",
     "semantic_hash": ""
   },
   "modules/content_generator.py": {
-    "mtime": 1780820788.830559,
-    "ast_hash": "297131f86942600a1793d110f23bb824",
+    "mtime": 1781969658.7591312,
+    "ast_hash": "931f4a53a3f721c33bbcc1c18ce4901e",
     "semantic_hash": ""
   },
   "modules/visual_generator.py": {
-    "mtime": 1781939732.337134,
-    "ast_hash": "97fb12e3c71f10a2feff56f08676355e",
+    "mtime": 1781969704.4617136,
+    "ast_hash": "4cdaa24164b3dd6144225ba67faeff29",
     "semantic_hash": ""
   },
   "tests/test_cli.py": {
@@ -380,28 +380,28 @@
     "semantic_hash": ""
   },
   "tests/test_content_generator.py": {
-    "mtime": 1780818336.1667178,
-    "ast_hash": "1e8eca837386eb8aa59664d823f2e5ad",
+    "mtime": 1781969935.9565482,
+    "ast_hash": "53e89e005fe79c2cadec9840823caa26",
     "semantic_hash": ""
   },
   "tests/test_routes.py": {
-    "mtime": 1781891960.7831497,
-    "ast_hash": "d04f44c19f869d21bd46bbf015caf45a",
+    "mtime": 1781960314.3748887,
+    "ast_hash": "d4d111cec562b8e34268a067c123d429",
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1780820810.5081499,
-    "ast_hash": "3382a6ddb78a3cbb3acaa191d947e9a9",
+    "mtime": 1781964420.672668,
+    "ast_hash": "c51be030a0e15d2a7ec680050265fce1",
     "semantic_hash": ""
   },
   "tests/test_visual_generator.py": {
-    "mtime": 1781939796.3791513,
-    "ast_hash": "d52785de88f631acdb6403bcaa87d6d1",
+    "mtime": 1781970098.880371,
+    "ast_hash": "0c18c0d56ce09a24d9f03d3e9fc1816e",
     "semantic_hash": ""
   },
   "app/templates/dashboard.html": {
-    "mtime": 1780851053.7555118,
-    "ast_hash": "c58f1a5c7b462d6422a114f7a074329e",
+    "mtime": 1781967546.105248,
+    "ast_hash": "f680fa52d6c35b91e71791414bcd1bfc",
     "semantic_hash": ""
   },
   "app/templates/preview/base.html": {
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "pyproject.toml": {
-    "mtime": 1781939752.0043983,
-    "ast_hash": "4917bbb2a360981c41e0020ed0933210",
+    "mtime": 1781966128.7286675,
+    "ast_hash": "ae5d927121ec0525c7bdfe056191112e",
     "semantic_hash": ""
   },
   "tests/test_hashtag_fix.py": {
@@ -567,6 +567,41 @@
   "docs/technical/visual_generator_image_fix.md": {
     "mtime": 1781939910.7627482,
     "ast_hash": "ec33875841a736436573dc00a550be65",
+    "semantic_hash": ""
+  },
+  "migrations/0005_add_img_title_to_content.sql": {
+    "mtime": 1781969600.2012877,
+    "ast_hash": "95b80d139cbaa3e37a0ed63c9f73d597",
+    "semantic_hash": ""
+  },
+  "migrations/0005_create_generation_state.sql": {
+    "mtime": 1781964162.4624343,
+    "ast_hash": "ff8eed49f5015cfa99794c6425f27da0",
+    "semantic_hash": ""
+  },
+  "tests/test_generate_api.py": {
+    "mtime": 1781966149.3328853,
+    "ast_hash": "098f267dc6c9ac9cacd21999c151b9fc",
+    "semantic_hash": ""
+  },
+  ".opencode/skills/explore/SKILL.md": {
+    "mtime": 1781962764.5000143,
+    "ast_hash": "1d7183b51a61b1f8796078441b857830",
+    "semantic_hash": ""
+  },
+  "docs/technical/app_dashboard_generate.md": {
+    "mtime": 1781966291.284176,
+    "ast_hash": "87337161b299f97cf07960cc0b2960b0",
+    "semantic_hash": ""
+  },
+  "docs/technical/content_generator_add_title.md": {
+    "mtime": 1781969427.250804,
+    "ast_hash": "7f42606c5dd80685e062f6ff94553756",
+    "semantic_hash": ""
+  },
+  "docs/technical/frontend_dashboard_ui_improvements.md": {
+    "mtime": 1781967050.891344,
+    "ast_hash": "72192a4b2b1464c436484c2665456d21",
     "semantic_hash": ""
   }
 }

@@ -83,6 +83,7 @@ class ContentOption(BaseModel):
     theme: str = Field(..., min_length=1, max_length=100)
     fact: str = Field(..., min_length=1)
     hashtags: list[str] = Field(default_factory=list)
+    img_title: Optional[str] = None
     image_prompt: Optional[str] = None
     image_path: Optional[str] = None
     status: ContentStatus = ContentStatus.PENDING
@@ -139,6 +140,7 @@ class ContentOptionResponse(BaseModel):
     theme: str
     fact: str
     hashtags: list[str]
+    img_title: Optional[str] = None
     image_prompt: Optional[str]
     image_url: Optional[str] = None
     status: ContentStatus
@@ -180,6 +182,7 @@ def content_option_from_record(record: dict[str, Any]) -> ContentOption:
         fact=record["fact"],
         hashtags=list(record["hashtags"]) if record.get("hashtags") else [],
         image_prompt=record.get("image_prompt"),
+        img_title=record.get("img_title"),
         image_path=record.get("image_path"),
         status=record["status"],
         created_at=record.get("created_at"),
