@@ -187,3 +187,5 @@ See [docs/technical/data_service_feature.md](docs/technical/data_service_feature
 3. **All work through tickets**: No bypassing the workflow
 4. **Update history**: Add entry for every status change
 5. **Use ISO timestamps**: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+6. **Mandatory Quality Gates**: Every implementation MUST pass through both @reviewer and @qa agents. Bypassing these gates is a critical workflow violation.
+7. **Sequential flow**: Implementations must follow: `development` $\to$ `review` $\to$ `qa` $\to$ (`documentation`) $\to$ `done`.

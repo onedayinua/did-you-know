@@ -24,6 +24,9 @@ permission:
 ## Implementation Process
 
 ### 1. Before Implementation
+- **Verification**: Verify that the ticket file and any referenced technical specifications are accessible.
+- **Missing Information**: If the ticket is missing, inaccessible, or contains ambiguities that prevent implementation, STOP immediately and ask the `techlead` for the missing materials.
+- **Branch Check**: Verify that you are on the correct feature branch designated in the ticket's `pr.branch` field. If no branch is created or you are on `main`, STOP and ask the `techlead` to create the branch or provide instructions.
 - Read and understand ticket requirements
 - Verify service scope from ticket
 - Create test file in `tests/` directory

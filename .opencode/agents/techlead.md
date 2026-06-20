@@ -64,7 +64,11 @@ mkdir -p board/{todo,development,review,qa,documentation,done}
 
 ### Decision-Based Orchestration
 
-As techlead, you decide ticket movement based on circumstances. There is NO predetermined linear flow.
+As techlead, you decide ticket movement based on circumstances. You MUST strictly adhere to the Mandatory Quality Gate Policy and sequential flow defined in the `@kanban` skill.
+
+#### Workflow Enforcement:
+- Consult the `@kanban` skill for the mandatory sequence and quality gate requirements.
+- Bypassing the reviewer or QA agent is a critical workflow violation.
 
 #### Common Decision Patterns:
 
