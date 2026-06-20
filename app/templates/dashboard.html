@@ -147,6 +147,61 @@
         .char-count.over { color: #e74c3c; }
         .char-count.under { color: #2ecc71; }
     </style>
+    <script>
+    async function checkGenerationStatus() {
+        try {
+            const resp = await fetch('/generate/status');
+            const data = await resp.json();
+            const statusEl = document.getElementById('generation-status');
+            const btn = document.getElementById('generate-btn');
+            
+            if (data.status === 'running') {
+                statusEl.textContent = data.message || 'Running...';
+                statusEl.style.display = 'block';
+                btn.disabled = true;
+                setTimeout(checkGenerationStatus, 3000);
+            } else if (data.status === 'completed') {
+                statusEl.textContent = '✅ ' + (data.message || 'Complete!');
+                statusEl.style.display = 'block';
+                btn.disabled = false;
+                // Reload to show new content
+                setTimeout(() => location.reload(), 2000);
+            } else if (data.status === 'failed') {
+                statusEl.textContent = '❌ ' + (data.message || 'Failed');
+                statusEl.style.display = 'block';
+                btn.disabled = false;
+            } else {
+                statusEl.style.display = 'none';
+                btn.disabled = false;
+            }
+        } catch (e) {
+            console.error('Status check failed:', e);
+            setTimeout(checkGenerationStatus, 10000);
+        }
+    }
+
+    async function startGeneration() {
+        try {
+            const resp = await fetch('/generate', { method: 'POST' });
+            if (resp.ok) {
+                document.getElementById('generation-status').textContent = 'Starting...';
+                document.getElementById('generation-status').style.display = 'block';
+                document.getElementById('generate-btn').disabled = true;
+                setTimeout(checkGenerationStatus, 1000);
+            } else if (resp.status === 409) {
+                alert('Generation already in progress.');
+                checkGenerationStatus();
+            }
+        } catch (e) {
+            alert('Failed to start generation: ' + e);
+        }
+    }
+
+    // On page load, check if generation was running
+    window.addEventListener('DOMContentLoaded', () => {
+        checkGenerationStatus();
+    });
+    </script>
 </head>
 <body>
     <header>
@@ -158,6 +213,12 @@
             <a href="/history">History</a>
             <a href="/health">Health</a>
         </nav>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <button id="generate-btn" onclick="startGeneration()" class="btn btn-primary" style="background:#4361ee;font-weight:600;">
+                ⚡ Generate
+            </button>
+            <div id="generation-status" style="display:none;font-size:0.85rem;color:#555;"></div>
+        </div>
     </header>
     <div class="container">
         {% if history_mode %}

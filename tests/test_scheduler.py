@@ -3,6 +3,8 @@
 Covers:
 - ``run_pipeline()`` — full pipeline orchestration (mocked)
 - ``setup_scheduler()`` — scheduler configuration
+- ``update_generation_state()`` — state persistence
+- ``get_generation_state()`` — state retrieval
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.scheduler import run_pipeline, setup_scheduler
+from app.scheduler import run_pipeline, setup_scheduler, update_generation_state, get_generation_state
 from shared.models import Trend, Theme
 
 
@@ -75,6 +77,98 @@ def sample_config() -> dict:
             "queue": {"max_pending": 10, "expire_days": 7, "cleanup_on_generate": True},
         },
     }
+
+
+# ===================================================================
+# Generation State Helpers
+# ===================================================================
+
+
+class TestGenerationState:
+    """Generation state persistence tests."""
+
+    def _make_conn(self, fetchrow_return=None, execute_return="UPDATE 1"):
+        """Create a mock connection with context manager support."""
+        conn = AsyncMock()
+        conn.fetchrow = AsyncMock(return_value=fetchrow_return)
+        conn.execute = AsyncMock(return_value=execute_return)
+        cm = MagicMock()
+        cm.__aenter__ = AsyncMock(return_value=conn)
+        cm.__aexit__ = AsyncMock(return_value=None)
+        return conn, cm
+
+    async def test_update_generation_state_inserts_when_no_row(
+        self, db_pool: AsyncMock
+    ):
+        """First call inserts a new row."""
+        # Simulate no existing row
+        conn, cm = self._make_conn(fetchrow_return=None, execute_return="INSERT 0 1")
+        # Make pool.acquire() return the context manager (not async)
+        type(db_pool).acquire = MagicMock(return_value=cm)
+
+        await update_generation_state(db_pool, "running", "Testing...")
+
+        conn.execute.assert_called_once()
+        call_args = conn.execute.call_args
+        assert "INSERT INTO generation_state" in call_args[0][0]
+        assert call_args[0][1] == "running"
+        assert call_args[0][2] == "Testing..."
+
+    async def test_update_generation_state_updates_existing_row(
+        self, db_pool: AsyncMock
+    ):
+        """Subsequent calls update the existing row."""
+        conn, cm = self._make_conn(fetchrow_return={"id": 1})
+        type(db_pool).acquire = MagicMock(return_value=cm)
+
+        await update_generation_state(db_pool, "completed", "Done!")
+
+        conn.execute.assert_called_once()
+        call_args = conn.execute.call_args
+        assert "UPDATE generation_state" in call_args[0][0]
+        assert call_args[0][1] == "completed"
+        assert call_args[0][2] == "Done!"
+
+    async def test_get_generation_state_returns_default_when_no_table(
+        self, db_pool: AsyncMock
+    ):
+        """When the table doesn't exist, returns idle default."""
+        type(db_pool).acquire = MagicMock(side_effect=Exception("relation does not exist"))
+
+        state = await get_generation_state(db_pool)
+
+        assert state["status"] == "idle"
+        assert state["progress_message"] == ""
+
+    async def test_get_generation_state_returns_row(self, db_pool: AsyncMock):
+        """Returns the current state row."""
+        conn, cm = self._make_conn(
+            fetchrow_return={
+                "status": "running",
+                "progress_message": "Selecting trend...",
+                "error_message": "",
+                "updated_at": None,
+            }
+        )
+        type(db_pool).acquire = MagicMock(return_value=cm)
+
+        state = await get_generation_state(db_pool)
+
+        assert state["status"] == "running"
+        assert state["progress_message"] == "Selecting trend..."
+
+    async def test_update_with_error_message(self, db_pool: AsyncMock):
+        """Error message is stored when status is failed."""
+        conn, cm = self._make_conn(fetchrow_return={"id": 1})
+        type(db_pool).acquire = MagicMock(return_value=cm)
+
+        await update_generation_state(
+            db_pool, "failed", "Something broke", error_message="Something broke"
+        )
+
+        call_args = conn.execute.call_args
+        assert call_args[0][1] == "failed"
+        assert call_args[0][3] == "Something broke"
 
 
 # ===================================================================

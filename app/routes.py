@@ -12,10 +12,13 @@ Endpoints:
 - GET  /preview/{id}/{platform}   — Preview for specific platform
 - GET  /history                   — Posted content history
 - GET  /health                    — Health check
+- POST /generate                  — Trigger content generation pipeline
+- GET  /generate/status           — Get generation pipeline status
 """
 
 from __future__ import annotations
 
+import asyncio
 import json as json_module
 import logging
 import os
@@ -27,7 +30,6 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from shared.db import fetch, fetch_one, execute, transaction
-from shared.models import ContentStatus
 
 logger = logging.getLogger(__name__)
 
@@ -614,6 +616,97 @@ async def history(request: Request, platform: str | None = None):
             "history_mode": True,
         },
     )
+
+
+# ===================================================================
+# Content Generation
+# ===================================================================
+
+
+@router.post("/generate", status_code=202)
+async def trigger_generation():
+    """Trigger the content generation pipeline in the background.
+
+    Returns 202 Accepted if the pipeline was started.
+    Returns 409 Conflict if a generation is already running.
+
+    Raises:
+        HTTPException 409: If a generation is already in progress.
+    """
+    from shared.db import get_pool
+    from shared.openrouter_client import OpenRouterClient
+    from shared.config_loader import load_config
+    from app.scheduler import (
+        run_pipeline,
+        update_generation_state,
+        get_generation_state,
+    )
+
+    pool = await get_pool()
+
+    # Check if already running
+    state = await get_generation_state(pool)
+    if state["status"] == "running":
+        raise HTTPException(
+            status_code=409,
+            detail="Generation already in progress",
+        )
+
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    client = OpenRouterClient(api_key)
+    config = {
+        "content_template": load_config("content_template"),
+        "platforms": load_config("platforms"),
+        "backup_trends": load_config("backup_trends"),
+    }
+
+    await update_generation_state(pool, "running", "Starting generation...")
+
+    async def _run():
+        """Background task wrapper that ensures client cleanup."""
+        try:
+            result = await run_pipeline(pool, client, config)
+            logger.info("Manual generation result: %s", result)
+        except Exception as exc:
+            logger.exception("Manual generation failed")
+            try:
+                await update_generation_state(
+                    pool,
+                    "failed",
+                    error_message=str(exc),
+                    progress_message=f"Failed: {exc}",
+                )
+            except Exception:
+                logger.exception("Failed to update generation state after error")
+        finally:
+            try:
+                await client.close()
+            except Exception:
+                logger.exception("Failed to close OpenRouter client")
+
+    asyncio.create_task(_run())
+    logger.info("Manual generation triggered in background")
+    return {"status": "started"}
+
+
+@router.get("/generate/status")
+async def generation_status():
+    """Get the current generation pipeline status.
+
+    Returns:
+        JSON with ``status``, ``message``, and ``updated_at`` fields.
+    """
+    from shared.db import get_pool
+    from app.scheduler import get_generation_state
+
+    pool = await get_pool()
+    state = await get_generation_state(pool)
+    return {
+        "status": state["status"],
+        "message": state.get("progress_message", ""),
+        "error_message": state.get("error_message", ""),
+        "updated_at": state.get("updated_at", ""),
+    }
 
 
 # ===================================================================
