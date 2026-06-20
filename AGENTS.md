@@ -52,21 +52,8 @@ Each service should have `.env.test` configuration files for development and tes
 - Point to sandbox/staging API endpoints
 - Include all required environment variables from `.env.example`
 
-## graphify (MANDATORY REPOSITORY NAVIGATION)
+## Codebase Navigation
 
-This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships. 
+Whenever you need to explore the project structure, locate where a feature is implemented, or trace execution paths (e.g., checking if a scheduler starts), you MUST load the exploration skill.
 
-**CRITICAL CONSTRAINT:** Do NOT use standard bash commands like `cd`, `ls`, `find`, `tree`, or `grep` for initial codebase discovery or navigation. You MUST use `graphify` as your primary lens for understanding the repo.
-
-When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
-
-### Mandatory Execution Order:
-1. **Initial Discovery:** For any codebase questions, you MUST first run `graphify query "<question>"` (assuming `graphify-out/graph.json` exists). Do not manually browse source files until this is done.
-2. **Deep Dives:** Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. 
-3. **Broad Navigation:** If `graphify-out/wiki/index.md` exists, read it for broad navigation instead of raw source browsing.
-4. **Architecture Review:** Read `graphify-out/GRAPH_REPORT.md` ONLY if the query/path/explain commands do not surface enough context.
-5. **Post-Modification:** After modifying any code, you MUST run `graphify update .` to keep the graph current (AST-only, no API cost).
-
-### Exceptions:
-- Dirty `graphify-out/` files are expected. Do not skip using `graphify` just because the graph files are dirty.
-- Only skip `graphify` if the user explicitly tells you to, or if the current task is specifically to debug stale/incorrect graphify output.
+Invoke the `skill` tool with `skill: "explore"` before executing any bash commands.
