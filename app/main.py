@@ -52,7 +52,8 @@ async def lifespan(app: FastAPI):
         "platforms": platforms_config,
         "backup_trends": backup_config,
     })
-    apscheduler.start()
+    # Temporary commented Scheduler
+    # apscheduler.start()
 
     logger.info("Application started with scheduler")
 
