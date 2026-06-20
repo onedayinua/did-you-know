@@ -371,67 +371,6 @@ class TestGenerateAndSave:
 
 
 # ===================================================================
-# TestImageResizing
-# ===================================================================
-
-
-class TestImageResizing:
-    """Post-generation image resize to exact platform dimensions."""
-
-    async def test_resizes_to_platform_dimensions(
-        self, generator, openrouter_client, sample_option, tmp_path
-    ):
-        """Generated image is resized to the exact platform dimensions."""
-        generator._images_dir = str(tmp_path)
-        # Return a small 10x10 image
-        from PIL import Image
-        import io
-        small_img = Image.new("RGB", (10, 10), color="red")
-        buf = io.BytesIO()
-        small_img.save(buf, format="PNG")
-        openrouter_client.generate_image.return_value = buf.getvalue()
-
-        result = await generator._generate_and_save(
-            sample_option, {"width": 500, "height": 1000}
-        )
-
-        filepath = Path(generator._images_dir) / result
-        saved_img = Image.open(filepath)
-        assert saved_img.width == 500
-        assert saved_img.height == 1000
-
-    async def test_skips_resize_on_zero_dimensions(
-        self, generator, openrouter_client, sample_option, tmp_path
-    ):
-        """No resize when dimensions are zero."""
-        generator._images_dir = str(tmp_path)
-        openrouter_client.generate_image.return_value = b"original_bytes"
-
-        result = await generator._generate_and_save(
-            sample_option, {"width": 0, "height": 0}
-        )
-
-        filepath = Path(generator._images_dir) / result
-        assert filepath.read_bytes() == b"original_bytes"
-
-    async def test_skips_resize_on_failure(
-        self, generator, openrouter_client, sample_option, tmp_path
-    ):
-        """Original bytes preserved when resize fails."""
-        generator._images_dir = str(tmp_path)
-        openrouter_client.generate_image.return_value = b"original_bytes"
-
-        with patch("PIL.Image.open") as mock_open:
-            mock_open.side_effect = Exception("Pillow error")
-            result = await generator._generate_and_save(
-                sample_option, {"width": 500, "height": 1000}
-            )
-
-        filepath = Path(generator._images_dir) / result
-        assert filepath.read_bytes() == b"original_bytes"
-
-
-# ===================================================================
 # _update_image_path
 # ===================================================================
 

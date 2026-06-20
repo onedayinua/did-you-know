@@ -269,32 +269,6 @@ class VisualGenerator:
             output_megapixels=output_megapixels,
         )
 
-        # Resize to exact platform dimensions
-        if dimensions["width"] > 0 and dimensions["height"] > 0:
-            try:
-                from PIL import Image as PILImage
-                import io
-                img = PILImage.open(io.BytesIO(image_bytes))
-                img = img.resize(
-                    (dimensions["width"], dimensions["height"]),
-                    PILImage.LANCZOS,
-                )
-                buf = io.BytesIO()
-                img.save(buf, format="PNG")
-                image_bytes = buf.getvalue()
-                logger.info(
-                    "Resized image to %dx%d for platform %s",
-                    dimensions["width"],
-                    dimensions["height"],
-                    option.platform,
-                )
-            except Exception as exc:
-                logger.warning(
-                    "Failed to resize image for option id=%d, using original: %s",
-                    option.id,
-                    exc,
-                )
-
         # Build file path
         filename = f"{option.batch_id}_{option.id}.png"
         filepath = os.path.join(self._images_dir, filename)
