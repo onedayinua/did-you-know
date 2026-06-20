@@ -15,6 +15,7 @@ with the requested aspect ratio, avoiding wasteful post-generation resizing.
 
 from __future__ import annotations
 
+import io
 import logging
 import os
 from typing import Any
@@ -204,12 +205,30 @@ class VisualGenerator:
             Aspect ratio string like "2:3" or "1:1".
         """
         dims = self._dimensions.get(platform)
-        if dims and dims.get("width") and dims.get("height"):
-            from math import gcd
-            w, h = dims["width"], dims["height"]
-            g = gcd(w, h)
-            return f"{w // g}:{h // g}"
+        if dims:
+            if "aspect_ratio" in dims:
+                return dims["aspect_ratio"]
+            if dims.get("width") and dims.get("height"):
+                from math import gcd
+                w, h = dims["width"], dims["height"]
+                g = gcd(w, h)
+                return f"{w // g}:{h // g}"
         return ASPECT_RATIO_MAP.get(platform, "1:1")
+
+    def _get_output_megapixels(self, platform: str) -> float | None:
+        """Get output megapixels setting for a platform.
+
+        Args:
+            platform: Platform name.
+
+        Returns:
+            Float megapixels value if configured and > 0, or ``None``.
+        """
+        dims = self._dimensions.get(platform, {})
+        mp = dims.get("output_megapixels")
+        if mp is not None and mp > 0:
+            return float(mp)
+        return None
 
     async def _generate_and_save(
         self,
@@ -220,7 +239,9 @@ class VisualGenerator:
 
         Args:
             option: ContentOption with an ``image_prompt``.
-            dimensions: Dict with ``width`` and ``height`` (used to derive aspect ratio only; the model generates at its native resolution).
+            dimensions: Dict with ``width`` and ``height`` (used to derive aspect
+                ratio and also to resize the generated image to exact platform
+                dimensions).
 
         Returns:
             Relative file path (e.g. ``"data/images/batch_xxx_1.png"``).
@@ -229,12 +250,14 @@ class VisualGenerator:
             RuntimeError: If the image file cannot be written.
         """
         aspect_ratio = self._get_aspect_ratio(option.platform)
+        output_megapixels = self._get_output_megapixels(option.platform)
 
         logger.info(
-            "Generating image for option id=%d platform=%s aspect_ratio=%s",
+            "Generating image for option id=%d platform=%s aspect_ratio=%s output_megapixels=%s",
             option.id,
             option.platform,
             aspect_ratio,
+            output_megapixels,
         )
 
         # Generate image via OpenRouter
@@ -243,7 +266,34 @@ class VisualGenerator:
             model=self._model,
             aspect_ratio=aspect_ratio,
             size=self._image_size,
+            output_megapixels=output_megapixels,
         )
+
+        # Resize to exact platform dimensions
+        if dimensions["width"] > 0 and dimensions["height"] > 0:
+            try:
+                from PIL import Image as PILImage
+                import io
+                img = PILImage.open(io.BytesIO(image_bytes))
+                img = img.resize(
+                    (dimensions["width"], dimensions["height"]),
+                    PILImage.LANCZOS,
+                )
+                buf = io.BytesIO()
+                img.save(buf, format="PNG")
+                image_bytes = buf.getvalue()
+                logger.info(
+                    "Resized image to %dx%d for platform %s",
+                    dimensions["width"],
+                    dimensions["height"],
+                    option.platform,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "Failed to resize image for option id=%d, using original: %s",
+                    option.id,
+                    exc,
+                )
 
         # Build file path
         filename = f"{option.batch_id}_{option.id}.png"

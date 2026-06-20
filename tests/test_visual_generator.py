@@ -35,8 +35,14 @@ def sample_config() -> dict:
     return {
         "visual": {
             "model": "openai/dall-e-3",
+            "image_size": "0.5K",
             "dimensions": {
-                "pinterest": {"width": 1000, "height": 1500},
+                "pinterest": {
+                    "width": 500,
+                    "height": 1000,
+                    "aspect_ratio": "2:3",
+                    "output_megapixels": 1.0,
+                },
                 "instagram": {"width": 1080, "height": 1080},
             },
         },
@@ -185,10 +191,10 @@ class TestGetDimensions:
     """Platform-specific dimension lookup."""
 
     def test_returns_pinterest_dimensions(self, generator: VisualGenerator):
-        """Pinterest returns 1000x1500."""
+        """Pinterest returns 500x1000."""
         dims = generator._get_dimensions("pinterest")
-        assert dims["width"] == 1000
-        assert dims["height"] == 1500
+        assert dims["width"] == 500
+        assert dims["height"] == 1000
 
     def test_returns_instagram_dimensions(self, generator: VisualGenerator):
         """Instagram returns 1080x1080."""
@@ -220,7 +226,7 @@ class TestGetDimensions:
         assert dims["height"] == 1024
 
     def test_aspect_ratio_derived_from_pinterest(self, generator: VisualGenerator):
-        """Aspect ratio derived from Pinterest dimensions (1000x1500 = 2:3)."""
+        """Aspect ratio derived from Pinterest config explicit aspect_ratio (2:3)."""
         ratio = generator._get_aspect_ratio("pinterest")
         assert ratio == "2:3"
 
@@ -257,6 +263,34 @@ class TestGetAspectRatio:
 
 
 # ===================================================================
+# _get_output_megapixels
+# ===================================================================
+
+
+class TestOutputMegapixels:
+    """Output megapixels lookup."""
+
+    def test_returns_pinterest_megapixels(self, generator: VisualGenerator):
+        mp = generator._get_output_megapixels("pinterest")
+        assert mp == 1.0
+
+    def test_returns_none_when_not_configured(self, generator: VisualGenerator):
+        mp = generator._get_output_megapixels("unknown")
+        assert mp is None
+
+    def test_returns_none_when_zero(self, generator, db_pool, openrouter_client):
+        gen = VisualGenerator(db_pool, openrouter_client, {
+            "visual": {
+                "dimensions": {
+                    "custom": {"output_megapixels": 0},
+                },
+            },
+        })
+        mp = gen._get_output_megapixels("custom")
+        assert mp is None
+
+
+# ===================================================================
 # _generate_and_save
 # ===================================================================
 
@@ -276,7 +310,7 @@ class TestGenerateAndSave:
         openrouter_client.generate_image.return_value = b"fake_image_bytes"
 
         result = await generator._generate_and_save(
-            sample_option, {"width": 1000, "height": 1500}
+            sample_option, {"width": 500, "height": 1000}
         )
 
         assert "batch_20240101_000000_abc123_1.png" in result
@@ -295,7 +329,7 @@ class TestGenerateAndSave:
         openrouter_client.generate_image.side_effect = Exception("API error")
         with pytest.raises(Exception, match="API error"):
             await generator._generate_and_save(
-                sample_option, {"width": 1000, "height": 1500}
+                sample_option, {"width": 500, "height": 1000}
             )
 
     async def test_raises_on_write_failure(
@@ -309,7 +343,7 @@ class TestGenerateAndSave:
         openrouter_client.generate_image.return_value = b"bytes"
         with pytest.raises(RuntimeError, match="Failed to write image file"):
             await generator._generate_and_save(
-                sample_option, {"width": 1000, "height": 1500}
+                sample_option, {"width": 500, "height": 1000}
             )
 
     async def test_passes_correct_parameters(
@@ -319,12 +353,12 @@ class TestGenerateAndSave:
         sample_option: ContentOption,
         tmp_path: Path,
     ):
-        """generate_image is called with the right prompt, model, and aspect_ratio."""
+        """generate_image is called with the right prompt, model, aspect_ratio, and output_megapixels."""
         generator._images_dir = str(tmp_path)
         openrouter_client.generate_image.return_value = b"bytes"
 
         await generator._generate_and_save(
-            sample_option, {"width": 1000, "height": 1500}
+            sample_option, {"width": 500, "height": 1000}
         )
 
         openrouter_client.generate_image.assert_called_once_with(
@@ -332,7 +366,69 @@ class TestGenerateAndSave:
             model="openai/dall-e-3",
             aspect_ratio="2:3",
             size="0.5K",
+            output_megapixels=1.0,
         )
+
+
+# ===================================================================
+# TestImageResizing
+# ===================================================================
+
+
+class TestImageResizing:
+    """Post-generation image resize to exact platform dimensions."""
+
+    async def test_resizes_to_platform_dimensions(
+        self, generator, openrouter_client, sample_option, tmp_path
+    ):
+        """Generated image is resized to the exact platform dimensions."""
+        generator._images_dir = str(tmp_path)
+        # Return a small 10x10 image
+        from PIL import Image
+        import io
+        small_img = Image.new("RGB", (10, 10), color="red")
+        buf = io.BytesIO()
+        small_img.save(buf, format="PNG")
+        openrouter_client.generate_image.return_value = buf.getvalue()
+
+        result = await generator._generate_and_save(
+            sample_option, {"width": 500, "height": 1000}
+        )
+
+        filepath = Path(generator._images_dir) / result
+        saved_img = Image.open(filepath)
+        assert saved_img.width == 500
+        assert saved_img.height == 1000
+
+    async def test_skips_resize_on_zero_dimensions(
+        self, generator, openrouter_client, sample_option, tmp_path
+    ):
+        """No resize when dimensions are zero."""
+        generator._images_dir = str(tmp_path)
+        openrouter_client.generate_image.return_value = b"original_bytes"
+
+        result = await generator._generate_and_save(
+            sample_option, {"width": 0, "height": 0}
+        )
+
+        filepath = Path(generator._images_dir) / result
+        assert filepath.read_bytes() == b"original_bytes"
+
+    async def test_skips_resize_on_failure(
+        self, generator, openrouter_client, sample_option, tmp_path
+    ):
+        """Original bytes preserved when resize fails."""
+        generator._images_dir = str(tmp_path)
+        openrouter_client.generate_image.return_value = b"original_bytes"
+
+        with patch("PIL.Image.open") as mock_open:
+            mock_open.side_effect = Exception("Pillow error")
+            result = await generator._generate_and_save(
+                sample_option, {"width": 500, "height": 1000}
+            )
+
+        filepath = Path(generator._images_dir) / result
+        assert filepath.read_bytes() == b"original_bytes"
 
 
 # ===================================================================
@@ -541,6 +637,7 @@ class TestRun:
             model="openai/dall-e-3",
             aspect_ratio="1:1",
             size="0.5K",
+            output_megapixels=None,
         )
 
 

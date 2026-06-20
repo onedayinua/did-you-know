@@ -20,6 +20,8 @@ visual:
     pinterest:
       width: 500
       height: 1000
+      aspect_ratio: "2:3"
+      output_megapixels: 1.0
     instagram:
       width: 1080
       height: 1080

@@ -548,6 +548,58 @@ class TestGenerateImage:
         body = call_kwargs["json"]
         assert "size" not in body["image_config"]
 
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_generate_image_with_output_megapixels(self, mock_httpx_client, client):
+        """output_megapixels is included in image_config when provided."""
+        import base64
+        b64_data = base64.b64encode(b"fake").decode("ascii")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": f"data:image/png;base64,{b64_data}"}}]
+                }
+            }]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat", output_megapixels=1.0)
+        assert result == b"fake"
+        call_kwargs = mock_instance.request.call_args[1]
+        body = call_kwargs["json"]
+        assert body["image_config"]["output_megapixels"] == 1.0
+
+    @patch("shared.openrouter_client.httpx.AsyncClient")
+    async def test_generate_image_without_output_megapixels(self, mock_httpx_client, client):
+        """No output_megapixels key in image_config when not provided."""
+        import base64
+        b64_data = base64.b64encode(b"fake").decode("ascii")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{
+                "message": {
+                    "images": [{"image_url": {"url": f"data:image/png;base64,{b64_data}"}}]
+                }
+            }]
+        }
+
+        mock_instance = AsyncMock()
+        mock_instance.request.return_value = mock_response
+        mock_httpx_client.return_value = mock_instance
+
+        result = await client.generate_image("A cat")
+        assert result == b"fake"
+        call_kwargs = mock_instance.request.call_args[1]
+        body = call_kwargs["json"]
+        assert "output_megapixels" not in body["image_config"]
+
 
 # ------------------------------------------------------------------
 # Retry timing (exponential backoff with jitter)
