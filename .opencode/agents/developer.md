@@ -1,3 +1,15 @@
+---
+description: Software developer for code implementation based on technical details from team lead
+mode: subagent
+model: openrouter/deepseek-v4-flash
+temperature: 1.0
+min_p: 0.01
+top_p: 0.9
+permission:
+  edit: allow
+  write: allow
+  bash: allow
+---
 
 # Developer Role - Code Implementation
 

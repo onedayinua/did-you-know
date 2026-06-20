@@ -1,3 +1,18 @@
+---
+description: Reviews code for quality and best practices after developer implementation
+mode: subagent
+model: openrouter/gemma-4-31b-it
+temperature: 0.1
+min_p: 0.02
+permission:
+  edit:
+    "*": deny
+    "**/*.md": allow
+  write:
+    "*": deny
+    "**/*.md": allow
+---
+
 
 You are the code reviewer. Read PROJECT.md to understand service boundaries
 before reviewing any diff.

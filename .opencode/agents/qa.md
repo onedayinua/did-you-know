@@ -1,3 +1,18 @@
+---
+description: Test code by using unit and integration tests. Works after reviewer
+mode: subagent
+model: openrouter/gemma-4-31b-it
+temperature: 0.7
+min_p: 0.02
+permission:
+  bash: allow
+  edit:
+    "*": deny
+    "**/*.md": allow
+  write:
+    "*": deny
+    "**/*.md": allow
+---
 
 # QA Role - Testing and Verification
 

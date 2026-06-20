@@ -6,11 +6,15 @@ ENV PYTHONUNBUFFERED=1
 # We add Node.js here as it is a prerequisite for the agents cli
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl ca-certificates tar gnupg \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs postgresql-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir psycopg2-binary SQLAlchemy
+
+WORKDIR /workspace
+RUN npm install -g npm@latest
+RUN npm install @mlflow/opencode
 
 # 2. Copy uv binaries
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
