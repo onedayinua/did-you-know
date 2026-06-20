@@ -148,24 +148,65 @@
         .char-count.under { color: #2ecc71; }
     </style>
     <script>
+    let ws = null;
+
+    function connectWebSocket() {
+        if (ws) ws.close();
+        const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${location.host}/generate/ws`);
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const statusEl = document.getElementById('generation-status');
+            const btn = document.getElementById('generate-btn');
+
+            if (data.status === 'running') {
+                statusEl.textContent = data.message || 'Running...';
+                statusEl.style.display = 'block';
+                btn.disabled = true;
+            } else if (data.status === 'completed') {
+                statusEl.textContent = '✅ ' + (data.message || 'Complete!');
+                statusEl.style.display = 'block';
+                btn.disabled = false;
+                ws.close();
+                // Reload once to show new content
+                setTimeout(() => location.reload(), 2000);
+            } else if (data.status === 'failed') {
+                statusEl.textContent = '❌ ' + (data.message || 'Failed');
+                statusEl.style.display = 'block';
+                btn.disabled = false;
+                ws.close();
+            } else {
+                // idle
+                statusEl.style.display = 'none';
+                btn.disabled = false;
+                ws.close();
+            }
+        };
+
+        ws.onerror = function() {
+            console.error('WebSocket error');
+            // Fall back to polling
+            setTimeout(checkGenerationStatus, 5000);
+        };
+    }
+
     async function checkGenerationStatus() {
         try {
             const resp = await fetch('/generate/status');
             const data = await resp.json();
             const statusEl = document.getElementById('generation-status');
             const btn = document.getElementById('generate-btn');
-            
+
             if (data.status === 'running') {
                 statusEl.textContent = data.message || 'Running...';
                 statusEl.style.display = 'block';
                 btn.disabled = true;
-                setTimeout(checkGenerationStatus, 3000);
+                // Fallback: if WebSocket fails, keep polling
             } else if (data.status === 'completed') {
                 statusEl.textContent = '✅ ' + (data.message || 'Complete!');
                 statusEl.style.display = 'block';
                 btn.disabled = false;
-                // Reload to show new content
-                setTimeout(() => location.reload(), 2000);
             } else if (data.status === 'failed') {
                 statusEl.textContent = '❌ ' + (data.message || 'Failed');
                 statusEl.style.display = 'block';
@@ -187,10 +228,10 @@
                 document.getElementById('generation-status').textContent = 'Starting...';
                 document.getElementById('generation-status').style.display = 'block';
                 document.getElementById('generate-btn').disabled = true;
-                setTimeout(checkGenerationStatus, 1000);
+                connectWebSocket();
             } else if (resp.status === 409) {
                 alert('Generation already in progress.');
-                checkGenerationStatus();
+                connectWebSocket();
             }
         } catch (e) {
             alert('Failed to start generation: ' + e);
@@ -199,7 +240,18 @@
 
     // On page load, check if generation was running
     window.addEventListener('DOMContentLoaded', () => {
-        checkGenerationStatus();
+        // Check if there's a running/completed generation
+        fetch('/generate/status')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'running') {
+                    connectWebSocket();
+                } else if (data.status === 'completed') {
+                    // Show completed but don't reload
+                    document.getElementById('generation-status').textContent = '✅ ' + (data.message || 'Complete!');
+                    document.getElementById('generation-status').style.display = 'block';
+                }
+            });
     });
     </script>
 </head>

@@ -13,6 +13,7 @@ Endpoints:
 - GET  /history                   — Posted content history
 - GET  /health                    — Health check
 - POST /generate                  — Trigger content generation pipeline
+- POST /generate/reset            — Reset generation state to idle
 - GET  /generate/status           — Get generation pipeline status
 """
 
@@ -25,7 +26,7 @@ import os
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -630,6 +631,9 @@ async def trigger_generation():
     Returns 202 Accepted if the pipeline was started.
     Returns 409 Conflict if a generation is already running.
 
+    If the state gets stuck in ``running``, use ``POST /generate/reset``
+    to reset it back to ``idle``.
+
     Raises:
         HTTPException 409: If a generation is already in progress.
     """
@@ -689,6 +693,30 @@ async def trigger_generation():
     return {"status": "started"}
 
 
+@router.post("/generate/reset")
+async def reset_generation():
+    """Reset the generation state back to idle.
+
+    Useful if a pipeline crashes in a way that leaves the state stuck
+    in ``running`` (e.g., SIGKILL).  Returns the new idle state.
+
+    Returns:
+        JSON with ``status``, ``message``, and ``updated_at`` fields.
+    """
+    from shared.db import get_pool
+    from app.scheduler import reset_generation_state, get_generation_state
+
+    pool = await get_pool()
+    await reset_generation_state(pool)
+    state = await get_generation_state(pool)
+    logger.info("Generation state reset to idle")
+    return {
+        "status": state["status"],
+        "message": state.get("progress_message", ""),
+        "updated_at": state.get("updated_at", ""),
+    }
+
+
 @router.get("/generate/status")
 async def generation_status():
     """Get the current generation pipeline status.
@@ -707,6 +735,40 @@ async def generation_status():
         "error_message": state.get("error_message", ""),
         "updated_at": state.get("updated_at", ""),
     }
+
+
+@router.websocket("/generate/ws")
+async def generation_status_ws(websocket: WebSocket):
+    """WebSocket endpoint for real-time generation status updates.
+
+    Polls the generation_state table every 1 second and pushes
+    status updates to the client. Closes when status is
+    ``completed`` or ``failed``.
+
+    Args:
+        websocket: The WebSocket connection.
+    """
+    await websocket.accept()
+    from shared.db import get_pool
+    from app.scheduler import get_generation_state
+
+    pool = await get_pool()
+    try:
+        while True:
+            state = await get_generation_state(pool)
+            await websocket.send_json({
+                "status": state["status"],
+                "message": state.get("progress_message", ""),
+                "error_message": state.get("error_message", ""),
+                "updated_at": state.get("updated_at", ""),
+            })
+            if state["status"] in ("completed", "failed"):
+                break
+            await asyncio.sleep(1)
+    except WebSocketDisconnect:
+        pass
+    finally:
+        await websocket.close()
 
 
 # ===================================================================

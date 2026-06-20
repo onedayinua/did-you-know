@@ -32,6 +32,7 @@ dependencies = [
     "jinja2>=3.1.0",        # Template engine
     "apscheduler>=3.10.0",  # Job scheduling
     "click>=8.0.0",         # CLI framework
+    "websockets>=14.0",     # WebSocket support for FastAPI
 ]
 
 [project.optional-dependencies]

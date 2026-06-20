@@ -3,6 +3,7 @@
 Covers:
 - POST /generate — trigger content generation
 - GET /generate/status — poll generation status
+- WebSocket /generate/ws — real-time status updates
 """
 
 from __future__ import annotations
@@ -31,7 +32,13 @@ def client():
     The generate endpoints use lazy imports inside the handler, so we
     patch at the source modules (shared.db, shared.openrouter_client,
     shared.config_loader, app.scheduler) instead of app.routes.
+
+    We import app submodules up front so that unittest.mock.patch can
+    resolve dotted paths like ``app.routes.fetch``.
     """
+    import app.routes  # noqa: F811 — register on app module for mock
+    import app.scheduler  # noqa: F811 — register on app module for mock
+
     with (
         patch("app.routes.fetch", new_callable=AsyncMock) as mock_fetch,
         patch("app.routes.fetch_one", new_callable=AsyncMock) as mock_fetch_one,
@@ -309,3 +316,130 @@ class TestGenerationStatus:
             data = response.json()
             assert "updated_at" in data
             assert data["updated_at"] == "2024-06-20T12:00:00+00:00"
+
+
+# ===================================================================
+# POST /generate/reset
+# ===================================================================
+
+
+class TestResetGeneration:
+    """POST /generate/reset endpoint tests."""
+
+    def test_reset_clears_running_state(self, client: TestClient):
+        """POST /generate/reset clears a running state."""
+        pool, conn = _make_pool_mock()
+
+        with (
+            patch("shared.db.get_pool", new_callable=AsyncMock, return_value=pool) as mock_get_pool,
+            patch("app.scheduler.reset_generation_state", new_callable=AsyncMock) as mock_reset,
+            patch("app.scheduler.get_generation_state", new_callable=AsyncMock) as mock_get_state,
+        ):
+            # First set up the mock to say it was running
+            mock_get_state.return_value = {
+                "status": "idle", "progress_message": "", "updated_at": "2024-06-20T12:00:00+00:00",
+            }
+
+            # Reset
+            response = client.post("/generate/reset")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "idle"
+
+            # Verify reset_generation_state was called
+            mock_reset.assert_called_once()
+
+    def test_reset_returns_idle_when_already_idle(self, client: TestClient):
+        """POST /generate/reset works even when already idle."""
+        pool, conn = _make_pool_mock()
+
+        with (
+            patch("shared.db.get_pool", new_callable=AsyncMock, return_value=pool) as mock_get_pool,
+            patch("app.scheduler.reset_generation_state", new_callable=AsyncMock) as mock_reset,
+            patch("app.scheduler.get_generation_state", new_callable=AsyncMock) as mock_get_state,
+        ):
+            mock_get_state.return_value = {
+                "status": "idle", "progress_message": "", "updated_at": "2024-06-20T12:00:00+00:00",
+            }
+
+            response = client.post("/generate/reset")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "idle"
+            mock_reset.assert_called_once()
+
+
+# ===================================================================
+# WebSocket /generate/ws
+# ===================================================================
+
+
+class TestGenerationWebSocket:
+    """WebSocket /generate/ws endpoint tests."""
+
+    def test_websocket_sends_status_updates(self, client: TestClient):
+        """WebSocket sends status updates while generation is running."""
+        pool, conn = _make_pool_mock()
+
+        with (
+            patch("shared.db.get_pool", new_callable=AsyncMock, return_value=pool) as mock_get_pool,
+            patch("app.scheduler.get_generation_state", new_callable=AsyncMock) as mock_get_state,
+        ):
+            # First call returns running, second returns completed
+            mock_get_state.side_effect = [
+                {
+                    "status": "running",
+                    "progress_message": "Selecting trend...",
+                    "error_message": "",
+                    "updated_at": "2024-01-01T00:00:00",
+                },
+                {
+                    "status": "completed",
+                    "progress_message": "Pipeline complete!",
+                    "error_message": "",
+                    "updated_at": "2024-01-01T00:01:00",
+                },
+            ]
+
+            with client.websocket_connect("/generate/ws") as ws:
+                # First message — running
+                data = ws.receive_json()
+                assert data["status"] == "running"
+                assert "message" in data
+                assert "updated_at" in data
+
+                # Second message — completed (causes WS to close)
+                data = ws.receive_json()
+                assert data["status"] == "completed"
+                assert "message" in data
+
+    def test_websocket_closes_on_failed(self, client: TestClient):
+        """WebSocket closes when status transitions to failed."""
+        pool, conn = _make_pool_mock()
+
+        with (
+            patch("shared.db.get_pool", new_callable=AsyncMock, return_value=pool) as mock_get_pool,
+            patch("app.scheduler.get_generation_state", new_callable=AsyncMock) as mock_get_state,
+        ):
+            mock_get_state.side_effect = [
+                {
+                    "status": "running",
+                    "progress_message": "Selecting trend...",
+                    "error_message": "",
+                    "updated_at": "2024-01-01T00:00:00",
+                },
+                {
+                    "status": "failed",
+                    "progress_message": "Failed: No trend found",
+                    "error_message": "No trend found",
+                    "updated_at": "2024-01-01T00:01:00",
+                },
+            ]
+
+            with client.websocket_connect("/generate/ws") as ws:
+                data = ws.receive_json()
+                assert data["status"] == "running"
+
+                data = ws.receive_json()
+                assert data["status"] == "failed"
+                assert "error_message" in data
