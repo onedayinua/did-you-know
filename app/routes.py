@@ -131,6 +131,54 @@ async def approved_page(request: Request, platform: str | None = None):
 
 
 # ===================================================================
+# Posted Page
+# ===================================================================
+
+
+@router.get("/posted", response_class=HTMLResponse)
+async def posted_page(request: Request, platform: str | None = None):
+    """Show all posted content options, optionally filtered by platform.
+
+    Args:
+        request: FastAPI request object.
+        platform: Optional platform filter (``"pinterest"`` or ``"instagram"``).
+
+    Returns:
+        HTML posted page.
+    """
+    if platform:
+        query = """
+            SELECT id, batch_id, platform, theme, fact, hashtags,
+                   image_prompt, image_path, status, created_at, updated_at
+            FROM content_options
+            WHERE status = 'posted'
+            AND platform = $1
+            ORDER BY created_at DESC
+        """
+        rows = await fetch(query, platform)
+    else:
+        query = """
+            SELECT id, batch_id, platform, theme, fact, hashtags,
+                   image_prompt, image_path, status, created_at, updated_at
+            FROM content_options
+            WHERE status = 'posted'
+            ORDER BY created_at DESC
+        """
+        rows = await fetch(query)
+
+    options = [_row_to_dict(r) for r in rows]
+    return templates.TemplateResponse(
+        request,
+        "dashboard.html",
+        {
+            "options": options,
+            "current_platform": platform,
+            "posted_mode": True,
+        },
+    )
+
+
+# ===================================================================
 # Option Detail
 # ===================================================================
 

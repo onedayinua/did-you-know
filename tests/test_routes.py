@@ -271,6 +271,96 @@ class TestMarkPosted:
 
 
 # ===================================================================
+# Posted Page
+# ===================================================================
+
+
+class TestPostedPage:
+    """Posted page endpoint tests."""
+
+    def test_posted_returns_html(self, client: TestClient):
+        """Verify /posted returns 200 OK with HTML content type."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert "text/html" in response.headers["content-type"]
+
+    def test_posted_shows_only_posted_options(self, client: TestClient):
+        """Verify only posted options are returned by checking the query uses status='posted'."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted")
+        assert response.status_code == 200
+        # Confirm the fetch was called with a query containing status = 'posted'
+        call_args = client.mock_fetch.call_args
+        assert call_args is not None
+        query = call_args[0][0]
+        assert "status = 'posted'" in query or "status=$1" in query
+
+    def test_posted_displays_posted_options(self, client: TestClient):
+        """Verify posted options appear in the rendered HTML."""
+        client.mock_fetch.return_value = [
+            _make_row(status="posted", theme="Posted Fact #1"),
+            _make_row(status="posted", theme="Posted Fact #2", platform="instagram"),
+        ]
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert "Posted Fact #1" in response.text
+        assert "Posted Fact #2" in response.text
+
+    def test_posted_with_platform_filter(self, client: TestClient):
+        """Verify platform filter is passed through for posted page."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted?platform=pinterest")
+        assert response.status_code == 200
+        call_args = client.mock_fetch.call_args
+        assert call_args is not None
+        assert call_args[0][1] == "pinterest"  # second arg is the platform value
+
+    def test_posted_empty_state(self, client: TestClient):
+        """Verify empty state message when no posted options exist."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert "No posted posts yet" in response.text
+
+    def test_posted_contains_preview_links(self, client: TestClient):
+        """Verify each posted option has a preview button linking to /preview/{id}."""
+        client.mock_fetch.return_value = [
+            _make_row(id=1, status="posted"),
+            _make_row(id=2, status="posted", platform="instagram"),
+        ]
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert '/preview/1' in response.text
+        assert '/preview/2' in response.text
+
+    def test_posted_contains_posted_badge(self, client: TestClient):
+        """Verify posted options display the 'posted' status badge."""
+        client.mock_fetch.return_value = [
+            _make_row(status="posted"),
+        ]
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert 'status-badge posted' in response.text
+
+    def test_posted_menu_link_present(self, client: TestClient):
+        """Verify the 'Posted' menu link exists in the navigation."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert '<a href="/posted">Posted</a>' in response.text
+        assert '<a href="/approved">Approved</a>' in response.text
+        assert '<a href="/history">History</a>' in response.text
+
+    def test_posted_shows_heading(self, client: TestClient):
+        """Verify the page heading says 'Posted Content'."""
+        client.mock_fetch.return_value = []
+        response = client.get("/posted")
+        assert response.status_code == 200
+        assert "Posted Content" in response.text
+
+
+# ===================================================================
 # Preview — Button Visibility
 # ===================================================================
 
