@@ -17,6 +17,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any
 
+from modules.text_validator import TextValidator
 from shared.models import ContentOption, ContentStatus, Platform
 
 logger = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ class ContentGenerator:
         self._platforms_config: dict[str, Any] = config.get("platforms", {})
         self._variations: int = config.get("variations", 3)
         self._text_model: str = config.get("text_model", "openai/gpt-4o-mini")
+        self._validation_config: dict[str, Any] = config.get("validation", {})
 
         queue_config = config.get("queue", {})
         self._max_pending: int = queue_config.get("max_pending", 10)
@@ -183,6 +185,19 @@ class ContentGenerator:
                 options=platform_options,
             )
             all_options.extend(saved)
+
+            # Run text validation on saved options
+            if self._validation_config.get("enabled", True):
+                from modules.text_validator import TextValidator
+
+                validator = TextValidator(self._db, self._client, self._validation_config)
+                for opt in saved:
+                    await validator.validate(
+                        content_option_id=opt.id,
+                        fact=opt.fact,
+                        hashtags=opt.hashtags if isinstance(opt.hashtags, list) else list(opt.hashtags) if opt.hashtags else [],
+                        img_title=opt.img_title or "",
+                    )
 
             logger.info(
                 "Generated %d options for platform=%s theme=%r",

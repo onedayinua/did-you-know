@@ -94,6 +94,54 @@
             <div class="fact-text">{{ option.fact }}</div>
             <div class="hashtags">{% for hashtag in option.hashtags %}{{ hashtag }}{% if not loop.last %}<br>{% endif %}{% endfor %}</div>
             {% endblock %}
+            {% if validation_results %}
+            <div class="metrics">
+                <h3>Content Quality</h3>
+                <div class="metric-row">
+                    <span class="label">Safety Score</span>
+                    <span class="value {% if validation_results.toxicity_score >= 0.8 %}under{% elif validation_results.toxicity_score < 0.5 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.toxicity_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Politeness</span>
+                    <span class="value {% if validation_results.politeness_score >= 0.8 %}under{% elif validation_results.politeness_score < 0.5 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.politeness_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Grammar</span>
+                    <span class="value {% if validation_results.grammar_score >= 0.8 %}under{% elif validation_results.grammar_score < 0.5 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.grammar_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Sentiment</span>
+                    <span class="value {% if validation_results.sentiment_score >= 0.6 %}under{% elif validation_results.sentiment_score < 0.3 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.sentiment_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Readability</span>
+                    <span class="value {% if validation_results.readability_score >= 0.8 %}under{% elif validation_results.readability_score < 0.5 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.readability_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Image Title Quality</span>
+                    <span class="value {% if validation_results.img_title_score >= 0.8 %}under{% elif validation_results.img_title_score < 0.5 %}over{% endif %}">
+                        {{ "%.0f"|format(validation_results.img_title_score * 100) }}%
+                    </span>
+                </div>
+                <div class="metric-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;">
+                    <span class="label">Model</span>
+                    <span class="value" style="font-size:0.75rem;color:#888;">{{ validation_results.model_used }}</span>
+                </div>
+                <form action="/options/{{ option.id }}/validate-text" method="post" style="margin-top:8px;">
+                    <button type="submit" class="btn" style="background:#3498db;color:#fff;padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">Re-run Validation</button>
+                </form>
+            </div>
+            {% endif %}
             {% if option.status == 'approved' and option.platform == 'pinterest' %}
             <div class="preview-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
                 <div style="display: flex; gap: 12px; margin-bottom: 12px;">

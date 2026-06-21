@@ -465,6 +465,62 @@ async def regenerate_image(id: int):
     return RedirectResponse(url=f"/options/{id}", status_code=302)
 
 
+@router.post("/options/{id}/validate-text")
+async def validate_option_text(id: int):
+    """Re-run text validation for a content option.
+
+    Fetches the option's fact, hashtags, and img_title from the DB,
+    runs the TextValidator, and returns the validation scores.
+
+    Args:
+        id: Content option ID.
+
+    Returns:
+        JSON with validation scores.
+
+    Raises:
+        HTTPException 404: If option not found.
+        HTTPException 500: If validation fails.
+    """
+    row = await fetch_one(
+        "SELECT id, fact, hashtags, img_title FROM content_options WHERE id = $1",
+        id,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Content option not found")
+
+    from shared.db import get_pool
+    from shared.openrouter_client import OpenRouterClient
+    from shared.config_loader import get_content_template
+    from modules.text_validator import TextValidator
+
+    pool = await get_pool()
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    client = OpenRouterClient(api_key)
+    config = get_content_template()
+    validation_config = config.get("validation", {})
+
+    validator = TextValidator(pool, client, validation_config)
+
+    hashtags_raw = row.get("hashtags", [])
+    if isinstance(hashtags_raw, str):
+        import json
+        hashtags = json.loads(hashtags_raw)
+    else:
+        hashtags = list(hashtags_raw) if hashtags_raw else []
+
+    scores = await validator.validate(
+        content_option_id=id,
+        fact=row["fact"],
+        hashtags=hashtags,
+        img_title=row.get("img_title", "") or "",
+    )
+    await client.close()
+
+    logger.info("Re-ran text validation for option id=%d", id)
+    return {"status": "ok", "scores": scores}
+
+
 # ===================================================================
 # Previews
 # ===================================================================
@@ -499,6 +555,9 @@ async def preview_all(request: Request, id: int):
     option = _row_to_dict(row)
     platform = option["platform"]
 
+    # Fetch text validation results
+    validation_results = await _fetch_validation_results(id)
+
     config = {
         "PINTEREST_EXTENSION_ID": os.environ.get("PINTEREST_EXTENSION_ID", "PASTE_YOUR_EXTENSION_ID_HERE"),
     }
@@ -509,6 +568,7 @@ async def preview_all(request: Request, id: int):
         {
             "option": option,
             "config": config,
+            "validation_results": validation_results,
         },
     )
 
@@ -543,6 +603,9 @@ async def preview_platform(request: Request, id: int, platform: str):
 
     option = _row_to_dict(row)
 
+    # Fetch text validation results
+    validation_results = await _fetch_validation_results(id)
+
     config = {
         "PINTEREST_EXTENSION_ID": os.environ.get("PINTEREST_EXTENSION_ID", "PASTE_YOUR_EXTENSION_ID_HERE"),
     }
@@ -553,6 +616,7 @@ async def preview_platform(request: Request, id: int, platform: str):
         {
             "option": option,
             "config": config,
+            "validation_results": validation_results,
         },
     )
 
@@ -833,4 +897,34 @@ def _row_to_dict(row: Any) -> dict[str, Any]:
         "status": row.get("status", ""),
         "created_at": row.get("created_at"),
         "updated_at": row.get("updated_at"),
+    }
+
+
+async def _fetch_validation_results(option_id: int) -> dict[str, Any] | None:
+    """Fetch text validation results for a content option.
+
+    Args:
+        option_id: Content option ID.
+
+    Returns:
+        Dict with score keys and model_used, or None if no results exist.
+    """
+    validation_row = await fetch_one(
+        "SELECT toxicity_score, politeness_score, grammar_score, "
+        "sentiment_score, readability_score, img_title_score, model_used "
+        "FROM text_validation_results "
+        "WHERE content_option_id = $1",
+        option_id,
+    )
+    if validation_row is None:
+        return None
+
+    return {
+        "toxicity_score": float(validation_row["toxicity_score"]) if validation_row.get("toxicity_score") else 0.5,
+        "politeness_score": float(validation_row["politeness_score"]) if validation_row.get("politeness_score") else 0.5,
+        "grammar_score": float(validation_row["grammar_score"]) if validation_row.get("grammar_score") else 0.5,
+        "sentiment_score": float(validation_row["sentiment_score"]) if validation_row.get("sentiment_score") else 0.5,
+        "readability_score": float(validation_row["readability_score"]) if validation_row.get("readability_score") else 0.5,
+        "img_title_score": float(validation_row["img_title_score"]) if validation_row.get("img_title_score") else 0.5,
+        "model_used": validation_row.get("model_used", ""),
     }
