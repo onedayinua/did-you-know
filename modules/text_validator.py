@@ -153,6 +153,17 @@ class TextValidator:
             logger.warning("Invalid JSON in validation response; using defaults")
             return dict(DEFAULT_SCORES)
 
+        # Handle both JSON object ({"toxicity_score": 0.95}) and JSON array ([{...}])
+        if isinstance(data, list):
+            if data:
+                data = data[0]
+            else:
+                data = {}
+
+        if not isinstance(data, dict):
+            logger.warning("Unexpected JSON type (%s) in validation response; using defaults", type(data).__name__)
+            return dict(DEFAULT_SCORES)
+
         scores = dict(DEFAULT_SCORES)
         for key in scores:
             val = data.get(key)

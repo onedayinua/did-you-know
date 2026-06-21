@@ -270,8 +270,8 @@
     "semantic_hash": ""
   },
   "config/content_template.yaml": {
-    "mtime": 1781983603.0680475,
-    "ast_hash": "7c35751cfbfc3f6b42ba3654a0442d1d",
+    "mtime": 1781986113.1544275,
+    "ast_hash": "610446dfa6054c728d1ca709d7447c9f",
     "semantic_hash": ""
   },
   "board/done/TKT-002_shared_config_and_db_pool.md": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "config/platforms.yaml": {
-    "mtime": 1781938709.444605,
-    "ast_hash": "6e4a912ca51e4f11f95f576ccbe2dc25",
+    "mtime": 1781986113.1567597,
+    "ast_hash": "23dbe76ce70ec799f9c01a506d80098b",
     "semantic_hash": ""
   },
   "modules/__init__.py": {
@@ -365,13 +365,13 @@
     "semantic_hash": ""
   },
   "modules/content_generator.py": {
-    "mtime": 1781969658.7591312,
-    "ast_hash": "931f4a53a3f721c33bbcc1c18ce4901e",
+    "mtime": 1781986113.4133666,
+    "ast_hash": "240ffe50569b6174337caa28bc373ef0",
     "semantic_hash": ""
   },
   "modules/visual_generator.py": {
-    "mtime": 1781969704.4617136,
-    "ast_hash": "4cdaa24164b3dd6144225ba67faeff29",
+    "mtime": 1781986113.4164817,
+    "ast_hash": "621fdc1403aca7b093004b5f71d929d2",
     "semantic_hash": ""
   },
   "tests/test_cli.py": {
@@ -602,6 +602,11 @@
   "docs/technical/frontend_dashboard_ui_improvements.md": {
     "mtime": 1781967050.891344,
     "ast_hash": "72192a4b2b1464c436484c2665456d21",
+    "semantic_hash": ""
+  },
+  "docs/technical/config_model_consistency.md": {
+    "mtime": 1781986113.1598024,
+    "ast_hash": "541f720571be3d7602d0818d931f84f7",
     "semantic_hash": ""
   }
 }
