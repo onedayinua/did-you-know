@@ -627,3 +627,229 @@ class TestValidateText:
 
             response = client.post("/options/1/validate-text")
             assert response.status_code == 200
+
+
+# ===================================================================
+# Regenerate Text Preview
+# ===================================================================
+
+
+class TestRegenerateTextPreview:
+    """Regenerate text preview endpoint tests.
+
+    Tests:
+    - Success: valid pending option -> 200, updates fact/hashtags/img_title
+    - Not found: non-existent id -> 404
+    - Not pending: approved/posted option -> 409
+    """
+
+    def test_regenerate_text_preview_success(self, client: TestClient):
+        """Valid pending option -> returns 200 with task_id."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1, "theme": "Crispy Cooking", "platform": "pinterest"},
+            {"id": 1, "status": "pending"},
+        ]
+
+        with patch("shared.db.get_pool") as mock_get_pool, \
+             patch("shared.openrouter_client.OpenRouterClient") as mock_client_cls, \
+             patch("shared.config_loader.get_content_template") as mock_get_config, \
+             patch("modules.content_generator.ContentGenerator") as mock_generator_cls, \
+             patch("modules.text_validator.TextValidator") as mock_validator_cls:
+
+            mock_pool = AsyncMock()
+            mock_get_pool.return_value = mock_pool
+
+            mock_client = AsyncMock()
+            mock_client_cls.return_value = mock_client
+
+            mock_get_config.return_value = {
+                "platforms": {"pinterest": {"character_limit": 500, "hashtag_count": "5-10"}},
+                "validation": {"enabled": True},
+            }
+
+            mock_generator = AsyncMock()
+            mock_generator._generate_text_variations.return_value = [
+                {
+                    "fact": "Air fryers use rapid air technology to create crispy food.",
+                    "hashtags": ["#AirFryer", "#Healthy"],
+                    "img_title": "Crispy Air Fryer Tips",
+                }
+            ]
+            mock_generator_cls.return_value = mock_generator
+
+            mock_validator = AsyncMock()
+            mock_validator.validate.return_value = {
+                "toxicity_score": 0.95,
+                "politeness_score": 0.90,
+                "grammar_score": 0.85,
+                "sentiment_score": 0.80,
+                "readability_score": 0.88,
+                "img_title_score": 0.92,
+            }
+            mock_validator_cls.return_value = mock_validator
+
+            response = client.post("/options/1/regenerate-text-preview")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "ok"
+            assert data["message"] == "Text regeneration started"
+            assert "task_id" in data
+            assert len(data["task_id"]) > 0
+
+    def test_regenerate_text_preview_not_found(self, client: TestClient):
+        """Non-existent id -> first fetch_one returns None -> 404."""
+        client.mock_fetch_one.return_value = None
+        response = client.post("/options/999/regenerate-text-preview")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Content option not found"
+
+    def test_regenerate_text_preview_not_pending(self, client: TestClient):
+        """Approved/posted option -> 409."""
+        client.mock_fetch_one.side_effect = [
+            {"id": 1, "theme": "Test", "platform": "pinterest"},
+            {"id": 1, "status": "approved"},
+        ]
+        response = client.post("/options/1/regenerate-text-preview")
+        assert response.status_code == 409
+        assert "pending" in response.json()["detail"]
+
+
+# ===================================================================
+# Regenerate Image Preview
+# ===================================================================
+
+
+class TestRegenerateImagePreview:
+    """Regenerate image preview endpoint tests.
+
+    Tests:
+    - Success: valid pending option with image_prompt -> 200
+    - Not found: non-existent id -> 404
+    - Not pending: approved/posted option -> 409
+    - No prompt: option without image_prompt -> 400
+    """
+
+    def test_regenerate_image_preview_success(self, client: TestClient):
+        """Valid pending option with image_prompt -> 200 with image_path."""
+        client.mock_fetch_one.side_effect = [
+            {
+                "id": 1,
+                "batch_id": "batch_test",
+                "platform": "pinterest",
+                "image_prompt": "A warm shot of food.",
+                "img_title": "Crispy Air Fryer Tips",
+            },
+            {"id": 1, "status": "pending"},
+        ]
+
+        with patch("shared.db.get_pool") as mock_get_pool, \
+             patch("shared.openrouter_client.OpenRouterClient") as mock_client_cls, \
+             patch("shared.config_loader.get_platforms_config") as mock_get_config, \
+             patch("modules.visual_generator.VisualGenerator") as mock_generator_cls:
+
+            mock_pool = AsyncMock()
+            mock_get_pool.return_value = mock_pool
+
+            mock_client = AsyncMock()
+            mock_client_cls.return_value = mock_client
+
+            mock_get_config.return_value = {
+                "visual": {"dimensions": {"pinterest": {"width": 1000, "height": 1500}}},
+            }
+
+            mock_generator = AsyncMock()
+            mock_generator._generate_and_save.return_value = "data/images/batch_test_1.png"
+            mock_generator._update_image_path = AsyncMock()
+            mock_generator._get_dimensions.return_value = {"width": 1000, "height": 1500}
+            mock_generator_cls.return_value = mock_generator
+
+            response = client.post("/options/1/regenerate-image-preview")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "ok"
+            assert data["message"] == "Image regeneration started"
+            assert "image_path" in data
+            assert len(data["image_path"]) > 0
+
+    def test_regenerate_image_preview_not_found(self, client: TestClient):
+        """Non-existent id -> first fetch_one returns None -> 404."""
+        client.mock_fetch_one.return_value = None
+        response = client.post("/options/999/regenerate-image-preview")
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Content option not found"
+
+    def test_regenerate_image_preview_not_pending(self, client: TestClient):
+        """Approved/posted option -> 409."""
+        client.mock_fetch_one.side_effect = [
+            {
+                "id": 1,
+                "batch_id": "batch_test",
+                "platform": "pinterest",
+                "image_prompt": "A warm shot of food.",
+                "img_title": "Test",
+            },
+            {"id": 1, "status": "approved"},
+        ]
+        response = client.post("/options/1/regenerate-image-preview")
+        assert response.status_code == 409
+        assert "pending" in response.json()["detail"]
+
+    def test_regenerate_image_preview_no_prompt(self, client: TestClient):
+        """Option without image_prompt -> 400."""
+        client.mock_fetch_one.side_effect = [
+            {
+                "id": 1,
+                "batch_id": "batch_test",
+                "platform": "pinterest",
+                "image_prompt": None,
+                "img_title": "Test",
+            },
+            {"id": 1, "status": "pending"},
+        ]
+        response = client.post("/options/1/regenerate-image-preview")
+        assert response.status_code == 400
+        assert "image prompt" in response.json()["detail"].lower()
+
+
+# ===================================================================
+# Preview - Regenerate Button Visibility
+# ===================================================================
+
+
+class TestPreviewRegenerateButtons:
+    """Preview page regenerate button visibility tests."""
+
+    def test_preview_shows_buttons_for_pending(self, client: TestClient):
+        """Pending option -> regenerate buttons present in HTML."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Regenerate Text" in response.text
+        assert "Regenerate Image" in response.text
+
+    def test_preview_hides_buttons_for_approved(self, client: TestClient):
+        """Approved option -> regenerate buttons absent."""
+        client.mock_fetch_one.return_value = _make_row(status="approved")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Regenerate Text" not in response.text
+        assert "Regenerate Image" not in response.text
+
+    def test_preview_shows_img_title(self, client: TestClient):
+        """Option with img_title set -> img_title displayed."""
+        client.mock_fetch_one.return_value = _make_row(img_title="Test Title")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert "Image Title:" in response.text
+        assert "Test Title" in response.text
+
+    def test_preview_hides_img_title_when_empty(self, client: TestClient):
+        """Option without img_title -> img_title not displayed."""
+        client.mock_fetch_one.return_value = _make_row(img_title=None, status="approved")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        # The img_title display div should not be rendered
+        assert '<strong>Image Title:</strong> {{ option.img_title }}' not in response.text
+        # But "Image Title:" might appear in JS for pending status - use approved status
+        # to ensure no img_title block is rendered
+        assert '<strong>Image Title:</strong>' not in response.text
