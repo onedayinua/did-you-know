@@ -41,6 +41,13 @@
             margin-bottom: 20px;
             line-height: 1.8;
         }
+        .img-title {
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #fff3cd;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
         .metrics {
             background: #f8f9fa;
             border-radius: 8px;
@@ -76,6 +83,18 @@
             display: inline-block;
         }
         .btn-primary { background: #2ecc71; color: #fff; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .regenerate-status {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        .regenerate-error {
+            font-size: 0.85rem;
+            color: #e74c3c;
+            margin-top: 8px;
+            display: none;
+        }
         {% block extra_styles %}{% endblock %}
     </style>
 </head>
@@ -94,6 +113,11 @@
             <div class="fact-text">{{ option.fact }}</div>
             <div class="hashtags">{% for hashtag in option.hashtags %}{{ hashtag }}{% if not loop.last %}<br>{% endif %}{% endfor %}</div>
             {% endblock %}
+            {% if option.img_title %}
+            <div class="img-title">
+                <strong>Image Title:</strong> {{ option.img_title }}
+            </div>
+            {% endif %}
             {% if validation_results %}
             <div class="metrics">
                 <h3>Content Quality</h3>
@@ -142,6 +166,124 @@
                 </form>
             </div>
             {% endif %}
+            {% if option.status == 'pending' %}
+            <div class="regenerate-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <button id="regenerate-text-btn" class="btn" style="background:#e67e22;color:#fff;" onclick="regenerateText()">
+                        Regenerate Text
+                    </button>
+                    <button id="regenerate-image-btn" class="btn" style="background:#9b59b6;color:#fff;" onclick="regenerateImage()">
+                        Regenerate Image
+                    </button>
+                </div>
+                <div id="regenerate-status" class="regenerate-status"></div>
+                <div id="regenerate-error" class="regenerate-error"></div>
+            </div>
+
+            <script>
+            // ============================================================
+            // Regenerate Text
+            // ============================================================
+            async function regenerateText() {
+                const btn = document.getElementById('regenerate-text-btn');
+                const imgBtn = document.getElementById('regenerate-image-btn');
+                const statusEl = document.getElementById('regenerate-status');
+                const errorEl = document.getElementById('regenerate-error');
+
+                btn.disabled = true;
+                imgBtn.disabled = true;
+                statusEl.innerText = 'Regenerating text...';
+                errorEl.style.display = 'none';
+
+                try {
+                    const resp = await fetch('/options/{{ option.id }}/regenerate-text-preview', { method: 'POST' });
+                    const data = await resp.json();
+                    if (!resp.ok) {
+                        throw new Error(data.detail || 'Failed to regenerate text');
+                    }
+                    statusEl.innerText = 'Text regenerated successfully!';
+
+                    // Connect to WebSocket for real-time update
+                    const ws = new WebSocket('ws://' + window.location.host + '/options/{{ option.id }}/regenerate/ws');
+                    ws.onmessage = function(event) {
+                        const update = JSON.parse(event.data);
+                        if (update.data) {
+                            // Update fact text
+                            const factEl = document.querySelector('.fact-text');
+                            if (factEl) {
+                                factEl.innerText = update.data.fact;
+                            }
+                            // Update hashtags
+                            const hashtagsEl = document.querySelector('.hashtags');
+                            if (hashtagsEl && update.data.hashtags) {
+                                hashtagsEl.innerHTML = '';
+                                update.data.hashtags.forEach(function(h, i) {
+                                    hashtagsEl.appendChild(document.createTextNode(h));
+                                    if (i < update.data.hashtags.length - 1) {
+                                        hashtagsEl.appendChild(document.createElement('br'));
+                                    }
+                                });
+                            }
+                            // Update img_title
+                            const imgTitleEl = document.querySelector('.img-title');
+                            if (imgTitleEl && update.data.img_title) {
+                                const strongEl = imgTitleEl.querySelector('strong');
+                                if (strongEl) {
+                                    imgTitleEl.innerHTML = '<strong>Image Title:</strong> ' + update.data.img_title;
+                                }
+                            }
+                        }
+                    };
+
+                    btn.disabled = false;
+                    imgBtn.disabled = false;
+                } catch (err) {
+                    errorEl.innerText = 'Error: ' + err.message;
+                    errorEl.style.display = 'block';
+                    btn.disabled = false;
+                    imgBtn.disabled = false;
+                }
+            }
+
+            // ============================================================
+            // Regenerate Image
+            // ============================================================
+            async function regenerateImage() {
+                const btn = document.getElementById('regenerate-text-btn');
+                const imgBtn = document.getElementById('regenerate-image-btn');
+                const statusEl = document.getElementById('regenerate-status');
+                const errorEl = document.getElementById('regenerate-error');
+
+                btn.disabled = true;
+                imgBtn.disabled = true;
+                statusEl.innerText = 'Regenerating image...';
+                errorEl.style.display = 'none';
+
+                try {
+                    const resp = await fetch('/options/{{ option.id }}/regenerate-image-preview', { method: 'POST' });
+                    const data = await resp.json();
+                    if (!resp.ok) {
+                        throw new Error(data.detail || 'Failed to regenerate image');
+                    }
+                    statusEl.innerText = 'Image regenerated successfully!';
+
+                    // Update the image on the page
+                    const imgEl = document.querySelector('.preview-image');
+                    if (imgEl) {
+                        imgEl.src = '/images/' + data.image_path + '?t=' + Date.now();
+                    }
+
+                    btn.disabled = false;
+                    imgBtn.disabled = false;
+                } catch (err) {
+                    errorEl.innerText = 'Error: ' + err.message;
+                    errorEl.style.display = 'block';
+                    btn.disabled = false;
+                    imgBtn.disabled = false;
+                }
+            }
+            </script>
+            {% endif %}
             {% if option.status == 'approved' and option.platform == 'pinterest' %}
             <div class="preview-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
                 <div style="display: flex; gap: 12px; margin-bottom: 12px;">
@@ -160,7 +302,7 @@
                 console.log("[TKT-029] fetchImageAsBase64 called with URL:", imageUrl);
                 const response = await fetch(imageUrl);
                 console.log("[TKT-029] Image fetch response status:", response.status);
-                if (!response.ok) throw new Error(`Failed to fetch image (HTTP ${response.status})`);
+                if (!response.ok) throw new Error('Failed to fetch image');
                 const blob = await response.blob();
                 console.log("[TKT-029] Image blob size:", blob.size, "bytes, type:", blob.type);
                 return new Promise((resolve, reject) => {
@@ -189,12 +331,12 @@
                     const title = '{{ option.theme|e }}';
                     const description = '{{ option.fact|e }}\n\n{% for hashtag in option.hashtags %}{{ hashtag }}{% if not loop.last %}\n{% endif %}{% endfor %}';
                     const destinationUrl = '{{ config.get("SITE_URL", "https://example.com") }}';
-                    
+
                     // Use postMessage instead of chrome.runtime.sendMessage
                     // The extension's dashboard-bridge.js content script will pick this up
                     const requestId = Date.now().toString();
                     console.log("[TKT-029] Sending postMessage with requestId:", requestId);
-                    
+
                     window.postMessage(
                         {
                             source: "did-you-know-dashboard",
@@ -209,7 +351,7 @@
                         },
                         window.location.origin
                     );
-                    
+
                     statusEl.innerText = "Sent to extension... Check the Pinterest tab.";
                 } catch (err) {
                     console.error("[TKT-029] Error in postToPinterest:", err);

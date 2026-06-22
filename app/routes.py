@@ -23,6 +23,7 @@ import asyncio
 import json as json_module
 import logging
 import os
+import uuid
 from datetime import datetime, timezone
 from typing import Any
 
@@ -522,6 +523,195 @@ async def validate_option_text(id: int):
 
 
 # ===================================================================
+# Preview Regeneration Actions
+# ===================================================================
+
+
+@router.post("/options/{id}/regenerate-text-preview")
+async def regenerate_text_preview(id: int):
+    """Regenerate text (fact + hashtags + img_title) for a pending content option.
+
+    Fetches the option by ID, verifies it is in ``'pending'`` status,
+    generates 1 new text variation via ContentGenerator, updates the DB
+    with new fact/hashtags/img_title, and re-runs text validation.
+
+    Args:
+        id: Content option ID.
+
+    Returns:
+        JSON with ``task_id`` on success.
+
+    Raises:
+        HTTPException 404: If option not found.
+        HTTPException 409: If option is not in ``'pending'`` status.
+        HTTPException 500: If regeneration fails.
+    """
+    row = await fetch_one(
+        "SELECT id, theme, platform FROM content_options WHERE id = $1",
+        id,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Content option not found")
+
+    # Check that status is 'pending'
+    status_row = await fetch_one(
+        "SELECT status FROM content_options WHERE id = $1",
+        id,
+    )
+    if status_row is None or status_row.get("status") != "pending":
+        raise HTTPException(
+            status_code=409,
+            detail="Option must be in pending status to regenerate",
+        )
+
+    from shared.db import get_pool
+    from shared.openrouter_client import OpenRouterClient
+    from shared.config_loader import get_content_template
+    from modules.content_generator import ContentGenerator
+
+    pool = await get_pool()
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    client = OpenRouterClient(api_key)
+    config = get_content_template()
+
+    generator = ContentGenerator(pool, client, config)
+    platform_limits = config.get("platforms", {}).get(row["platform"], {})
+    variations = await generator._generate_text_variations(
+        theme=row["theme"],
+        count=1,
+        platform_limits=platform_limits,
+    )
+
+    if not variations:
+        await client.close()
+        raise HTTPException(status_code=500, detail="Text regeneration failed")
+
+    var = variations[0]
+    hashtags_json = json_module.dumps(var.get("hashtags", []))
+    img_title = var.get("img_title", "")
+    if not img_title or not img_title.strip():
+        img_title = row["theme"]
+    img_title = img_title[:255]
+
+    task_id = str(uuid.uuid4())
+
+    await execute(
+        "UPDATE content_options SET fact = $1, hashtags = $2::jsonb, "
+        "img_title = $3, updated_at = CURRENT_TIMESTAMP "
+        "WHERE id = $4",
+        var["fact"],
+        hashtags_json,
+        img_title,
+        id,
+    )
+
+    # Re-run text validation
+    from modules.text_validator import TextValidator
+
+    validator_config = config.get("validation", {})
+    validator = TextValidator(pool, client, validator_config)
+    hashtags_list = var.get("hashtags", [])
+    if isinstance(hashtags_list, str):
+        import json
+        hashtags_list = json.loads(hashtags_list)
+    await validator.validate(
+        content_option_id=id,
+        fact=var["fact"],
+        hashtags=hashtags_list,
+        img_title=img_title or "",
+    )
+
+    await client.close()
+    logger.info("Regenerated text for option id=%d (task=%s)", id, task_id)
+    return {
+        "status": "ok",
+        "message": "Text regeneration started",
+        "task_id": task_id,
+    }
+
+
+@router.post("/options/{id}/regenerate-image-preview")
+async def regenerate_image_preview(id: int):
+    """Regenerate image for a pending content option, keeping the text.
+
+    Fetches the option by ID, verifies it is in ``'pending'`` status,
+    checks that an ``image_prompt`` exists, generates a new image via
+    VisualGenerator, and updates the DB with the new image path.
+
+    Args:
+        id: Content option ID.
+
+    Returns:
+        JSON with ``image_path`` on success.
+
+    Raises:
+        HTTPException 404: If option not found.
+        HTTPException 409: If option is not in ``'pending'`` status.
+        HTTPException 400: If option has no ``image_prompt``.
+        HTTPException 500: If image generation fails.
+    """
+    row = await fetch_one(
+        "SELECT id, batch_id, platform, theme, fact, image_prompt, img_title FROM content_options WHERE id = $1",
+        id,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Content option not found")
+
+    # Check that status is 'pending'
+    status_row = await fetch_one(
+        "SELECT status FROM content_options WHERE id = $1",
+        id,
+    )
+    if status_row is None or status_row.get("status") != "pending":
+        raise HTTPException(
+            status_code=409,
+            detail="Option must be in pending status to regenerate",
+        )
+
+    if not row.get("image_prompt"):
+        raise HTTPException(status_code=400, detail="Option has no image prompt")
+
+    from shared.db import get_pool
+    from shared.openrouter_client import OpenRouterClient
+    from shared.config_loader import get_platforms_config
+    from modules.visual_generator import VisualGenerator
+
+    pool = await get_pool()
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    client = OpenRouterClient(api_key)
+    config = get_platforms_config()
+
+    # Create a minimal ContentOption-like object for the generator
+    from shared.models import ContentOption, ContentStatus
+
+    option = ContentOption(
+        id=row["id"],
+        batch_id=row["batch_id"],
+        platform=str(row["platform"]),
+        theme=row.get("theme", "") or "untitled",
+        fact=row.get("fact", "") or "content",
+        hashtags=[],
+        img_title=row.get("img_title"),
+        image_prompt=row["image_prompt"],
+        image_path=None,
+        status=ContentStatus.PENDING,
+    )
+
+    generator = VisualGenerator(pool, client, config)
+    dimensions = generator._get_dimensions(str(row["platform"]))
+    image_path = await generator._generate_and_save(option, dimensions)
+    await generator._update_image_path(id, image_path)
+
+    await client.close()
+    logger.info("Regenerated image for option id=%d path=%s", id, image_path)
+    return {
+        "status": "ok",
+        "message": "Image regeneration started",
+        "image_path": image_path,
+    }
+
+
+# ===================================================================
 # Previews
 # ===================================================================
 
@@ -543,7 +733,7 @@ async def preview_all(request: Request, id: int):
     row = await fetch_one(
         """
         SELECT id, batch_id, platform, theme, fact, hashtags,
-               image_prompt, image_path, status, created_at, updated_at
+               image_prompt, image_path, img_title, status, created_at, updated_at
         FROM content_options
         WHERE id = $1
         """,
@@ -591,7 +781,7 @@ async def preview_platform(request: Request, id: int, platform: str):
     row = await fetch_one(
         """
         SELECT id, batch_id, platform, theme, fact, hashtags,
-               image_prompt, image_path, status, created_at, updated_at
+               image_prompt, image_path, img_title, status, created_at, updated_at
         FROM content_options
         WHERE id = $1 AND platform = $2
         """,
@@ -835,6 +1025,55 @@ async def generation_status_ws(websocket: WebSocket):
         await websocket.close()
 
 
+@router.websocket("/options/{id}/regenerate/ws")
+async def option_regeneration_ws(websocket: WebSocket, id: int):
+    """WebSocket endpoint for per-option regeneration status updates.
+
+    Accepts a connection, sends status updates during regeneration,
+    and closes when regeneration completes or fails.
+
+    Args:
+        websocket: The WebSocket connection.
+        id: Content option ID.
+    """
+    await websocket.accept()
+    from shared.db import get_pool
+
+    pool = await get_pool()
+    try:
+        while True:
+            # Poll the content_options table for this option's status
+            row = await fetch_one(
+                "SELECT status, fact, hashtags, img_title FROM content_options WHERE id = $1",
+                id,
+            )
+            if row is None:
+                await websocket.send_json({
+                    "status": "failed",
+                    "message": "Content option not found",
+                    "error": "Content option not found",
+                })
+                break
+
+            await websocket.send_json({
+                "status": row["status"],
+                "message": "Regenerating...",
+                "error": None,
+                "data": {
+                    "fact": row.get("fact", ""),
+                    "hashtags": list(row.get("hashtags", [])) if row.get("hashtags") else [],
+                    "img_title": row.get("img_title", ""),
+                },
+            })
+            if row["status"] in ("approved", "posted"):
+                break
+            await asyncio.sleep(1)
+    except WebSocketDisconnect:
+        pass
+    finally:
+        await websocket.close()
+
+
 # ===================================================================
 # Health Check
 # ===================================================================
@@ -892,6 +1131,7 @@ def _row_to_dict(row: Any) -> dict[str, Any]:
         "hashtags": hashtags,
         "hashtag_count": len(hashtags),
         "fact_length": len(row.get("fact", "")),
+        "img_title": row.get("img_title"),
         "image_prompt": row.get("image_prompt"),
         "image_path": row.get("image_path"),
         "status": row.get("status", ""),
