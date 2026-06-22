@@ -733,7 +733,7 @@ async def preview_all(request: Request, id: int):
     row = await fetch_one(
         """
         SELECT id, batch_id, platform, theme, fact, hashtags,
-               image_prompt, image_path, status, created_at, updated_at
+               image_prompt, image_path, img_title, status, created_at, updated_at
         FROM content_options
         WHERE id = $1
         """,
@@ -781,7 +781,7 @@ async def preview_platform(request: Request, id: int, platform: str):
     row = await fetch_one(
         """
         SELECT id, batch_id, platform, theme, fact, hashtags,
-               image_prompt, image_path, status, created_at, updated_at
+               image_prompt, image_path, img_title, status, created_at, updated_at
         FROM content_options
         WHERE id = $1 AND platform = $2
         """,
