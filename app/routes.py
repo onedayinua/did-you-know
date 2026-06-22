@@ -231,14 +231,15 @@ async def option_detail(request: Request, id: int):
 
 
 @router.post("/options/{id}/approve")
-async def approve_option(id: int):
+async def approve_option(id: int, request: Request):
     """Approve a content option — marks as ready for manual posting.
 
     Args:
         id: Content option ID.
+        request: FastAPI request object.
 
     Returns:
-        Redirect to dashboard.
+        JSON if ``Accept: application/json``, otherwise Redirect to dashboard.
 
     Raises:
         HTTPException 409: If option is not in ``pending`` status.
@@ -254,19 +255,22 @@ async def approve_option(id: int):
             detail="Option not found or not in pending status",
         )
     logger.info("Approved content option id=%d", id)
+    if request.headers.get("accept") == "application/json":
+        return {"status": "ok", "message": "Content option approved"}
     return RedirectResponse(url="/", status_code=302)
 
 
 @router.post("/options/{id}/cancel")
-async def cancel_option(id: int, next: str = "/"):
+async def cancel_option(id: int, request: Request, next: str = "/"):
     """Cancel a content option.
 
     Args:
         id: Content option ID.
+        request: FastAPI request object.
         next: URL to redirect to after cancellation (default: "/").
 
     Returns:
-        Redirect to the specified URL (or dashboard by default).
+        JSON if ``Accept: application/json``, otherwise Redirect.
 
     Raises:
         HTTPException 409: If option is not in ``pending`` or ``approved`` status.
@@ -282,6 +286,8 @@ async def cancel_option(id: int, next: str = "/"):
             detail="Option not found or not in pending/approved status",
         )
     logger.info("Cancelled content option id=%d", id)
+    if request.headers.get("accept") == "application/json":
+        return {"status": "ok", "message": "Content option cancelled"}
     return RedirectResponse(url=next, status_code=302)
 
 

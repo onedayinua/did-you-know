@@ -402,6 +402,117 @@ class TestPreviewButtons:
 
 
 # ===================================================================
+# Preview — UI Layout & Approve/Cancel Buttons (TKT-031)
+# ===================================================================
+
+
+class TestPreviewUI:
+    """Preview page UI layout and approve/cancel button visibility tests."""
+
+    def test_preview_layout_has_two_columns(self, client: TestClient):
+        """Pending option → HTML contains two-column layout classes."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert 'class="preview-layout"' in response.text
+        assert 'class="preview-body-wrapper"' in response.text
+        assert 'class="preview-image-wrapper"' in response.text
+
+    def test_preview_shows_approve_for_pending(self, client: TestClient):
+        """Pending option → Approve button (<button id="approve-btn">) present."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert 'id="approve-btn"' in response.text
+
+    def test_preview_shows_cancel_for_pending(self, client: TestClient):
+        """Pending option → Cancel button (<button id="cancel-btn">) present."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        assert 'id="cancel-btn"' in response.text
+
+    def test_preview_shows_cancel_for_approved(self, client: TestClient):
+        """Approved option → Cancel button present, Approve button absent."""
+        client.mock_fetch_one.return_value = _make_row(status="approved")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        # Cancel button should be rendered as an HTML element
+        assert 'id="cancel-btn"' in response.text
+        # Approve button should NOT be rendered as an HTML element
+        # (JS code may reference 'approve-btn' but the HTML <button> must not exist)
+        html_lower = response.text.lower()
+        assert '<button id="approve-btn"' not in html_lower
+
+    def test_preview_hides_approve_cancel_for_posted(self, client: TestClient):
+        """Posted option → neither Approve nor Cancel buttons rendered."""
+        client.mock_fetch_one.return_value = _make_row(status="posted")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        # JS code may reference 'approve-btn' / 'cancel-btn' but HTML buttons must not exist
+        html_lower = response.text.lower()
+        assert '<button id="approve-btn"' not in html_lower
+        assert '<button id="cancel-btn"' not in html_lower
+
+    def test_preview_hides_approve_cancel_for_cancelled(self, client: TestClient):
+        """Cancelled option → neither Approve nor Cancel buttons rendered."""
+        client.mock_fetch_one.return_value = _make_row(status="cancelled")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        html_lower = response.text.lower()
+        assert '<button id="approve-btn"' not in html_lower
+        assert '<button id="cancel-btn"' not in html_lower
+
+    def test_preview_image_on_right_side(self, client: TestClient):
+        """Verify HTML order: preview-body-wrapper before preview-image-wrapper."""
+        client.mock_fetch_one.return_value = _make_row(status="pending")
+        response = client.get("/preview/1")
+        assert response.status_code == 200
+        html = response.text
+        body_idx = html.index('class="preview-body-wrapper"')
+        image_idx = html.index('class="preview-image-wrapper"')
+        assert body_idx < image_idx, (
+            "preview-body-wrapper should appear before preview-image-wrapper in the DOM"
+        )
+
+    def test_preview_approve_json_accept_header(self, client: TestClient):
+        """Approve with Accept: application/json → returns JSON, not redirect."""
+        client.mock_execute.return_value = "UPDATE 1"
+        response = client.post(
+            "/options/1/approve",
+            headers={"Accept": "application/json"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+        assert data["message"] == "Content option approved"
+
+    def test_preview_cancel_json_accept_header(self, client: TestClient):
+        """Cancel with Accept: application/json → returns JSON, not redirect."""
+        client.mock_execute.return_value = "UPDATE 1"
+        response = client.post(
+            "/options/1/cancel",
+            headers={"Accept": "application/json"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+        assert data["message"] == "Content option cancelled"
+
+    def test_preview_approve_redirect_without_json(self, client: TestClient):
+        """Approve without Accept: application/json → still returns redirect."""
+        client.mock_execute.return_value = "UPDATE 1"
+        response = client.post("/options/1/approve", follow_redirects=False)
+        assert response.status_code == 302
+
+    def test_preview_cancel_redirect_without_json(self, client: TestClient):
+        """Cancel without Accept: application/json → still returns redirect."""
+        client.mock_execute.return_value = "UPDATE 1"
+        response = client.post("/options/1/cancel", follow_redirects=False)
+        assert response.status_code == 302
+
+
+# ===================================================================
 # Regenerate Text
 # ===================================================================
 
