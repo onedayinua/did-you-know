@@ -62,7 +62,7 @@ Replace the current single-column `.preview-container` layout:
 
 **New structure**:
 ```
-.preview-container (max-width: 960px)
+.preview-container (max-width: 1280px)
   .preview-layout (display: flex, flex-direction: row, gap: 24px)
     .preview-body-wrapper (flex: 1, min-width: 0 — left column)
       .preview-body (content: fact, hashtags, metrics, buttons, back-link)
@@ -79,7 +79,7 @@ Replace the current single-column `.preview-container` layout:
 ```css
 /* Remove: .preview-container { max-width: 600px; } */
 .preview-container {
-    max-width: 960px;
+    max-width: 1280px;
     width: 100%;
     background: #fff;
     border-radius: 16px;
